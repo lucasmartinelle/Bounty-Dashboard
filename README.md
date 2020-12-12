@@ -4,6 +4,47 @@ varchar(36)  NO  UNIQUE  varchar(36)  NO  varchar(36)  NOBounty Dashboard
 
 ![banner](https://zupimages.net/up/20/50/sfp6.png)
 
+## Installation
+
+```bash
+apt-get update && apt-get upgrade -y
+apt-get install apache2 php php-mysql mariadb-server
+a2enmod rewrite
+git clone https://github.com/lucasmartinelle/Bounty-Dashboard
+mv Bounty-Dashboard/ /var/www/html/
+chown www-data:www-data /var/www/html/ -R && chmod 775 /var/www/html/ -R
+```
+
+### Create the database :
+
+```bash
+mysql -u root
+CREATE DATABASE bugbounty;
+GRANT ALL ON bugbounty.* TO 'bugbounty'@'localhost' IDENTIFIED BY '29ani6ibuKzyayWvCrLBQuTXp674R5hy';
+FLUSH PRIVILEGES;
+quit
+```
+
+If you want, change the password for `bugbounty` user and also in `/var/www/html/Bounty-Dashboard/app/init.php`
+
+###  Import the SQL File :
+
+```bash
+cd /var/www/html/Bounty-Dashboard/
+mysql -u root bugbounty < base.sql
+```
+
+Uncomment `extension=pdo_mysql` on `/etc/php/{version}/apache2/php.ini`
+ Change `AllowOverride None` to `AllowOverride All` line 172 on `/etc/apache2/apache2.conf`
+
+On `/etc/apache2/sites-enabled/000-default.conf` change `DocumentRoot /var/www/html/` by `DocumentRoot /var/www/html/Bounty-Dashboard` on line 12
+
+### Restart apache2 :
+
+```bash
+systemctl restart apache2
+```
+
 ## Structure
 
 ### dashboard
@@ -40,7 +81,8 @@ pie charts (**canvasJS**)
 
 - ​	Adding and deleting a program  **(auth required)**
 
-- - ​		**Scope** (1 or more URLs)
+  * ​		**Scope** (1 or more URLs)
+
   - ​		**start date**
   - ​		**status** (open / close)
   - ​		**Tags** (the user can add tags of his choice on the program)
@@ -61,24 +103,22 @@ pie charts (**canvasJS**)
 
 - ​	Creating a report (open report by default)
 
-- - ​		Ability to apply a template
+  * ​	    Ability to apply a template
+
   - ​		Title (Text)
   - ​		Date
   - ​		Severity (CVSS scale)
   - ​		Endpoint (URL)
   - ​		Steps to Reproduce (Markdown) / Impact (Markdown) / Mitigation (Markdown) / Ressources (Markdown)
-  -         Programs
+  -         ​        Programs
 
 ---
 
 ### templates  **(auth required)**
 
 - ​	List existing templates
-
 - ​	Adding a template
-
-- - ​		Title (Text) / Severity (CVSS scale) / Endpoint (URL) / Description (Markdown) / Steps to Reproduce (Markdown) / Impact (Markdown) /  Mitigation (Markdown) / Ressources (Markdown)
-
+* ​	Title (Text) / Severity (CVSS scale) / Endpoint (URL) / Description (Markdown) / Steps to Reproduce (Markdown) / Impact (Markdown) /  Mitigation (Markdown) / Ressources (Markdown)
 - ​	Editing/deleting a template
 
 ---
@@ -94,15 +134,16 @@ pie charts (**canvasJS**)
 
 - ​	Choice of language (FR/EN)
 
-- - ​		The texts must therefore be taken from a configuration file according to the chosen language.
+  * ​	The texts must therefore be taken from a configuration file according to the chosen language.
 
 - ​	User management **(admin required)**
 
-- - ​		List users
+  * ​		List users
 
   - ​		Add / remove a user
 
-  - - ​			Username
+    * ​			Username
+
     - ​            Password
     - ​            Role (Hunter / Admin)
 
@@ -168,8 +209,9 @@ window.onload = function() {
 
 - If the user tries to log in more than 5 times with a wrong password, added a delay to the connection of 1s
 
-- - ​	For example via a "Bad count" and "Last bad count" field in the DB, as soon as Bad count reaches 5 then a delay of 1s is added to the connection and the field is reset to 0 after one hour.
-  - ​	Otherwise add a captcha on the connection but the admin must be able to add his reCaptcha key in the administration, if the value does not exist then the captcha is not active.
+  * For example via a "Bad count" and "Last bad count" field in the DB, as soon as Bad count reaches 5 then a delay of 1s is added to the connection and the field is reset to 0 after one hour.
+
+  - Otherwise add a captcha on the connection but the admin must be able to add his reCaptcha key in the administration, if the value does not exist then the captcha is not active.
 
 - password hashed in base with Argon2ID
 

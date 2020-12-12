@@ -1,4 +1,4 @@
-# Bounty Dashboard
+varchar(36)  NO  UNIQUE  varchar(36)  NO  varchar(36)  NOBounty Dashboard
 
 > platform to gather data for bugbounty services created by a beginner
 
@@ -47,7 +47,7 @@ pie charts (**canvasJS**)
 
 - ​	Pie chart with the number of bugs found by severity
 
--     Platform
+-     Platform
 
 ---
 
@@ -67,7 +67,7 @@ pie charts (**canvasJS**)
   - ​		Severity (CVSS scale)
   - ​		Endpoint (URL)
   - ​		Steps to Reproduce (Markdown) / Impact (Markdown) / Mitigation (Markdown) / Ressources (Markdown)
-  -         Programs
+  -         Programs
 
 ---
 
@@ -181,62 +181,65 @@ window.onload = function() {
 
 ### Reports
 
-| Field            | Type                 | Null | Key     | Default             | Extra          |
-| ---------------- | -------------------- | ---- | ------- | ------------------- | -------------- |
-| id               | smallint(7) unsigned | NO   | PRIMARY | NULL                | auto_increment |
-| created_at       | datetime             | YES  |         | current_timestamp() |                |
-| title            | varchar(200)         | NO   | UNIQUE  | NULL                |                |
-| severity         | float(8,5)           | NO   |         | NULL                |                |
-| endpoint         | text                 | NO   |         | NULL                |                |
-| template_id      | smallint(7) unsigned | NO   |         | NULL                |                |
-| program_id       | smallint(7) unsigned | NO   |         | NULL                |                |
-| stepsToReproduce | longtext             | NO   |         | NULL                |                |
-| impact           | longtext             | NO   |         | NULL                |                |
-| mitigation       | longtext             | NO   |         | NULL                |                |
-| resources        | longtext             | NO   |         | NULL                |                |
+| Field            | Type         | Null | Key    | Default             | Extra |
+| ---------------- | ------------ | ---- | ------ | ------------------- | ----- |
+| id               | varchar(36)  | NO   | UNIQUE |                     |       |
+| title            | varchar(200) | NO   | UNIQUE |                     |       |
+| severity         | float(8,5)   | NO   |        |                     |       |
+| endpoint         | text         | NO   |        |                     |       |
+| template_id      | varchar(36)  | NO   |        |                     |       |
+| program_id       | varchar(36)  | NO   |        |                     |       |
+| stepsToReproduce | longtext     | NO   |        |                     |       |
+| impact           | longtext     | NO   |        |                     |       |
+| mitigation       | longtext     | NO   |        |                     |       |
+| resources        | longtext     | NO   |        |                     |       |
+| created_at       | datetime     | YES  |        | current_timestamp() |       |
 
 ### programs
 
-| Field       | Type                 | Null | Key     | Default             | Extra          |
-| ----------- | -------------------- | ---- | ------- | ------------------- | -------------- |
-| id          | smallint(7) unsigned | NO   | PRIMARY | NULL                | auto_increment |
-| scope       | text                 | NO   |         | NULL                |                |
-| date        | datetime             | YES  |         | current_timestamp() |                |
-| status      | varchar(5)           | YES  |         | 'open'              |                |
-| platform_id | smallint(7) unsigned | NO   |         | NULL                |                |
+| Field       | Type        | Null | Key    | Default             | Extra |
+| ----------- | ----------- | ---- | ------ | ------------------- | ----- |
+| id          | varchar(36) | NO   | UNIQUE |                     |       |
+| scope       | text        | NO   |        |                     |       |
+| status      | varchar(5)  | YES  |        | 'open'              |       |
+| platform_id | varchar(36) | NO   |        |                     |       |
+| created_at  | datetime    | YES  |        | current_timestamp() |       |
 
 ### platforms
 
-| Field | Type                 | Null | Key     | Default | Extra          |
-| ----- | -------------------- | ---- | ------- | ------- | -------------- |
-| id    | smallint(7) unsigned | NO   | PRIMARY | NULL    | auto_increment |
-| name  | varchar(200)         | NO   | UNIQUE  | NULL    |                |
+| Field | Type         | Null | Key    | Default | Extra |
+| ----- | ------------ | ---- | ------ | ------- | ----- |
+| id    | varchar(36)  | NO   | UNIQUE |         |       |
+| name  | varchar(200) | NO   | UNIQUE |         |       |
 
 ### templates
 
-| Field            | Type                 | Null | Key     | Default             | Extra          |
-| ---------------- | -------------------- | ---- | ------- | ------------------- | -------------- |
-| id               | smallint(7) unsigned | NO   | PRIMARY | NULL                | auto_increment |
-| created_at       | datetime             | YES  |         | current_timestamp() |                |
-| title            | varchar(200)         | NO   | UNIQUE  | NULL                |                |
-| severity         | float(8,5)           | NO   |         | NULL                |                |
-| endpoint         | text                 | NO   |         | NULL                |                |
-| stepsToReproduce | longtext             | NO   |         | NULL                |                |
-| impact           | longtext             | NO   |         | NULL                |                |
-| mitigation       | longtext             | NO   |         | NULL                |                |
-| resources        | longtext             | NO   |         | NULL                |                |
+| Field            | Type         | Null | Key    | Default             | Extra |
+| ---------------- | ------------ | ---- | ------ | ------------------- | ----- |
+| id               | varchar(36)  | NO   | UNIQUE |                     |       |
+| creator_id       | varchar(36)  | NO   |        |                     |       |
+| title            | varchar(200) | NO   |        |                     |       |
+| severity         | float(8,5)   | NO   |        |                     |       |
+| endpoint         | text         | NO   |        |                     |       |
+| stepsToReproduce | longtext     | NO   |        |                     |       |
+| impact           | longtext     | NO   |        |                     |       |
+| mitigation       | longtext     | NO   |        |                     |       |
+| resources        | longtext     | NO   |        |                     |       |
+| created_at       | datetime     | YES  |        | current_timestamp() |       |
 
 ### users
 
-| Field      | Type                 | Null | Key     | Default             | Extra          |
-| ---------- | -------------------- | ---- | ------- | ------------------- | -------------- |
-| id         | smallint(7) unsigned | NO   | PRIMARY | NULL                | auto_increment |
-| username   | varchar(200)         | NO   | UNIQUE  | NULL                |                |
-| email      | varchar(255)         | NO   | UNIQUE  | NULL                |                |
-| password   | text                 | NO   |         | NULL                |                |
-| token      | text                 | NO   |         | NULL                |                |
-| role       | varchar(6)           | YES  |         | 'hunter'            |                |
-| active     | char(1)              | YES  |         | 'N'                 |                |
-| created_at | datetime             | YES  |         | current_timestamp() |                |
-| updated_at | datetime             | YES  |         | current_timestamp() |                |
+| Field       | Type                 | Null | Key    | Default             | Extra |
+| ----------- | -------------------- | ---- | ------ | ------------------- | ----- |
+| id          | varchar(36)          | NO   | UNIQUE |                     |       |
+| username    | varchar(200)         | NO   | UNIQUE |                     |       |
+| email       | varchar(255)         | NO   | UNIQUE |                     |       |
+| password    | text                 | NO   |        |                     |       |
+| token       | text                 | NO   |        |                     |       |
+| role        | varchar(6)           | YES  |        | 'hunter'            |       |
+| active      | char(1)              | YES  |        | 'N'                 |       |
+| created_at  | datetime             | YES  |        | current_timestamp() |       |
+| updated_at  | datetime             | YES  |        | current_timestamp() |       |
+| bad_attempt | smallint(1) unsigned | YES  |        | 0                   |       |
+| last_failed | datetime             | YES  |        | NULL                |       |
 

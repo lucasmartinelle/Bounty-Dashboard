@@ -29,8 +29,18 @@
         *
         *  return : amount of users in the table users
         */
-        public function countUsers(){
+        public function countUsers($where=null){
+            $stmt = 'SELECT count(*) FROM users';
+            if($where != null){
+                $stmt .= ' WHERE ';
+                foreach($where as $key => $value){
+                    $stmt .= "`". $key . "` = '".$value."' AND ";
+                }
+                $stmt = substr($stmt, 0, -5);
+            }
 
+            $req = $this->statement($stmt);
+            return $req->fetch(PDO::FETCH_ASSOC)['count(*)'];
         }
 
         /* new user
@@ -44,7 +54,18 @@
         *           false if users couldn't be created
         */
         public function newUser($values){
+            $stmt = 'INSERT INTO users (`id`, `username`, `email`, `password`, `token`, `role`) VALUES (';
+            foreach($values as $val){
+                $stmt.="'".$val . "', ";
+            }
+            $stmt = substr($stmt, 0, -2) . ')';
 
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* update user
@@ -59,7 +80,23 @@
         *           false if users couldn't be updated
         */
         public function updateUser($set, $where){
+            $stmt = "UPDATE users SET ";
+            foreach($set as $key => $value){
+                $stmt .="`". $key . "` = '".$value."', ";
+            }
+            $stmt = substr($stmt, 0, -2);
+            $stmt .= ' WHERE ';
+            foreach($where as $key => $value){
+                $stmt .= "`". $key . "` = '".$value."' AND ";
+            }
+            $stmt = substr($stmt, 0, -5);
 
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* delete user
@@ -73,7 +110,18 @@
         *           false if users couldn't be deleted
         */
         public function deleteUser($where){
-            
+            $stmt = "DELETE users WHERE ";
+            foreach($where as $key => $value){
+                $stmt .= "`". $key . "` = '".$value."' AND ";
+            }
+            $stmt = substr($stmt, 0, -5);
+
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
     }
 ?>

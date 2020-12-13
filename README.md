@@ -103,7 +103,7 @@ pie charts (**canvasJS**)
 
 - ​	Creating a report (open report by default)
 
-  * ​	    Ability to apply a template
+  * ​	    Ability to apply a template
 
   - ​		Title (Text)
   - ​		Date
@@ -149,9 +149,13 @@ pie charts (**canvasJS**)
 
 ---
 
-## Modules
+## Assets
 
-use of [canvasJS](https://canvasjs.com/jquery-charts/)
+* [canvasJS](https://canvasjs.com/jquery-charts/) for charts
+* [PHP-MVC](https://github.com/lucasmartinelle/MVC-PHP) for MVC system
+* [bootstrap](https://getbootstrap.com/) and [template](https://startbootstrap.com/theme/sb-admin-2) from [startbootstrap](https://startbootstrap.com/)
+* [jquery](https://jquery.com/) and [datatables](https://datatables.net/)
+* [icons8](https://icones8.fr/) and [fontawesome](https://fontawesome.com/)
 
 ### pie charts
 

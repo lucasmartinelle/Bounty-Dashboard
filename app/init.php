@@ -30,4 +30,7 @@
     define('EMAIL', 'something@gmail.com'); // EMAIL SENDER
     define('EMAIL_PASSWORD', 'password'); // PASSWORD EMAIL SENDER
     define('EMAIL_FROM', 'sender'); // NAME OF SENDER
+
+    $defaultLanguage = 'EN';
+    define('LANGUAGE', $defaultLanguage);
 ?>

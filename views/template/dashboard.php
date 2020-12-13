@@ -36,10 +36,61 @@
                 <hr class="sidebar-divider my-0">
 
                 <!-- Nav Item - Dashboard -->
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
+                        <span><?= $lang->getTxt('navbar', 'navitem-dashboard'); ?></span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Platforms -->
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                        <i class="fas fa-pager"></i>
+                        <span><?= $lang->getTxt('navbar', 'navitem-platforms'); ?></span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Programs -->
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                        <i class="fas fa-file-alt"></i>
+                        <span><?= $lang->getTxt('navbar', 'navitem-programs'); ?></span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Reports -->
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                        <i class="fas fa-bug"></i>
+                        <span><?= $lang->getTxt('navbar', 'navitem-reports'); ?></span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Templates -->
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                        <i class="fas fa-clipboard"></i>
+                        <span><?= $lang->getTxt('navbar', 'navitem-templates'); ?></span>
+                    </a>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider d-none d-md-block">
+
+                <!-- Nav Item - Profile -->
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                        <i class="fas fa-user"></i>
+                        <span><?= $lang->getTxt('navbar', 'navitem-profile'); ?></span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Settings -->
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                        <i class="fas fa-cog"></i>
+                        <span><?= $lang->getTxt('navbar', 'navitem-settings'); ?></span>
                     </a>
                 </li>
 
@@ -50,7 +101,6 @@
                 <div class="text-center d-none d-md-inline">
                     <button class="rounded-circle border-0" id="sidebarToggle"></button>
                 </div>
-
             </ul>
             <!-- End of Sidebar -->
 

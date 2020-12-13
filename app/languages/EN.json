@@ -1,0 +1,19 @@
+{
+    "navbar" : {
+        "navitem-dashboard" : "Dashboard",
+        "navitem-platforms" : "Platforms",
+        "navitem-programs" : "Programs",
+        "navitem-reports" : "Reports",
+        "navitem-templates" : "Templates",
+        "navitem-profile" : "Profile",
+        "navitem-settings" : "Settings"
+    },
+    "dashboard" : {
+        "content-header" : "Blank Page"
+    },
+    "page404" : {
+        "content-header" : "Page Not Found",
+        "content-subheader" : "It looks like you found a glitch in the matrix...",
+        "link-to-home" : "Back to Dashboard"
+    }
+}

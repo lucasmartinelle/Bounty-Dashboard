@@ -1,0 +1,19 @@
+{
+    "navbar" : {
+        "navitem-dashboard" : "Tableau de bord",
+        "navitem-platforms" : "Plateformes",
+        "navitem-programs" : "Programes",
+        "navitem-reports" : "Rapports",
+        "navitem-templates" : "Templates",
+        "navitem-profile" : "Profil",
+        "navitem-settings" : "Paramètre"
+    },
+    "dashboard" : {
+        "content-header" : "Page blanche"
+    },
+    "page404" : {
+        "content-header" : "Page Iconnue",
+        "content-subheader" : "Il semble que vous ayez trouvé une faille dans la matrice...",
+        "link-to-home" : "Retour au tableau de bord"
+    }
+}

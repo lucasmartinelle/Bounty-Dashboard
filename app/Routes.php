@@ -21,12 +21,76 @@
             );
 
             $this->create(
-                "/dashoard",
+                "/dashboard",
                 "dashboard",
                 "Dashboard",
                 "controllerDashboard",
                 "dashboard/viewDashboard",
                 "dashboard"
+            );
+
+            // auth
+            $this->create(
+                "/dashboard/registration",
+                "registration",
+                "Registration",
+                "controllerAuth",
+                "auth/viewRegistration",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/login",
+                "login",
+                "Login",
+                "controllerAuth",
+                "auth/viewLogin",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/forgot",
+                "forgot",
+                "Forgot",
+                "controllerAuth",
+                "auth/viewForgot",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/sent/registration",
+                "sentRegistration",
+                "Sent Email",
+                "controllerAuth",
+                "auth/viewEmailSent",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/sent/forgot",
+                "sentForgot",
+                "Sent email",
+                "controllerAuth",
+                "auth/viewEmailSent",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/confirm/forgot/{string}",
+                "confirmForgot",
+                "Confirmation",
+                "controllerAuth",
+                "auth/viewValidationForgot",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/confirm/registration/{string}",
+                "confirmRegistration",
+                "Confirmation",
+                "controllerAuth",
+                null,
+                null
             );
         }
 

@@ -5,11 +5,54 @@
         "navitem-programs" : "Programes",
         "navitem-reports" : "Rapports",
         "navitem-templates" : "Templates",
+        "navitem-signup" : "Inscription",
+        "navitem-signin" : "Connexion",
+        "navitem-settings" : "Paramètre",
         "navitem-profile" : "Profil",
-        "navitem-settings" : "Paramètre"
+        "navitem-logout" : "Déconnexion"
     },
     "dashboard" : {
         "content-header" : "Page blanche"
+    },
+    "registration" : {
+        "content-header" : "Inscription",
+        "username-placeholder" : "Identifiant",
+        "email-placeholder" : "Email",
+        "password-placeholder" : "Mot de passe",
+        "cpassword-placeholder" : "Confirmation mot de passe",
+        "submit" : "Envoyer",
+        "txt-to-signin" : "Vous avez déjà un compte,",
+        "link-to-signin" : "connectez-vous"
+    },
+    "login" : {
+        "content-header" : "Connexion",
+        "email-placeholder" : "Email",
+        "password-placeholder" : "Mot de passe",
+        "remember-me" : "M'enregistrer",
+        "forgot-password" : "Mot de passe oublié ?",
+        "submit" : "Envoyer",
+        "txt-to-signup" : "Vous n'avez pas de compte, ",
+        "link-to-signup" : "inscrivez-vous"
+    },
+    "forgot" : {
+        "content-header" : "Mot de passe oublié",
+        "email-placeholder" : "Email",
+        "submit" : "Envoyer",
+        "txt-to-signin" : "Vous vous souvenez de votre mot de passe,",
+        "link-to-signin" : "connectez-vous"
+    },
+    "emailSent" : {
+        "content-header" : "Email envoyé",
+        "forgot-sent" : "Un email vous a été envoyé pour modifier votre mot de passe.",
+        "registration-sent" : "Un email vous a été envoyé pour confirmer votre inscription."
+    },
+    "validationForgot" : {
+        "content-header" : "Mot de passe oublié",
+        "password-placeholder" : "Mot de passe",
+        "cpassword-placeholder" : "Confirmation mot de passe",
+        "submit" : "Envoyé",
+        "txt-to-signin" : "Vous vous souvenez de votre mot de passe,",
+        "link-to-signin" : "connectez-vous"
     },
     "page404" : {
         "content-header" : "Page Iconnue",

@@ -1,3 +1,30 @@
-.navbar-nav {
+.sidebar {
     background-color : #66573c;
+}
+
+#registration .card, #login .card, #forgot .card, #emailSent .card, #validationForgot .card {
+    background: transparent;
+    width: 400px;
+    border-radius: 25px;
+    border-color: transparent;
+}
+
+#registration input, #login input, #forgot input, #validationForgot input {
+    background: transparent;
+    height: 40px;
+    border-radius: 0;
+    border-color: #000000;
+    box-shadow: unset;
+    color: #000000;
+}
+
+#login .form-check input {
+    height: auto;
+}
+
+#emailSent .card-body {
+    padding: 20px;
+    height: max-content;
+    background: #ffffff;
+    border-radius: 25px;
 }

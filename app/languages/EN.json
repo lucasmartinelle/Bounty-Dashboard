@@ -5,11 +5,54 @@
         "navitem-programs" : "Programs",
         "navitem-reports" : "Reports",
         "navitem-templates" : "Templates",
+        "navitem-signup" : "Registration",
+        "navitem-signin" : "Login",
+        "navitem-settings" : "Settings",
         "navitem-profile" : "Profile",
-        "navitem-settings" : "Settings"
+        "navitem-logout" : "Logout"
     },
     "dashboard" : {
         "content-header" : "Blank Page"
+    },
+    "registration" : {
+        "content-header" : "Registration",
+        "username-placeholder" : "Username",
+        "email-placeholder" : "Email",
+        "password-placeholder" : "Password",
+        "cpassword-placeholder" : "Confirm Password",
+        "submit" : "Submit",
+        "txt-to-signin" : "You already have an account,",
+        "link-to-signin" : "sign in"
+    },
+    "login" : {
+        "content-header" : "Login",
+        "email-placeholder" : "Email",
+        "password-placeholder" : "Password",
+        "remember-me" : "Remember me",
+        "forgot-password" : "Forgot password ?",
+        "submit" : "Submit",
+        "txt-to-signup" : "You don't have an account, ",
+        "link-to-signup" : "sign up"
+    },
+    "forgot" : {
+        "content-header" : "Forgot",
+        "email-placeholder" : "Email",
+        "submit" : "Submit",
+        "txt-to-signin" : "You remember your password,",
+        "link-to-signin" : "sign in"
+    },
+    "emailSent" : {
+        "content-header" : "Email sent",
+        "forgot-sent" : "An email was sent to you to allow you to change your password.",
+        "registration-sent" : "An email was sent to you to confirm your registration."
+    },
+    "validationForgot" : {
+        "content-header" : "Forgot",
+        "password-placeholder" : "Password",
+        "cpassword-placeholder" : "Confirm Password",
+        "submit" : "Submit",
+        "txt-to-signin" : "You remember your password,",
+        "link-to-signin" : "sign in"
     },
     "page404" : {
         "content-header" : "Page Not Found",

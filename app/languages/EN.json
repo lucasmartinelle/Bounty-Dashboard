@@ -22,7 +22,8 @@
         "cpassword-placeholder" : "Confirm Password",
         "submit" : "Submit",
         "txt-to-signin" : "You already have an account,",
-        "link-to-signin" : "sign in"
+        "link-to-signin" : "sign in",
+        "invalid-input" : "Invalid input"
     },
     "login" : {
         "content-header" : "Login",
@@ -58,5 +59,24 @@
         "content-header" : "Page Not Found",
         "content-subheader" : "It looks like you found a glitch in the matrix...",
         "link-to-home" : "Back to Dashboard"
+    },
+    "validator" : {
+        "required" : "This field is required.",
+        "requiredLetter" : "Must contain at least one letter.",
+        "requiredSpecialCharacter" : "Must contain at least one special character.",
+        "requiredNumber" : "Must contain at least one digit.",
+        "onlyNumber" : "Must contain only digits.",
+        "noNumber" : "Numbers are not allowed.",
+        "noLetter" : "Letters are not allowed.",
+        "noSpecialCharacter" : "Special characters are not allowed.",
+        "onlyLetter" : "Must contain only letters.",
+        "min-1" : "Minimum size : ",
+        "min-2" : " characters.",
+        "max-1" : "Maximum size : ",
+        "max-2" : " characters.",
+        "cpassword" : "Passwords must match.",
+        "email" : "Invalid email format.",
+        "URL" : "Invalid URL format.",
+        "equal" : "Value denied."
     }
 }

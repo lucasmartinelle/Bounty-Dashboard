@@ -22,7 +22,8 @@
         "cpassword-placeholder" : "Confirmation mot de passe",
         "submit" : "Envoyer",
         "txt-to-signin" : "Vous avez déjà un compte,",
-        "link-to-signin" : "connectez-vous"
+        "link-to-signin" : "connectez-vous",
+        "invalid-input" : "champ invalide"
     },
     "login" : {
         "content-header" : "Connexion",
@@ -58,5 +59,24 @@
         "content-header" : "Page Iconnue",
         "content-subheader" : "Il semble que vous ayez trouvé une faille dans la matrice...",
         "link-to-home" : "Retour au tableau de bord"
+    },
+    "validator" : {
+        "required" : "Ce champ est obligatoire.",
+        "requiredLetter" : "Doit contenir au moins une lettre.",
+        "requiredSpecialCharacter" : "Doit contenir au moins un caractère spécial.",
+        "requiredNumber" : "Doit contenir au moins un chiffre.",
+        "onlyNumber" : "Doit contenir uniquement des chiffres.",
+        "noNumber" : "Les chiffres ne sont pas autorisés.",
+        "noLetter" : "Les lettres ne sont pas autorisées.",
+        "noSpecialCharacter" : "Les caractères spéciaux ne sont pas autorisés.",
+        "onlyLetter" : "Ne doit contenir que des lettres.",
+        "min-1" : "Taille minimale : ",
+        "min-2" : " caractères.",
+        "max-1" : "Taille maximale : ",
+        "max-2" : " caractères.",
+        "cpassword" : "Les mots de passe doivent correspondre.",
+        "email" : "Format d'email invalide.",
+        "URL" : "Format d'URL non valide",
+        "equal" : "Valeur refusée."
     }
 }

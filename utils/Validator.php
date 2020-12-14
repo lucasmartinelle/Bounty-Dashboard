@@ -2,16 +2,19 @@
     namespace Utils;
 
     require_once("models/validatorHandler.php");
+    require_once("app/languages/languageManager.php");
 
     use PDO;
     use Models\ValidatorHandler;
+    use app\languages\languageManager;
 
     class Validator extends ValidatorHandler {
-
+        private $_lang;
         private $_data;
         private $_validatorHandler;
 
         public function validator($data){
+            $this->_lang = new languageManager(LANGUAGE);
             if(empty($data)){
                 return false;
             } else {
@@ -35,43 +38,43 @@
                             if(!isset($value) || empty($value) || trim($value) == ""){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'This field is required';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'required');
                             }
                         } else if ($param == "requiredLetter" && !empty($value)){
                             if(!preg_match('/[A-Za-z]/', $value)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Must contain at least one letter';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'requiredLetter');
                             }
                         } else if ($param == "requiredSpecialCharacter" && !empty($value)){
                             if(!preg_match('/[^a-zA-Z\d]/', $value)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Must contain at least one special character';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'requiredSpecialCharacter');
                             }
                         } else if ($param == "requiredNumber" && !empty($value)){
                             if(!preg_match('/[0-9]/', $value)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Must contain at least one digit';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'requiredNumber');
                             }
                         } else if ($param == "onlyNumber" && !empty($value)){
                             if(preg_match('/[A-Za-z]/', $value) || preg_match('/[^a-zA-Z\d]/', $value)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Must contain only digits';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'onlyNumber');
                             }
                         } else if($param == "noNumber" && !empty($value)){
                             if(preg_match('/[0-9]/', $value)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Numbers are not allowed';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'noNumber');
                             }
                         } else if($param == "noLetter" && !empty($value)){
                             if(preg_match('/[A-Za-z]/', $value)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Letters are not allowed';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'noLetter');
                             }
                         } else if($param == "noSpecialCharacter" && !empty($value)){
                             if(strpos($value, ".")){
@@ -79,35 +82,35 @@
                                 if(preg_match('/[^a-zA-Z\d]/', $except)){
                                     $validator['success'] = 'false';
                                     $validator[$input] = 'invalid';
-                                    $validator['message'][$input][] = 'Special characters are not allowed';
+                                    $validator['message'][$input][] = $this->_lang->getTxt('validator', 'noSpecialCharacter');
                                 }
                             }
                         } else if ($param == "onlyLetter" && !empty($value)){
                             if(preg_match('/[0-9]/', $value) || preg_match('/[^a-zA-Z\d]/', $value)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Must contain only letters';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'onlyLetter');
                             }
                         } else if (strpos($param, "min") !== false && !empty($value)){
                             $min_value = explode(":", $param);
                             if(strlen($value) < $min_value[1]){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Minimum size : ' . $min_value[1] . ' characters';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'min-1') . $min_value[1] . $this->_lang->getTxt('validator', 'min-2');
                             }
                         } else if (strpos($param, "max") !== false && !empty($value)){
                             $max_value = explode(":", $param);
                             if(strlen($value) > $max_value[1]){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Maximum size : ' . $max_value[1] . ' characters';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'max-1') . $max_value[1] . $this->_lang->getTxt('validator', 'max-2');
                             }
                         } else if(strpos($param, "cpassword") !== false && !empty($value)){
                             $cpassword_value = explode(":", $param);
                             if($value != $cpassword_value[1]){
                                 $validator['success'] = 'false';
                                 $validator["cpassword"] = "invalid";
-                                $validator['message']["cpassword"][] = 'Passwords must match';
+                                $validator['message']["cpassword"][] = $this->_lang->getTxt('validator', 'cpassword');
                             } else {
                                 $validator['cpassword'] = 'valid';
                             }
@@ -115,7 +118,7 @@
                             if(filter_var($value, FILTER_VALIDATE_EMAIL) === false){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Invalid email format';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'email');
                             }
                         } else if(strpos($param, "unique") !== false && !empty($value)){
                             $dt = explode("|", $param);
@@ -141,12 +144,12 @@
                                 if(!filter_var($ver, FILTER_VALIDATE_URL)){
                                     $validator['success'] = 'false';
                                     $validator[$input] = 'invalid';
-                                    $validator['message'][$input][] = 'Invalid URL format';
+                                    $validator['message'][$input][] = $this->_lang->getTxt('validator', 'URL');
                                 }
                             } else {
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Invalid URL format';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'URL');
                             }
                         } else if(strpos($param,"equal") !== false && !empty($value)){
                             $dt = explode("|", $param);
@@ -161,7 +164,7 @@
                             if($Ok == false){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
-                                $validator['message'][$input][] = 'Value denied.';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'equal');
                             }
                         }
                     }

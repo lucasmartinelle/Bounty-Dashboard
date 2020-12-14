@@ -71,7 +71,7 @@
 
         private function setActive($active){
             if(is_string($active) && ($active == "N" || $active == "Y")){
-                $this->_validity = $validity;
+                $this->_active = $active;
             }
         }
 

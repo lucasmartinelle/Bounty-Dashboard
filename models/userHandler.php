@@ -43,6 +43,27 @@
             return $req->fetch(PDO::FETCH_ASSOC)['count(*)'];
         }
 
+        /* select info user
+        *
+        * ex: $userHandler->selectUser($column, $where);
+        *
+        * return : $column value of users with the id : $id
+        */
+
+        public function selectUser($column, $where){
+            $stmt = 'SELECT `' . $column . '` FROM users';
+            if($where != null){
+                $stmt .= ' WHERE ';
+                foreach($where as $key => $value){
+                    $stmt .= "`". $key . "` = '".$value."' AND ";
+                }
+                $stmt = substr($stmt, 0, -5);
+            }
+
+            $req = $this->statement($stmt);
+            return $req->fetch(PDO::FETCH_ASSOC)[$column];
+        }
+
         /* new user
         *  $values must be an array with this syntax :
         *    array('value of first attribute', 'value of second attribute', ....);

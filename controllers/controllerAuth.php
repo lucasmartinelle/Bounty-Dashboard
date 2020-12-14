@@ -167,8 +167,155 @@
         }
 
         private function login($name, $view, $template){
-            $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name));
+            if($_POST){
+                $this->postLogin();
+            } else {
+                $this->_session = new Session;
+                $token = $this->_session->updateToken();
+                $this->_view = new View($view, $template);
+                $this->_view->generate(array("titre" => $name, "token" => $token));
+            }
+        }
+
+        protected function postLogin(){
+            $this->_routes = new Routes;
+            if($this->postDataValid()){
+                $this->_session = new Session;
+                $this->_userHandler = new UserHandler;
+
+                $_SESSION['inputValueEmail'] = htmlspecialchars($_POST['email'], ENT_QUOTES);
+
+                $token = $this->_session->updateToken();
+
+                $data = array(
+                    array('email', $_POST['email'], 'required', 'min:3', 'max:255', 'email', 'exist|users|email'),
+                    array('password', $_POST['password'], 'required', 'min:6', 'max:32', 'requiredSpecialCharacter', 'requiredNumber', 'requiredLetter')
+                );
+
+                $this->_validator = new Validator();
+                $response = $this->_validator->validator($data);
+
+                if($response['success'] == 'false'){
+                    // register validity of input
+                    if($response['email'] == 'invalid' && empty($response['message']['email'])){
+                        $_SESSION['inputResponseEmail'] = 'valid';
+                    } else {
+                        $_SESSION['inputResponseEmail'] = $response['email'];
+                    }
+                    $_SESSION['inputResponsePassword'] = $response['password'];
+
+                    // register error message by input
+                    if($_SESSION['inputResponseEmail'] == 'invalid'){
+                        $_SESSION['inputResponseEmailMessage'] = "<span class='text-danger'>";
+                        foreach($response['message']['email'] as $e){
+                            $_SESSION['inputResponseEmailMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                        }
+                        $_SESSION['inputResponseEmailMessage'] .= "</span>";
+                    }
+
+                    if($response['password'] == 'invalid'){
+                        $_SESSION['inputResponsePasswordMessage'] = "<span class='text-danger'>";
+                        foreach($response['message']['password'] as $e){
+                            $_SESSION['inputResponsePasswordMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                        }
+                        $_SESSION['inputResponsePasswordMessage'] .= "</span>";
+                    }
+
+                    if($_SESSION['inputResponsePassword'] == 'valid' && $_SESSION['inputResponseEmail'] == 'valid' && $response['unique']['email'] == 'false'){
+                        $_SESSION['alert'] = "Your credentials are invalid.";
+                        $_SESSION['typeAlert'] = "error";
+                        $_SESSION['inputResponsePassword'] = 'invalid';
+                        $_SESSION['inputResponseEmail'] = 'invalid';
+                    }
+
+                    header('Location: ' . $this->_routes->url("login"));
+                    exit;
+                } else {
+                    $email = htmlspecialchars($_POST['email'], ENT_QUOTES);
+                    $password = htmlspecialchars($_POST['password'], ENT_QUOTES);
+                    $exist = false;
+                    $active = false;
+                    $passwordMatch = false;
+                    $users = $this->_userHandler->getUsers(array('email' => $email));
+                    foreach($users as $user){
+                        $exist = true;
+                        if($user->active() == "Y"){
+                            $active = true;
+                            if(password_verify($password, $user->password())){
+                                $passwordMatch = true;
+                            }
+                        }
+                    }
+                    if($exist){
+                        $updateLastFailed = false;
+                        $bad_attempt = $this->_userHandler->selectUser('bad_attempt', array('email' => $email));
+                        if($bad_attempt == 5){
+                            $last_failed = $this->_userHandler->selectUser('last_failed', array('email' => $email));
+                            if(strtotime($last_failed) + 60 * 60 > time()){
+                                $updateLastFailed = true;
+                                sleep(1);
+                            } else {
+                                $this->_userHandler->updateUser(array('bad_attempt' => 0), array('email' => $email));
+                            }
+                        }
+                        if($active){
+                            if($passwordMatch){
+                                if(isset($_POST['rem']) && $_POST['rem'] == 'on'){
+                                    $this->_session->Auth($email, 'on');
+                                } else {
+                                    $this->_session->Auth($email, 'off');
+                                }
+                                $this->_userHandler->updateUser(array('bad_attempt' => 0), array('email' => $email));
+                                header('Location: ' . $this->_routes->url("dashboard"));
+                                exit;
+                            } else {
+                                if($updateLastFailed){
+                                    $date = date('Y-m-d H:i:s');
+                                    $this->_userHandler->updateUser(array('last_failed' => ($date)), array('email' => $email));
+                                } else {
+                                    $this->_userHandler->updateUser(array('bad_attempt' => ($bad_attempt+1)), array('email' => $email));
+                                }
+
+                                $_SESSION['alert'] = "Your credentials are invalid.";
+                                $_SESSION['typeAlert'] = "error";
+
+                                header('Location: ' . $this->_routes->url("login"));
+                                exit;
+                            }
+                        } else {
+                            if($updateLastFailed){
+                                $date = date('Y-m-d H:i:s');
+                                $this->_userHandler->updateUser(array('last_failed' => ($date)), array('email' => $email));
+                            } else {
+                                $this->_userHandler->updateUser(array('bad_attempt' => ($bad_attempt+1)), array('email' => $email));
+                            }
+
+                            $_SESSION['alert'] = "You must confirm your account by email.";
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("login"));
+                            exit;
+                        }
+                    } else {
+                        if($updateLastFailed){
+                            $date = date('Y-m-d H:i:s');
+                            $this->_userHandler->updateUser(array('last_failed' => ($date)), array('email' => $email));
+                        } else {
+                            $this->_userHandler->updateUser(array('bad_attempt' => ($bad_attempt+1)), array('email' => $email));
+                        }
+
+                        $_SESSION['alert'] = "Your credentials are invalid.";
+                        $_SESSION['typeAlert'] = "error";
+
+                        header('Location: ' . $this->_routes->url("login"));
+                        exit;
+                    }
+                }
+            } else {
+                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                $_SESSION['typeAlert'] = "error";
+                header('Location: ' . $this->_routes->url("login"));
+                exit;
+            }
         }
 
         private function forgot($name, $view, $template){
@@ -201,14 +348,12 @@
                 $users = $this->_userHandler->getUsers(array('token' => $token));
                 $updated = false;
                 foreach($users as $user){
-                    if($user->token() == $token){
-                        $id = $user->id();
-                        $date = date('Y-m-d H:i:s');
-                        $this->_session = new Session;
-                        $token = $this->_session->updateToken();
-                        if($this->_userHandler->updateUser(array('active' => 'Y', 'updated_at' => $date, 'token' => $token), array('id' => htmlspecialchars($id, ENT_QUOTES)))){
-                            $updated = true;
-                        }
+                    $id = $user->id();
+                    $date = date('Y-m-d H:i:s');
+                    $this->_session = new Session;
+                    $token = $this->_session->updateToken();
+                    if($this->_userHandler->updateUser(array('active' => 'Y', 'updated_at' => $date, 'token' => $token), array('id' => htmlspecialchars($id, ENT_QUOTES)))){
+                        $updated = true;
                     }
                 }
                 if($updated){

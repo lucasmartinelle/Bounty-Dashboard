@@ -1,5 +1,3 @@
-varchar(36)  NO  UNIQUE  varchar(36)  NO  varchar(36)  NOBounty Dashboard
-
 > platform to gather data for bugbounty services created by a beginner
 
 ![banner](https://zupimages.net/up/20/50/sfp6.png)
@@ -77,75 +75,74 @@ pie charts (**canvasJS**)
 
 ### Programs  **(auth required)**
 
-- ​	Display programs with **number of bugs found**, **gain**, **scope**, **status** and **tags**.
+- Display programs with **number of bugs found**, **gain**, **scope**, **status** and **tags**.
 
-- ​	Adding and deleting a program  **(auth required)**
+- Adding and deleting a program  **(auth required)**
 
-  * ​		**Scope** (1 or more URLs)
+  * **Scope** (1 or more URLs)
 
-  - ​		**start date**
-  - ​		**status** (open / close)
-  - ​		**Tags** (the user can add tags of his choice on the program)
+  - **start date**
+  - **status** (open / close)
+  - **Tags** (the user can add tags of his choice on the program)
 
-- ​	Pie chart with the number of bugs found by severity
+- Pie chart with the number of bugs found by severity
 
--     Platform
 
 ---
 
 ### Reports  **(auth required)**
 
-- ​	List reports (filter by **platform** and/or **program** and/or **severity** and/or **status**)
+- List reports (filter by **platform** and/or **program** and/or **severity** and/or **status**)
 
-- ​    Button to change the status of a report (Accepted / Resolved / NA / OOS / Informative)
+- Button to change the status of a report (Accepted / Resolved / NA / OOS / Informative)
 
-- ​	Button to export a report in PDF/Markdown format
+- Button to export a report in PDF/Markdown format
 
-- ​	Creating a report (open report by default)
+- Creating a report (open report by default)
 
-  * ​	    Ability to apply a template
+  * Ability to apply a template
 
-  - ​		Title (Text)
-  - ​		Date
-  - ​		Severity (CVSS scale)
-  - ​		Endpoint (URL)
-  - ​		Steps to Reproduce (Markdown) / Impact (Markdown) / Mitigation (Markdown) / Ressources (Markdown)
-  -         ​        Programs
+  - Title (Text)
+  - Date
+  - Severity (CVSS scale)
+  - Endpoint (URL)
+  - Steps to Reproduce (Markdown) / Impact (Markdown) / Mitigation (Markdown) / Ressources (Markdown)
+  -         Programs
 
 ---
 
 ### templates  **(auth required)**
 
-- ​	List existing templates
-- ​	Adding a template
-* ​	Title (Text) / Severity (CVSS scale) / Endpoint (URL) / Description (Markdown) / Steps to Reproduce (Markdown) / Impact (Markdown) /  Mitigation (Markdown) / Ressources (Markdown)
-- ​	Editing/deleting a template
+- List existing templates
+- Adding a template
+* Title (Text) / Severity (CVSS scale) / Endpoint (URL) / Description (Markdown) / Steps to Reproduce (Markdown) / Impact (Markdown) /  Mitigation (Markdown) / Ressources (Markdown)
+- Editing/deleting a template
 
 ---
 
 ### Profile  **(auth required)**
 
-- ​	Change username
-- ​	Change email / password
+- Change username
+- Change email / password
 
 ---
 
 ### Settings 
 
-- ​	Choice of language (FR/EN)
+- Choice of language (FR/EN)
 
-  * ​	The texts must therefore be taken from a configuration file according to the chosen language.
+  * The texts must therefore be taken from a configuration file according to the chosen language.
 
-- ​	User management **(admin required)**
+- User management **(admin required)**
 
-  * ​		List users
+  * List users
 
-  - ​		Add / remove a user
+  - Add / remove a user
 
-    * ​			Username
+    * Username
 
-    - ​            Password
-    - ​            Role (Hunter / Admin)
+    - Password
+    - Role (Hunter / Admin)
 
 ---
 

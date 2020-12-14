@@ -52,7 +52,7 @@
             try {
                 $req = $this->getBdd()->prepare($stmt);
                 $req->execute();
-                return true;
+                return $req;
             } catch (Exception $e){
                 return $e->getMessage();
             }

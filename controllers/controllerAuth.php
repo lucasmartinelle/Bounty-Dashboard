@@ -40,7 +40,7 @@
             } elseif($label == "confirmForgot"){
                 $this->confirmForgot($name, $view, $template);
             } elseif($label == "confirmRegistration"){
-                $this->confirmRegistration($name, $view, $template);
+                $this->confirmRegistration($data);
             }
         }
 
@@ -193,9 +193,37 @@
             $this->_view->generate(array("titre" => $name));
         }
 
-        private function confirmRegistration($name, $view, $template){
-            $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name));
+        private function confirmRegistration($data){
+            $token = htmlspecialchars($data[3], ENT_QUOTES);
+            $this->_userHandler = new UserHandler;
+            $this->_routes = new Routes;
+            if(isset($token) && !empty($token)){
+                $users = $this->_userHandler->getUsers(array('token' => $token));
+                $updated = false;
+                foreach($users as $user){
+                    if($user->token() == $token){
+                        $id = $user->id();
+                        $date = date('Y-m-d H:i:s');
+                        $this->_session = new Session;
+                        $token = $this->_session->updateToken();
+                        if($this->_userHandler->updateUser(array('active' => 'Y', 'updated_at' => $date, 'token' => $token), array('id' => htmlspecialchars($id, ENT_QUOTES)))){
+                            $updated = true;
+                        }
+                    }
+                }
+                if($updated){
+                    $_SESSION['alert'] = 'Your email address was confirmed. You can now log in !';
+                    $_SESSION['typeAlert'] = 'success';
+                    header('Location: ' . $this->_routes->url("login"));
+                    exit;
+                } else {
+                    header('Location: ' . $this->_routes->url("login"));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url("login"));
+                exit;
+            }
         }
 
         private function postDataValid() {

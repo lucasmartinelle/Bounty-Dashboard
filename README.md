@@ -107,7 +107,7 @@ pie charts (**canvasJS**)
   - Severity (CVSS scale)
   - Endpoint (URL)
   - Steps to Reproduce (Markdown) / Impact (Markdown) / Mitigation (Markdown) / Ressources (Markdown)
-  -         Programs
+  - Programs
 
 ---
 

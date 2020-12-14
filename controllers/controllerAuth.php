@@ -38,7 +38,7 @@
             } elseif($label == "sentForgot"){
                 $this->sentForgot($name, $view, $template);
             } elseif($label == "confirmForgot"){
-                $this->confirmForgot($name, $view, $template);
+                $this->confirmForgot($name, $view, $template, $data);
             } elseif($label == "confirmRegistration"){
                 $this->confirmRegistration($data);
             }
@@ -319,8 +319,89 @@
         }
 
         private function forgot($name, $view, $template){
-            $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name));
+            if($_POST){
+                $this->postForgot();
+            } else {
+                $this->_session = new Session;
+                $token = $this->_session->updateToken();
+                $this->_view = new View($view, $template);
+                $this->_view->generate(array("titre" => $name, "token" => $token));
+            }
+        }
+
+        private function postForgot(){
+            $this->_routes = new Routes;
+            if($this->postDataValid()){
+                $this->_session = new Session;
+                $this->_userHandler = new UserHandler;
+
+                $_SESSION['inputValueEmail'] = htmlspecialchars($_POST['email'], ENT_QUOTES);
+
+                $token = $this->_session->updateToken();
+
+                $data = array(
+                    array('email', $_POST['email'], 'required', 'min:3', 'max:255', 'email', 'exist|users|email')
+                );
+
+                $this->_validator = new Validator();
+                $response = $this->_validator->validator($data);
+
+                if($response['success'] == 'false'){
+                    // register validity of input
+                    if($response['email'] == 'invalid' && empty($response['message']['email'])){
+                        $_SESSION['inputResponseEmail'] = 'valid';
+                    } else {
+                        $_SESSION['inputResponseEmail'] = $response['email'];
+                    }
+                    $_SESSION['inputResponsePassword'] = $response['password'];
+
+                    // register error message by input
+                    if($_SESSION['inputResponseEmail'] == 'invalid'){
+                        $_SESSION['inputResponseEmailMessage'] = "<span class='text-danger'>";
+                        foreach($response['message']['email'] as $e){
+                            $_SESSION['inputResponseEmailMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                        }
+                        $_SESSION['inputResponseEmailMessage'] .= "</span>";
+                    }
+
+                    if($_SESSION['inputResponseEmail'] == 'valid' && $response['unique']['email'] == 'false'){
+                        header('Location: ' . $this->_routes->url("sentForgot"));
+                        exit;
+                    }
+
+                    header('Location: ' . $this->_routes->url("forgot"));
+                    exit;
+                } else {
+                    $email = htmlspecialchars($_POST['email'], ENT_QUOTES);
+
+                    $users = $this->_userHandler->getUsers(array('email' => $email));
+                    foreach($users as $user){
+                        $forgotURL = $this->_routes->urlReplace("confirmForgot", array($token));
+                        $this->_sender = new Sender(null, $email, $forgotURL);
+                        if($this->_sender->resetpassword()){
+                            if($this->_userHandler->updateUser(array('token' => $token), array('id' => htmlspecialchars($user->id(), ENT_QUOTES)))){
+                                header('Location: ' . $this->_routes->url("sentForgot"));
+                                exit;
+                            } else {
+                                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                                $_SESSION['typeAlert'] = "error";
+                                header('Location: ' . $this->_routes->url("forgot"));
+                                exit;
+                            }
+                        } else {
+                            $_SESSION['alert'] = "An error has occurred while processing your request.";
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("forgot"));
+                            exit;
+                        }
+                    }
+                }
+            } else {
+                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                $_SESSION['typeAlert'] = "error";
+                header('Location: ' . $this->_routes->url("forgot"));
+                exit;
+            }
         }
 
         private function sentRegistration($name, $view, $template){
@@ -335,9 +416,93 @@
             $this->_view->generate(array("titre" => $name, "id" => $id));
         }
 
-        private function confirmForgot($name, $view, $template){
-            $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name));
+        private function confirmForgot($name, $view, $template, $data){
+            $token = htmlspecialchars($data[3], ENT_QUOTES);
+            $this->_routes = new Routes;
+            $this->_userHandler = new UserHandler;
+            $this->_session = new Session;
+            $continue = false;
+            $email;
+            if(isset($token) && !empty($token)){
+                $users = $this->_userHandler->getUsers(array('token' => $token));
+                foreach($users as $user){
+                    $email = $user->email();
+                    $continue = true;
+                }
+            }  
+            if($continue){
+                if($_POST){
+                    $this->postConfirmForgot($email,$token);
+                } else {
+                    $token = $this->_session->updateToken();
+                    $this->_view = new View($view, $template);
+                    $this->_view->generate(array("titre" => $name, "token" => $token));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url("login"));
+                exit;
+            }
+        }
+
+        protected function postConfirmForgot($email,$token){
+            $this->_routes = new Routes;
+            if($this->postDataValid()){
+                $this->_session = new Session;
+                $this->_userHandler = new UserHandler;
+
+                $newtoken = $this->_session->updateToken();
+
+                $data = array(
+                    array('password', $_POST['password'], 'cpassword:'.$_POST['cpassword'], 'required', 'min:6', 'max:32', 'requiredSpecialCharacter', 'requiredNumber', 'requiredLetter')
+                );
+                $this->_validator = new Validator();
+                $response = $this->_validator->validator($data);
+
+                if($response['success'] == 'false'){
+                    // register validity of input
+                    $_SESSION['inputResponsePassword'] = $response['password'];
+                    $_SESSION['inputResponseCPassword'] = $response['cpassword'];
+
+                    if($response['password'] == 'invalid'){
+                        $_SESSION['inputResponsePasswordMessage'] = "<span class='text-danger'>";
+                        foreach($response['message']['password'] as $e){
+                            $_SESSION['inputResponsePasswordMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                        }
+                        $_SESSION['inputResponsePasswordMessage'] .= "</span>";
+                    }
+
+                    if($response['cpassword'] == 'invalid'){
+                        $_SESSION['inputResponseCPasswordMessage'] = "<span class='text-danger'>";
+                        foreach($response['message']['cpassword'] as $e){
+                            $_SESSION['inputResponseCPasswordMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                        }
+                        $_SESSION['inputResponseCPasswordMessage'] .= "</span>";
+                    }
+
+                    header('Location: ' . $this->_routes->urlReplace("confirmForgot", array($token)));
+                    exit;
+                } else {
+                    $password = password_hash(htmlspecialchars($_POST['password'], ENT_QUOTES), PASSWORD_ARGON2ID);
+                    $date = date('Y-m-d H:i:s');
+                    if($this->_userHandler->updateUser(array("token" => $newtoken, "password" => $password, "updated_at" => $date), array("email" => $email))){
+                        $_SESSION['alert'] = 'Your password has been changed !';
+                        $_SESSION['typeAlert'] = 'success';
+                        header('Location: ' . $this->_routes->url("login"));
+                        exit;
+                    } else {
+                        $_SESSION['alert'] = "An error has occurred while processing your request.";
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->urlReplace("confirmForgot", array($token)));
+                        exit;
+                    }
+                }
+            } else {
+                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                $_SESSION['typeAlert'] = "error";
+                header('Location: ' . $this->_routes->urlReplace("confirmForgot", array($token)));
+                exit;
+            }
         }
 
         private function confirmRegistration($data){
@@ -387,7 +552,7 @@
             return false;
         }
 
-        function GUIDv4 ($trim = true){
+        private function GUIDv4 ($trim = true){
             // Windows
             if (function_exists('com_create_guid') === true) {
                 if ($trim === true)

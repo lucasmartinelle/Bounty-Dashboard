@@ -8,6 +8,7 @@
     require_once("utils/Captcha.php");
     require_once("app/Routes.php");
     require_once("utils/Sender.php");
+    require_once("app/languages/languageManager.php");
 
     use app\Routes;
     use Utils\Session;
@@ -16,6 +17,7 @@
     use Utils\Sender;
     use Models\UserHandler;
     use view\View;
+    use app\languages\languageManager;
 
     class controllerAuth {
         private $_view;
@@ -25,6 +27,7 @@
         private $_routes;
         private $_sender;
         private $_captcha;
+        private $_lang;
         
         public function __construct($label, $name, $view, $template, $data){
             if($label == "registration"){
@@ -57,6 +60,8 @@
 
         protected function postRegistration(){
             $this->_routes = new Routes;
+            $this->_lang = new languageManager(LANGUAGE);
+
             if($this->postDataValid()){
                 $this->_session = new Session;
                 $this->_userHandler = new UserHandler;
@@ -140,26 +145,26 @@
                                 header('Location: ' . $this->_routes->url("sentRegistration"));
                                 exit;
                             } else {
-                                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                                 $_SESSION['typeAlert'] = "error";
                                 header('Location: ' . $this->_routes->url("registration"));
                                 exit;
                             }
                         } else {
-                            $_SESSION['alert'] = "An error has occurred while processing your request.";
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                             $_SESSION['typeAlert'] = "error";
                             header('Location: ' . $this->_routes->url("registration"));
                             exit;
                         }
                     } catch (Exception $e){
-                        $_SESSION['alert'] = "An error has occurred while processing your request.";
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                         $_SESSION['typeAlert'] = "error";
                         header('Location: ' . $this->_routes->url("registration"));
                         exit;
                     }
                 }
             } else {
-                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                 $_SESSION['typeAlert'] = "error";
                 header('Location: ' . $this->_routes->url("registration"));
                 exit;
@@ -179,6 +184,7 @@
 
         protected function postLogin(){
             $this->_routes = new Routes;
+            $this->_lang = new languageManager(LANGUAGE);
             if($this->postDataValid()){
                 $this->_session = new Session;
                 $this->_userHandler = new UserHandler;
@@ -222,7 +228,7 @@
                     }
 
                     if($_SESSION['inputResponsePassword'] == 'valid' && $_SESSION['inputResponseEmail'] == 'valid' && $response['unique']['email'] == 'false'){
-                        $_SESSION['alert'] = "Your credentials are invalid.";
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "invalid-credentials");;
                         $_SESSION['typeAlert'] = "error";
                         $_SESSION['inputResponsePassword'] = 'invalid';
                         $_SESSION['inputResponseEmail'] = 'invalid';
@@ -276,7 +282,7 @@
                                     $this->_userHandler->updateUser(array('bad_attempt' => ($bad_attempt+1)), array('email' => $email));
                                 }
 
-                                $_SESSION['alert'] = "Your credentials are invalid.";
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "invalid-credentials");
                                 $_SESSION['typeAlert'] = "error";
 
                                 header('Location: ' . $this->_routes->url("login"));
@@ -290,7 +296,7 @@
                                 $this->_userHandler->updateUser(array('bad_attempt' => ($bad_attempt+1)), array('email' => $email));
                             }
 
-                            $_SESSION['alert'] = "You must confirm your account by email.";
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "not-activate-error");
                             $_SESSION['typeAlert'] = "error";
                             header('Location: ' . $this->_routes->url("login"));
                             exit;
@@ -303,7 +309,7 @@
                             $this->_userHandler->updateUser(array('bad_attempt' => ($bad_attempt+1)), array('email' => $email));
                         }
 
-                        $_SESSION['alert'] = "Your credentials are invalid.";
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "invalid-credentials");
                         $_SESSION['typeAlert'] = "error";
 
                         header('Location: ' . $this->_routes->url("login"));
@@ -311,7 +317,7 @@
                     }
                 }
             } else {
-                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                 $_SESSION['typeAlert'] = "error";
                 header('Location: ' . $this->_routes->url("login"));
                 exit;
@@ -331,6 +337,7 @@
 
         private function postForgot(){
             $this->_routes = new Routes;
+            $this->_lang = new languageManager(LANGUAGE);
             if($this->postDataValid()){
                 $this->_session = new Session;
                 $this->_userHandler = new UserHandler;
@@ -383,13 +390,13 @@
                                 header('Location: ' . $this->_routes->url("sentForgot"));
                                 exit;
                             } else {
-                                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                                 $_SESSION['typeAlert'] = "error";
                                 header('Location: ' . $this->_routes->url("forgot"));
                                 exit;
                             }
                         } else {
-                            $_SESSION['alert'] = "An error has occurred while processing your request.";
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                             $_SESSION['typeAlert'] = "error";
                             header('Location: ' . $this->_routes->url("forgot"));
                             exit;
@@ -397,7 +404,7 @@
                     }
                 }
             } else {
-                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                 $_SESSION['typeAlert'] = "error";
                 header('Location: ' . $this->_routes->url("forgot"));
                 exit;
@@ -447,6 +454,7 @@
 
         protected function postConfirmForgot($email,$token){
             $this->_routes = new Routes;
+            $this->_lang = new languageManager(LANGUAGE);
             if($this->postDataValid()){
                 $this->_session = new Session;
                 $this->_userHandler = new UserHandler;
@@ -486,19 +494,19 @@
                     $password = password_hash(htmlspecialchars($_POST['password'], ENT_QUOTES), PASSWORD_ARGON2ID);
                     $date = date('Y-m-d H:i:s');
                     if($this->_userHandler->updateUser(array("token" => $newtoken, "password" => $password, "updated_at" => $date), array("email" => $email))){
-                        $_SESSION['alert'] = 'Your password has been changed !';
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "password-changed");
                         $_SESSION['typeAlert'] = 'success';
                         header('Location: ' . $this->_routes->url("login"));
                         exit;
                     } else {
-                        $_SESSION['alert'] = "An error has occurred while processing your request.";
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                         $_SESSION['typeAlert'] = "error";
                         header('Location: ' . $this->_routes->urlReplace("confirmForgot", array($token)));
                         exit;
                     }
                 }
             } else {
-                $_SESSION['alert'] = "An error has occurred while processing your request.";
+                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "global-error");
                 $_SESSION['typeAlert'] = "error";
                 header('Location: ' . $this->_routes->urlReplace("confirmForgot", array($token)));
                 exit;
@@ -509,6 +517,7 @@
             $token = htmlspecialchars($data[3], ENT_QUOTES);
             $this->_userHandler = new UserHandler;
             $this->_routes = new Routes;
+            $this->_lang = new languageManager(LANGUAGE);
             if(isset($token) && !empty($token)){
                 $users = $this->_userHandler->getUsers(array('token' => $token));
                 $updated = false;
@@ -522,7 +531,7 @@
                     }
                 }
                 if($updated){
-                    $_SESSION['alert'] = 'Your email address was confirmed. You can now log in !';
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "email-confirmed");
                     $_SESSION['typeAlert'] = 'success';
                     header('Location: ' . $this->_routes->url("login"));
                     exit;

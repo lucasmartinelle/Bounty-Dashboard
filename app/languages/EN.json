@@ -33,14 +33,16 @@
         "forgot-password" : "Forgot password ?",
         "submit" : "Submit",
         "txt-to-signup" : "You don't have an account, ",
-        "link-to-signup" : "sign up"
+        "link-to-signup" : "sign up",
+        "invalid-input" : "Invalid input"
     },
     "forgot" : {
         "content-header" : "Forgot",
         "email-placeholder" : "Email",
         "submit" : "Submit",
         "txt-to-signin" : "You remember your password,",
-        "link-to-signin" : "sign in"
+        "link-to-signin" : "sign in",
+        "invalid-input" : "Invalid input"
     },
     "emailSent" : {
         "content-header" : "Email sent",
@@ -53,7 +55,8 @@
         "cpassword-placeholder" : "Confirm Password",
         "submit" : "Submit",
         "txt-to-signin" : "You remember your password,",
-        "link-to-signin" : "sign in"
+        "link-to-signin" : "sign in",
+        "invalid-input" : "Invalid input"
     },
     "page404" : {
         "content-header" : "Page Not Found",
@@ -78,5 +81,12 @@
         "email" : "Invalid email format.",
         "URL" : "Invalid URL format.",
         "equal" : "Value denied."
+    },
+    "controllerAuth" : {
+        "global-error" : "An error has occurred while processing your request.",
+        "invalid-credentials" : "Your credentials are invalid.",
+        "not-activate-error" : "You must confirm your account by email.",
+        "password-changed" : "Your password has been changed !",
+        "email-confirmed" : "Your email address was confirmed. You can now log in !"
     }
 }

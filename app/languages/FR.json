@@ -78,5 +78,12 @@
         "email" : "Format d'email invalide.",
         "URL" : "Format d'URL non valide",
         "equal" : "Valeur refusée."
+    },
+    "controllerAuth" : {
+        "global-error" : "Une erreur s'est produite lors du traitement de votre demande",
+        "invalid-credentials" : "Vos identifiants ne sont pas valables.",
+        "not-activate-error" : "Vous devez confirmer votre compte par mail.",
+        "password-changed" : "Votre mot de passe a été changé !",
+        "email-confirmed" : "Votre adresse email a été confirmée. Vous pouvez maintenant vous connecter."
     }
 }

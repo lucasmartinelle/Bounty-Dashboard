@@ -44,6 +44,8 @@
                 $this->confirmForgot($name, $view, $template, $data);
             } elseif($label == "confirmRegistration"){
                 $this->confirmRegistration($data);
+            } elseif($label == "logout"){
+                $this->logout();
             }
         }
 
@@ -137,7 +139,7 @@
                     }
 
                     try {
-                        if($this->_userHandler->newUser(array($id, $username, $email, $password, $token, $role))) {
+                        if($this->_userHandler->newUser(array($id, $username, $email, $password, $token, $role, 'N'))) {
                             // send mail
                             $confirmURL = $this->_routes->urlReplace("confirmRegistration", array($token));
                             $this->_sender = new Sender($username, $email, $confirmURL);
@@ -243,11 +245,13 @@
                     $active = false;
                     $passwordMatch = false;
                     $users = $this->_userHandler->getUsers(array('email' => $email));
+                    $lang;
                     foreach($users as $user){
                         $exist = true;
                         if($user->active() == "Y"){
                             $active = true;
                             if(password_verify($password, $user->password())){
+                                $lang = $user->lang();
                                 $passwordMatch = true;
                             }
                         }
@@ -542,6 +546,25 @@
             } else {
                 header('Location: ' . $this->_routes->url("login"));
                 exit;
+            }
+        }
+
+        private function logout(){
+            $this->_routes = new Routes;
+            $this->_session = new Session;
+            $this->_lang = new languageManager(LANGUAGE);
+            if($this->_session->isAuth()){
+                if($this->_session->disconnect()){
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "logout-message");
+                    $_SESSION['typeAlert'] = 'error';
+                    header('Location: ' . $this->_routes->url("login"));
+                } else {
+                    header('Location: ' . $this->_routes->url("login"));
+                }
+            } else {
+                $_SESSION['alert'] = $this->_lang->getTxt('controllerAuth', "logout-message");
+                $_SESSION['typeAlert'] = 'error';
+                header('Location: ' . $this->_routes->url("login"));
             }
         }
 

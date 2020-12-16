@@ -7,7 +7,7 @@
     use app\languages\languageManager;
     
     $routes = new Routes;
-    $lang = new languageManager(LANGUAGE);
+    $lang = new languageManager;
 
     $asset = "../../assets/";
     $idPage = "emailSent";

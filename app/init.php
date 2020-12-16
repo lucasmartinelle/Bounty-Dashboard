@@ -5,6 +5,7 @@
     define('DEFAULT_PAGE', 'dashboard'); // label of default page
     define('TITLE', 'BugBounty'); // Global title
     define('WEBSITE_PATH', '/var/www/html/'); // website path. Need a "/" at the end of the path.
+    define('LANGUAGE', 'EN');
 
     // make sure to enable PDO drivers and download php-mysql extensions
     define('DB_HOST', '127.0.0.1'); // host MYSQL
@@ -30,7 +31,4 @@
     define('EMAIL', 'something@gmail.com'); // EMAIL SENDER
     define('EMAIL_PASSWORD', 'password'); // PASSWORD EMAIL SENDER
     define('EMAIL_FROM', 'sender'); // NAME OF SENDER
-
-    $defaultLanguage = 'EN';
-    define('LANGUAGE', $defaultLanguage);
 ?>

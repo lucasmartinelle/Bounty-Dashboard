@@ -12,6 +12,11 @@
 		ini_set('display_startup_errors', 1);
 		error_reporting(E_ALL);
     }
+
+    
+    if(!isset($_COOKIE['lang']) || empty($_COOKIE['lang'])){
+        setcookie('lang', LANGUAGE, time() + (86400 * 30), "/");
+    }
     
     // Initialisation des routes
     $routes = new Routes;

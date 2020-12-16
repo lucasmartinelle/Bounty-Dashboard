@@ -75,7 +75,7 @@
         *           false if users couldn't be created
         */
         public function newUser($values){
-            $stmt = 'INSERT INTO users (`id`, `username`, `email`, `password`, `token`, `role`) VALUES (';
+            $stmt = 'INSERT INTO users (`id`, `username`, `email`, `password`, `token`, `role`, `active`) VALUES (';
             foreach($values as $val){
                 $stmt.="'".$val . "', ";
             }

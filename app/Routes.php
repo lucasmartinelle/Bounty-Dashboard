@@ -20,15 +20,6 @@
                 "dashboard"
             );
 
-            $this->create(
-                "/dashboard",
-                "dashboard",
-                "Dashboard",
-                "controllerDashboard",
-                "dashboard/viewDashboard",
-                "dashboard"
-            );
-
             // auth
             $this->create(
                 "/dashboard/registration",
@@ -89,6 +80,43 @@
                 "confirmRegistration",
                 "Confirmation",
                 "controllerAuth",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/logout",
+                "logout",
+                "Logout",
+                "controllerAuth",
+                null,
+                null
+            );
+
+            // dashboard
+            $this->create(
+                "/dashboard",
+                "dashboard",
+                "Dashboard",
+                "controllerDashboard",
+                "dashboard/viewDashboard",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/settings",
+                "settings",
+                "Settings",
+                "controllerDashboard",
+                "dashboard/viewSettings",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/admin/addUser",
+                "adduser",
+                "Add a user",
+                "controllerDashboard",
                 null,
                 null
             );

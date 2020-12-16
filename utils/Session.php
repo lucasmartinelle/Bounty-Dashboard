@@ -8,7 +8,7 @@
         private $_userHandler;
 
         // Check if user is authenticate or not
-        public function isAuth(){
+        public function isAuth($updateToken = true){
             $this->_userHandler = new UserHandler;
             $auth = false;
             $id;
@@ -35,9 +35,11 @@
                 foreach($users as $user){
                     if($user->username() == $username && $user->email() == $email && $user->password() == $password){
                         $_SESSION['role'] = $user->role();
-                        $token = bin2hex(openssl_random_pseudo_bytes(16));
-                        $_SESSION['token'] = $token;
-                        $this->_userHandler->updateUser(array("token" => $token), array("email" => $email));
+                        if($updateToken){
+                            $token = bin2hex(openssl_random_pseudo_bytes(16));
+                            $_SESSION['token'] = $token;
+                            $this->_userHandler->updateUser(array("token" => $token), array("email" => $email));
+                        }
                         return true;
                     }
                 }

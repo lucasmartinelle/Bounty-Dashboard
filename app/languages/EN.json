@@ -11,9 +11,6 @@
         "navitem-profile" : "Profile",
         "navitem-logout" : "Logout"
     },
-    "dashboard" : {
-        "content-header" : "Blank Page"
-    },
     "registration" : {
         "content-header" : "Registration",
         "username-placeholder" : "Username",
@@ -86,7 +83,34 @@
         "global-error" : "An error has occurred while processing your request.",
         "invalid-credentials" : "Your credentials are invalid.",
         "not-activate-error" : "You must confirm your account by email.",
+        "logout-message" : "You have been disconnected.",
         "password-changed" : "Your password has been changed !",
         "email-confirmed" : "Your email address was confirmed. You can now log in !"
+    },
+    "controllerDashboard" : {
+        "global-error" : "An error has occurred while processing your request.",
+        "user-created" : "A new user was added.",
+        "language-change" : "The language was changed."
+    },
+    "dashboard" : {
+        "content-header" : "Blank Page"
+    },
+    "settings" : {
+        "header-change-language" : "Change your language",
+        "header-list-user" : "List user",
+        "header-add-user" : "Add a user",
+        "username-placeholder" : "Username",
+        "email-placeholder" : "Email",
+        "password-placeholder" : "Password",
+        "cpassword-placeholder" : "Confirm Password",
+        "role-admin" : "admin",
+        "role-hunter" : "hunter",
+        "submit" : "Submit",
+        "invalid-input" : "Invalid input",
+        "table-active" : "active",
+        "table-created-at" : "created at",
+        "table-updated-at" : "updated at",
+        "table-bad-login-attempt" : "bad login attempt",
+        "table-last-login-failed" : "last login failed"
     }
 }

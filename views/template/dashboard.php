@@ -1,3 +1,9 @@
+<?php
+    require_once("utils/Session.php");
+    use Utils\Session;
+    $session = new Session;
+?>
+
 <!doctype html>
 <html lang="fr">
     <head>
@@ -12,6 +18,7 @@
         <link rel="stylesheet" href="<?= $asset ?>css/template.css">
         <link rel="icon" href="<?= $asset ?>img/favicon.png">
         <title><?= TITLE . ' | '. $titre ?></title>
+        <?php if(isset($css) && !empty($css)){ echo $css; } ?>
         <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
@@ -108,26 +115,41 @@
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <img class="img-profile rounded-circle" src="https://img.icons8.com/bubbles/50/000000/user-male.png">
                                 </a>
-                                <!-- Dropdown - User -->
-                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                    <a class="dropdown-item" href="<?= $routes->url('login'); ?>">
-                                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        <?= $lang->getTxt('navbar', 'navitem-signin'); ?>
-                                    </a>
-                                    <a class="dropdown-item" href="<?= $routes->url('registration'); ?>">
-                                        <i class="fas fa-sign-in-alt fa-fw mr-2 text-gray-400"></i>
-                                        <?= $lang->getTxt('navbar', 'navitem-signup'); ?>
-                                    </a>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        <?= $lang->getTxt('navbar', 'navitem-settings'); ?>
-                                    </a>
-                                    <!--<div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Logout
-                                    </a>-->
-                                </div>
+
+                                <?php if($session->isAuth(false)): ?>
+                                    <!-- Dropdown - User -->
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            <?= $lang->getTxt('navbar', 'navitem-profile'); ?>
+                                        </a>
+                                        <a class="dropdown-item" href="<?= $routes->url('settings'); ?>">
+                                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            <?= $lang->getTxt('navbar', 'navitem-settings'); ?>
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="<?= $routes->url('logout'); ?>">
+                                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            <?= $lang->getTxt('navbar', 'navitem-logout'); ?>
+                                        </a>
+                                    </div>
+                                <?php else: ?>
+                                    <!-- Dropdown - User -->
+                                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                        <a class="dropdown-item" href="<?= $routes->url('login'); ?>">
+                                            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            <?= $lang->getTxt('navbar', 'navitem-signin'); ?>
+                                        </a>
+                                        <a class="dropdown-item" href="<?= $routes->url('registration'); ?>">
+                                            <i class="fas fa-sign-in-alt fa-fw mr-2 text-gray-400"></i>
+                                            <?= $lang->getTxt('navbar', 'navitem-signup'); ?>
+                                        </a>
+                                        <a class="dropdown-item" href="<?= $routes->url('settings'); ?>">
+                                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                            <?= $lang->getTxt('navbar', 'navitem-settings'); ?>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             </li>
 
                         </ul>

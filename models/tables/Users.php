@@ -9,6 +9,7 @@
         private $_password;
         private $_token;
         private $_role;
+        private $_lang;
         private $_active;
         private $_createdat;
         private $_updatedat;
@@ -69,6 +70,12 @@
             }
         }
 
+        private function setLang($lang){
+            if(is_string($lang) && ($lang == "EN" || $lang == "FR")){
+                $this->_lang = $lang;
+            }
+        }
+
         private function setActive($active){
             if(is_string($active) && ($active == "N" || $active == "Y")){
                 $this->_active = $active;
@@ -118,6 +125,10 @@
 
         public function role(){
             return $this->_role;
+        }
+
+        public function lang(){
+            return $this->_lang;
         }
 
         public function active(){

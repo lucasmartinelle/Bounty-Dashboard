@@ -87,7 +87,6 @@ pie charts (**canvasJS**)
 
 - Pie chart with the number of bugs found by severity
 
-
 ---
 
 ### Reports  **(auth required)**
@@ -100,8 +99,10 @@ pie charts (**canvasJS**)
 
 - Creating a report (open report by default)
 
-  * Ability to apply a template
+  * Identifiant (optional)
 
+  * Ability to apply a template
+  
   - Title (Text)
   - Date
   - Severity (CVSS scale)
@@ -124,6 +125,9 @@ pie charts (**canvasJS**)
 
 - Change username
 - Change email / password
+- The user must be able to check if he wants to activate or not the billing system.
+  * If it is active, it can fill in the following fields
+    * name / First name / Address / Phone number / Email / SIRET / VAT / BANK / IBAN / BIC
 
 ---
 
@@ -143,6 +147,20 @@ pie charts (**canvasJS**)
 
     - Password
     - Role (Hunter / Admin)
+
+---
+
+### Invoice
+
+* Manually generated
+  * The user selects the platform and the desired month.
+    * it shows him the list of all reports (only those with a bounty) for the platform and the selected month, the user has the choice to uncheck some reports that will then not be in the PDF.
+    * it generates a PDF according to the attached template
+      * Some information in the PDF is automatically filled in depending on the platform (See attachment)
+        * Project / client / BTW / Address / email / date (corresponds to the generation date)
+        * Subtotal excl: Must be automatically calculated (VAT & TOTAL is the same amount)
+* Automatically generated
+  * Button grayed out for the moment
 
 ---
 
@@ -230,6 +248,7 @@ window.onload = function() {
 | title            | varchar(200) | NO   | UNIQUE |                     |       |
 | severity         | float(8,5)   | NO   |        |                     |       |
 | endpoint         | text         | NO   |        |                     |       |
+| identifiant      | varchar(200) | NO   | UNIQUE |                     |       |
 | template_id      | varchar(36)  | NO   |        |                     |       |
 | program_id       | varchar(36)  | NO   |        |                     |       |
 | stepsToReproduce | longtext     | NO   |        |                     |       |

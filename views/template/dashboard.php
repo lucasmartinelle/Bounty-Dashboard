@@ -119,7 +119,7 @@
                                 <?php if($session->isAuth(false)): ?>
                                     <!-- Dropdown - User -->
                                     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" href="<?= $routes->url('profile'); ?>">
                                             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                             <?= $lang->getTxt('navbar', 'navitem-profile'); ?>
                                         </a>

@@ -33,6 +33,14 @@
                 $this->settings($name,$view,$template);
             } elseif($label == "adduser"){
                 $this->adduser();
+            } elseif($label == "profile"){
+                $this->profile($name,$view,$template);
+            } elseif($label == "changeUsername"){
+                $this->changeUsername();
+            } elseif($label == "changeEmail"){
+                $this->changeEmail();
+            } elseif($label == "changePassword"){
+                $this->changePassword();
             }
         }
 
@@ -127,7 +135,7 @@
             if($this->_session->isAdmin()){
                 if($this->_session->isAuth()){
                     if($_POST){
-                        $this->_lang = new languageManager(LANGUAGE);
+                        $this->_lang = new languageManager;
                         if($this->postDataValid($last_token)){
                             $this->_userHandler = new UserHandler;
                             $_SESSION['inputValueUsername'] = htmlspecialchars($_POST['username'], ENT_QUOTES);
@@ -238,6 +246,87 @@
                 }
             } else {
                 header('Location: ' . $this->_routes->url('dashboard'));
+                exit;
+            }
+        }
+
+        
+        private function profile($name, $view, $template){
+            $this->_view = new View($view, $template);
+            $this->_view->generate(array("titre" => $name));
+        }
+
+        private function changeUsername() {
+            $this->_session = new Session;
+            $last_token = $this->_session->getToken();
+            $this->_routes = new Routes;
+            if($this->_session->isAuth()){
+                if($_POST){
+                    $this->_lang = new languageManager;
+                    if($this->postDataValid($last_token)){
+
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("profile"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url('profile'));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function changeEmail() {
+            $this->_session = new Session;
+            $last_token = $this->_session->getToken();
+            $this->_routes = new Routes;
+            if($this->_session->isAuth()){
+                if($_POST){
+                    $this->_lang = new languageManager;
+                    if($this->postDataValid($last_token)){
+
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("profile"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url('profile'));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function changePassword() {
+            $this->_session = new Session;
+            $last_token = $this->_session->getToken();
+            $this->_routes = new Routes;
+            if($this->_session->isAuth()){
+                if($_POST){
+                    $this->_lang = new languageManager;
+                    if($this->postDataValid($last_token)){
+
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("profile"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url('profile'));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
                 exit;
             }
         }

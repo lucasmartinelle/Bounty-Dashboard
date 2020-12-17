@@ -50,7 +50,7 @@
         "content-header" : "Mot de passe oublié",
         "password-placeholder" : "Mot de passe",
         "cpassword-placeholder" : "Confirmation mot de passe",
-        "submit" : "Envoyé",
+        "submit" : "Envoyer",
         "txt-to-signin" : "Vous vous souvenez de votre mot de passe,",
         "link-to-signin" : "connectez-vous",
         "invalid-input" : "Champ invalide"
@@ -96,6 +96,7 @@
         "content-header" : "Page blanche"
     },
     "settings" : {
+        "header" : "Paramètres",
         "header-change-language" : "Changez votre langue",
         "header-list-user" : "Liste utilisateur",
         "header-add-user" : "Ajouter un utilisateur",
@@ -105,12 +106,23 @@
         "cpassword-placeholder" : "Confirmer le mot de passe",
         "role-admin" : "admin",
         "role-hunter" : "hunter",
-        "submit" : "Soumettre",
+        "submit" : "Envoyer",
         "invalid-input" : "Entrée non valable",
         "table-active" : "actif",
         "table-created-at" : "créé le",
         "table-updated-at" : "mis à jour le",
         "table-bad-login-attempt" : "tentative de connexion erronée",
         "table-last-login-failed" : "dernière connexion échouée le"
+    },
+    "profil" : {
+        "header" : "Profile",
+        "header-change-username" : "Changer de nom d'utilisateur",
+        "header-change-email" : "Change email",
+        "header-change-password" : "Changer de mot de passe",
+        "username-placeholder" : "Nom d'utilisateur",
+        "email-placeholder" : "Email",
+        "password-placeholder" : "Mot de passe",
+        "cpassword-placeholder" : "Confirmer le mot de passe",
+        "submit" : "Envoyer"
     }
 }

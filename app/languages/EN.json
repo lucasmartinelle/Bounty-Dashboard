@@ -96,6 +96,7 @@
         "content-header" : "Blank Page"
     },
     "settings" : {
+        "header" : "Settings",
         "header-change-language" : "Change your language",
         "header-list-user" : "List user",
         "header-add-user" : "Add a user",
@@ -112,5 +113,16 @@
         "table-updated-at" : "updated at",
         "table-bad-login-attempt" : "bad login attempt",
         "table-last-login-failed" : "last login failed"
+    },
+    "profile" : {
+        "header" : "Profile",
+        "header-change-username" : "Change username",
+        "header-change-email" : "Change email",
+        "header-change-password" : "Change password",
+        "username-placeholder" : "Username",
+        "email-placeholder" : "Email",
+        "password-placeholder" : "Password",
+        "cpassword-placeholder" : "Confirm Password",
+        "submit" : "Submit"
     }
 }

@@ -29,160 +29,177 @@
         </div>
 <?php endif; $_SESSION['alert'] = ''; $_SESSION['typeAlert'] = ''; endif; ?><!-- end global alert -->
 
-<div class="card m-auto">
-    <div class="text-header">
-        <h1 class="text-center mt-3 text-dark"><?= $lang->getTxt($idPage, "header-change-language"); ?></h1>
-    </div>
-    <form method="post">
-        <div class="form-row justify-content-center">
-            <div class="col-md-10 mb-3 mt-2">
-                <select name="language" class="custom-select <?php if(!empty(htmlspecialchars($_SESSION['inputResponseLanguage'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseLanguage'], ENT_QUOTES); } ?>">
-                    <option value="en" selected>EN</option>
-                    <option value="fr" selected>FR</option>
-                </select>
-                <!-- == If validation failed == -->
-                <?php if(isset($_SESSION['inputResponseLanguage']) && !empty($_SESSION['inputResponseLanguage']) && $_SESSION['inputResponseLanguage'] == 'invalid'): ?>
-                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseLanguageMessage'], ENT_QUOTES); ?>"></i></span>
-                <?php endif; $_SESSION['inputResponseLanguage'] = ''; $_SESSION['inputResponseLanguageMessage'] = ''; ?> <!-- End of validation failed -->
-            </div>
-        </div>
-
-        <div class="form-row justify-content-center">
-            <div class="col-md-10 mb-3 mt-2">
-                <button class="btn btn-dark w-100" type="submit"><?= $lang->getTxt($idPage, "submit"); ?></button>
-            </div>
-        </div>
-        
-        <!-- == Captcha and crsf token == -->
-        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
-        <input type="hidden" id="token" name="token" value="<?= $token ?>">
-        <!-- End Captcha and crsf token -->
-    </form>
-</div>
+<h1 class="h3 mb-1 text-gray-800 mb-3"><?= $lang->getTxt($idPage, "header"); ?></h1>
 
 <?php if($admin): ?>
-    <div class="card m-auto userManagement">
-        <div class="text-header">
-            <h1 class="text-center mt-3 text-dark"><?= $lang->getTxt($idPage, "header-list-user"); ?></h1>
+    <div class="card card-listuser shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-list-user"); ?></h6>
         </div>
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>username</th>
-                        <th>email</th>
-                        <th>role</th>
-                        <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-created-at"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-updated-at"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-bad-login-attempt"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-last-login-failed"); ?></th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>id</th>
-                        <th>username</th>
-                        <th>email</th>
-                        <th>role</th>
-                        <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-created-at"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-updated-at"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-bad-login-attempt"); ?></th>
-                        <th><?= $lang->getTxt($idPage, "table-last-login-failed"); ?></th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <?php foreach($users as $user): ?>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
                         <tr>
-                            <td><?= $user->id(); ?></td>
-                            <td><?= '<span class="badge badge-pill badge-warning">' . $user->username() . '</span>'; ?></td>
-                            <td><?= '<span class="badge badge-pill badge-warning">' . $user->email() . '</span>'; ?></td>
-                            <td><?php if($user->role() == "admin"){ 
-                                echo '<span class="badge badge-pill badge-danger">' . $user->role() . '</span>'; 
-                            } else { 
-                                echo '<span class="badge badge-pill badge-secondary">' . $user->role() . '</span>'; 
-                            } ?></td>
-                            <td><?= $user->active(); ?></td>
-                            <td><?= '<span class="badge badge-pill badge-info">' . $user->createdat() . '</span>'; ?></td>
-                            <td><?= '<span class="badge badge-pill badge-info">' . $user->updatedat() . '</span>'; ?></td>
-                            <td><?= $user->badattempt(); ?></td>
-                            <td><?= $user->lastfailed(); ?></td>
+                            <th>id</th>
+                            <th>username</th>
+                            <th>email</th>
+                            <th>role</th>
+                            <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-created-at"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-updated-at"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-bad-login-attempt"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-last-login-failed"); ?></th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>id</th>
+                            <th>username</th>
+                            <th>email</th>
+                            <th>role</th>
+                            <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-created-at"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-updated-at"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-bad-login-attempt"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "table-last-login-failed"); ?></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        <?php foreach($users as $user): ?>
+                            <tr>
+                                <td><?= $user->id(); ?></td>
+                                <td><?= '<span class="badge badge-pill badge-warning">' . $user->username() . '</span>'; ?></td>
+                                <td><?= '<span class="badge badge-pill badge-warning">' . $user->email() . '</span>'; ?></td>
+                                <td><?php if($user->role() == "admin"){ 
+                                    echo '<span class="badge badge-pill badge-danger">' . $user->role() . '</span>'; 
+                                } else { 
+                                    echo '<span class="badge badge-pill badge-secondary">' . $user->role() . '</span>'; 
+                                } ?></td>
+                                <td><?= $user->active(); ?></td>
+                                <td><?= '<span class="badge badge-pill badge-info">' . $user->createdat() . '</span>'; ?></td>
+                                <td><?= '<span class="badge badge-pill badge-info">' . $user->updatedat() . '</span>'; ?></td>
+                                <td><?= $user->badattempt(); ?></td>
+                                <td><?= $user->lastfailed(); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
-    <div class="card m-auto">
-        <div class="text-header">
-            <h1 class="text-center mt-3 text-dark"><?= $lang->getTxt($idPage, "header-add-user"); ?></h1>
-        </div>
-        <form method="post" action="<?= $routes->url('adduser'); ?>">
-            <div class="form-row justify-content-center">
-                <div class="col-md-10 mb-3 mt-4">
-                    <input type="text" name="username" class="form-control <?php if(isset($_SESSION['inputResponseUsername']) && !empty($_SESSION['inputResponseUsername'])){ echo htmlspecialchars($_SESSION['inputResponseUsername'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValueUsername']) && !empty($_SESSION['inputValueUsername'])){ echo htmlspecialchars($_SESSION['inputValueUsername'], ENT_QUOTES); $_SESSION['inputValueUsername'] = ''; } ?>" id="username" placeholder="<?= $lang->getTxt($idPage, "username-placeholder"); ?>">
-                    <!-- == If validation failed == -->
-                    <?php if(isset($_SESSION['inputResponseUsername']) && !empty($_SESSION['inputResponseUsername']) && $_SESSION['inputResponseUsername'] == 'invalid'): ?>
-                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseUsernameMessage'], ENT_QUOTES); ?>"></i></span>
-                    <?php endif; $_SESSION['inputResponseUsername'] = ''; $_SESSION['inputResponseUsernameMessage'] = ''; ?> <!-- End of validation failed -->
-                </div>
-            </div>
-            <div class="form-row justify-content-center">
-                <div class="col-md-10 mb-3 mt-2">
-                    <input type="text" name="email" class="form-control <?php if(isset($_SESSION['inputResponseEmail']) && !empty($_SESSION['inputResponseEmail'])){ echo htmlspecialchars($_SESSION['inputResponseEmail'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValueEmail']) && !empty($_SESSION['inputValueEmail'])){ echo htmlspecialchars($_SESSION['inputValueEmail'], ENT_QUOTES); $_SESSION['inputValueEmail'] = ''; } ?>" id="email" placeholder="<?= $lang->getTxt($idPage, "email-placeholder"); ?>">
-                    <!-- == If validation failed == -->
-                    <?php if(isset($_SESSION['inputResponseEmail']) && !empty($_SESSION['inputResponseEmail']) && $_SESSION['inputResponseEmail'] == 'invalid'): ?>
-                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseEmailMessage'], ENT_QUOTES); ?>"></i></span>
-                    <?php endif; $_SESSION['inputResponseEmail'] = ''; $_SESSION['inputResponseEmailMessage'] = ''; ?> <!-- End of validation failed -->
-                </div>
-            </div>
-            <div class="form-row justify-content-center">
-                <div class="col-md-10 mb-3 mt-2">
-                    <input type="password" name="password" class="form-control <?php if(!empty(htmlspecialchars($_SESSION['inputResponsePassword'], ENT_QUOTES)) && $_SESSION['inputResponsePassword'] == 'invalid') { echo htmlspecialchars($_SESSION['inputResponsePassword'], ENT_QUOTES); } elseif(isset($_SESSION['inputResponsePassword']) && !empty($_SESSION['inputResponsePassword']) && $_SESSION['inputResponsePassword'] == 'valid' && isset($_SESSION['inputResponseCPassword']) && !empty($_SESSION['inputResponseCPassword']) && $_SESSION['inputResponseCPassword'] == 'invalid') { echo 'invalid'; } else { echo htmlspecialchars($_SESSION['inputResponsePassword'], ENT_QUOTES); }?>" id="password" placeholder="<?= $lang->getTxt($idPage, "password-placeholder"); ?>">
-                    <!-- == If validation failed == -->
-                    <?php if(isset($_SESSION['inputResponsePassword']) && !empty($_SESSION['inputResponsePassword']) && $_SESSION['inputResponsePassword'] == 'invalid'): ?>
-                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponsePasswordMessage'], ENT_QUOTES); ?>"></i></span>
-                    <?php elseif(isset($_SESSION['inputResponsePassword']) && !empty($_SESSION['inputResponsePassword']) && $_SESSION['inputResponsePassword'] == 'valid' && isset($_SESSION['inputResponseCPassword']) && !empty($_SESSION['inputResponseCPassword']) && $_SESSION['inputResponseCPassword'] == 'invalid'): ?>
-                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseCPasswordMessage'], ENT_QUOTES); ?>"></i></span>
-                    <?php endif; $_SESSION['inputResponsePassword'] = ''; $_SESSION['inputResponsePasswordMessage'] = ''; ?> <!-- End of validation failed -->
-                </div>
-            </div>
-            <div class="form-row justify-content-center">
-                <div class="col-md-10 mb-3 mt-2">
-                    <input type="password" name="cpassword" class="form-control <?php if(!empty(htmlspecialchars($_SESSION['inputResponseCPassword'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseCPassword'], ENT_QUOTES); } ?>" id="cpassword" placeholder="<?= $lang->getTxt($idPage, "cpassword-placeholder"); ?>">
-                    <!-- == If validation failed == -->
-                    <?php if(isset($_SESSION['inputResponseCPassword']) && !empty($_SESSION['inputResponseCPassword']) && $_SESSION['inputResponseCPassword'] == 'invalid'): ?>
-                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseCPasswordMessage'], ENT_QUOTES); ?>"></i></span>
-                    <?php endif; $_SESSION['inputResponseCPassword'] = ''; $_SESSION['inputResponseCPasswordMessage'] = ''; ?> <!-- End of validation failed -->
-                </div>
-            </div>
-            <div class="form-row justify-content-center">
-                <div class="col-md-10 mb-3 mt-2">
-                    <select name="role" class="custom-select <?php if(!empty(htmlspecialchars($_SESSION['inputResponseRole'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseRole'], ENT_QUOTES); } ?>">
-                        <option value="admin" selected><?= $lang->getTxt($idPage, "role-admin"); ?></option>
-                        <option value="hunter" selected><?= $lang->getTxt($idPage, "role-hunter"); ?></option>
-                    </select>
-                    <!-- == If validation failed == -->
-                    <?php if(isset($_SESSION['inputResponseRole']) && !empty($_SESSION['inputResponseRole']) && $_SESSION['inputResponseRole'] == 'invalid'): ?>
-                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseRoleMessage'], ENT_QUOTES); ?>"></i></span>
-                    <?php endif; $_SESSION['inputResponseRole'] = ''; $_SESSION['inputResponseRoleMessage'] = ''; ?> <!-- End of validation failed -->
-                </div>
-            </div>
-            <div class="form-row justify-content-center">
-                <div class="col-md-10 mb-3 mt-2">
-                    <button class="btn btn-dark w-100" type="submit"><?= $lang->getTxt($idPage, "submit"); ?></button>
-                </div>
-            </div>
-            <!-- == Captcha and crsf token == -->
-            <input type="hidden" id="g-recaptcha-response-1" name="g-recaptcha-response">
-            <input type="hidden" id="token" name="token" value="<?= $token ?>">
-            <!-- End Captcha and crsf token -->
-        </form>
     </div>
 <?php endif; ?>
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-change-language"); ?></h6>
+                </div>
+                <div class="wrapper-form">
+                    <form method="post" class="mt-3">
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <select name="language" class="custom-select <?php if(!empty(htmlspecialchars($_SESSION['inputResponseLanguage'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseLanguage'], ENT_QUOTES); } ?>">
+                                    <option value="en" selected>EN</option>
+                                    <option value="fr" selected>FR</option>
+                                </select>
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseLanguage']) && !empty($_SESSION['inputResponseLanguage']) && $_SESSION['inputResponseLanguage'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseLanguageMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseLanguage'] = ''; $_SESSION['inputResponseLanguageMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <button class="btn btn-info w-100" type="submit"><?= $lang->getTxt($idPage, "submit"); ?></button>
+                            </div>
+                        </div>
+                        
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        <input type="hidden" id="token" name="token" value="<?= $token ?>">
+                        <!-- End Captcha and crsf token -->
+                    </form>
+                </div>
+            </div>
+        </div>
+        <?php if($admin): ?>
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-add-user"); ?></h6>
+                    </div>
+                    <div class="wrapper-form">
+                        <form method="post" action="<?= $routes->url('adduser'); ?>">
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-4">
+                                    <input type="text" name="username" class="form-control <?php if(isset($_SESSION['inputResponseUsername']) && !empty($_SESSION['inputResponseUsername'])){ echo htmlspecialchars($_SESSION['inputResponseUsername'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValueUsername']) && !empty($_SESSION['inputValueUsername'])){ echo htmlspecialchars($_SESSION['inputValueUsername'], ENT_QUOTES); $_SESSION['inputValueUsername'] = ''; } ?>" id="username" placeholder="<?= $lang->getTxt($idPage, "username-placeholder"); ?>">
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponseUsername']) && !empty($_SESSION['inputResponseUsername']) && $_SESSION['inputResponseUsername'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseUsernameMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponseUsername'] = ''; $_SESSION['inputResponseUsernameMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <input type="text" name="email" class="form-control <?php if(isset($_SESSION['inputResponseEmail']) && !empty($_SESSION['inputResponseEmail'])){ echo htmlspecialchars($_SESSION['inputResponseEmail'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValueEmail']) && !empty($_SESSION['inputValueEmail'])){ echo htmlspecialchars($_SESSION['inputValueEmail'], ENT_QUOTES); $_SESSION['inputValueEmail'] = ''; } ?>" id="email" placeholder="<?= $lang->getTxt($idPage, "email-placeholder"); ?>">
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponseEmail']) && !empty($_SESSION['inputResponseEmail']) && $_SESSION['inputResponseEmail'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseEmailMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponseEmail'] = ''; $_SESSION['inputResponseEmailMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <input type="password" name="password" class="form-control <?php if(!empty(htmlspecialchars($_SESSION['inputResponsePassword'], ENT_QUOTES)) && $_SESSION['inputResponsePassword'] == 'invalid') { echo htmlspecialchars($_SESSION['inputResponsePassword'], ENT_QUOTES); } elseif(isset($_SESSION['inputResponsePassword']) && !empty($_SESSION['inputResponsePassword']) && $_SESSION['inputResponsePassword'] == 'valid' && isset($_SESSION['inputResponseCPassword']) && !empty($_SESSION['inputResponseCPassword']) && $_SESSION['inputResponseCPassword'] == 'invalid') { echo 'invalid'; } else { echo htmlspecialchars($_SESSION['inputResponsePassword'], ENT_QUOTES); }?>" id="password" placeholder="<?= $lang->getTxt($idPage, "password-placeholder"); ?>">
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponsePassword']) && !empty($_SESSION['inputResponsePassword']) && $_SESSION['inputResponsePassword'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponsePasswordMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php elseif(isset($_SESSION['inputResponsePassword']) && !empty($_SESSION['inputResponsePassword']) && $_SESSION['inputResponsePassword'] == 'valid' && isset($_SESSION['inputResponseCPassword']) && !empty($_SESSION['inputResponseCPassword']) && $_SESSION['inputResponseCPassword'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseCPasswordMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponsePassword'] = ''; $_SESSION['inputResponsePasswordMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <input type="password" name="cpassword" class="form-control <?php if(!empty(htmlspecialchars($_SESSION['inputResponseCPassword'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseCPassword'], ENT_QUOTES); } ?>" id="cpassword" placeholder="<?= $lang->getTxt($idPage, "cpassword-placeholder"); ?>">
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponseCPassword']) && !empty($_SESSION['inputResponseCPassword']) && $_SESSION['inputResponseCPassword'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseCPasswordMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponseCPassword'] = ''; $_SESSION['inputResponseCPasswordMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <select name="role" class="custom-select <?php if(!empty(htmlspecialchars($_SESSION['inputResponseRole'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseRole'], ENT_QUOTES); } ?>">
+                                        <option value="admin" selected><?= $lang->getTxt($idPage, "role-admin"); ?></option>
+                                        <option value="hunter" selected><?= $lang->getTxt($idPage, "role-hunter"); ?></option>
+                                    </select>
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponseRole']) && !empty($_SESSION['inputResponseRole']) && $_SESSION['inputResponseRole'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseRoleMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponseRole'] = ''; $_SESSION['inputResponseRoleMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <button class="btn btn-info w-100" type="submit"><?= $lang->getTxt($idPage, "submit"); ?></button>
+                                </div>
+                            </div>
+                            <!-- == Captcha and crsf token == -->
+                            <input type="hidden" id="g-recaptcha-response-1" name="g-recaptcha-response">
+                            <input type="hidden" id="token" name="token" value="<?= $token ?>">
+                            <!-- End Captcha and crsf token -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
 
 <?php
     $content = ob_get_clean();

@@ -305,6 +305,8 @@ window.onload = function() {
 | bad_attempt | smallint(1) unsigned | YES  |        | 0                   |       |
 | last_failed | datetime             | YES  |        | NULL                |       |
 
+### billings
+
 | Field     | Type         | Null | Key    | Default | Extra |
 | --------- | ------------ | ---- | ------ | ------- | ----- |
 | id        | varchar(36)  | NO   | UNIQUE |         |       |

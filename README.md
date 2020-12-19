@@ -291,19 +291,20 @@ window.onload = function() {
 
 ### users
 
-| Field       | Type                 | Null | Key    | Default             | Extra |
-| ----------- | -------------------- | ---- | ------ | ------------------- | ----- |
-| id          | varchar(36)          | NO   | UNIQUE |                     |       |
-| username    | varchar(200)         | NO   | UNIQUE |                     |       |
-| email       | varchar(255)         | NO   | UNIQUE |                     |       |
-| password    | text                 | NO   |        |                     |       |
-| token       | text                 | NO   |        |                     |       |
-| role        | varchar(6)           | YES  |        | 'hunter'            |       |
-| active      | char(1)              | YES  |        | 'N'                 |       |
-| created_at  | datetime             | YES  |        | current_timestamp() |       |
-| updated_at  | datetime             | YES  |        | current_timestamp() |       |
-| bad_attempt | smallint(1) unsigned | YES  |        | 0                   |       |
-| last_failed | datetime             | YES  |        | NULL                |       |
+| Field          | Type                 | Null | Key    | Default             | Extra |
+| -------------- | -------------------- | ---- | ------ | ------------------- | ----- |
+| id             | varchar(36)          | NO   | UNIQUE |                     |       |
+| username       | varchar(200)         | NO   | UNIQUE |                     |       |
+| email          | varchar(255)         | NO   | UNIQUE |                     |       |
+| password       | text                 | NO   |        |                     |       |
+| token          | text                 | NO   |        |                     |       |
+| role           | varchar(6)           | YES  |        | 'hunter'            |       |
+| active         | char(1)              | YES  |        | 'N'                 |       |
+| active_billing | char(1)              | YES  |        | 'N'                 |       |
+| created_at     | datetime             | YES  |        | current_timestamp() |       |
+| updated_at     | datetime             | YES  |        | current_timestamp() |       |
+| bad_attempt    | smallint(1) unsigned | YES  |        | 0                   |       |
+| last_failed    | datetime             | YES  |        | NULL                |       |
 
 ### billings
 

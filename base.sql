@@ -6,6 +6,7 @@ CREATE TABLE `users` (
   `token` text NOT NULL,
   `role` varchar(6) DEFAULT 'hunter',
   `active` char(1) DEFAULT 'N',
+  `active_billing` char(1) DEFAULT 'N',
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp(),
   `bad_attempt` smallint(1) unsigned DEFAULT 0,

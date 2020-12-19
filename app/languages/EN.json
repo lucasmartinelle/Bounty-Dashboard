@@ -94,6 +94,7 @@
         "language-change" : "The language was changed.",
         "username-change" : "Your username has been changed.",
         "password-change" : "Your username has been changed.",
+        "billing-enable" : "You have activated billing",
         "not-unique" : "This field must be unique."
     },
     "dashboard" : {
@@ -123,11 +124,21 @@
         "header-change-username" : "Change username",
         "header-change-email" : "Change email",
         "header-change-password" : "Change password",
+        "header-change-billing" : "enable/disable billing",
+        "name-placeholder" : "Name",
+        "firstname-placeholder" : "First name",
+        "address-placeholder" : "Address",
+        "phone-placeholder" : "Phone",
+        "SIRET-placeholder" : "SIRET",
+        "VAT-placeholder" : "VAT",
+        "bank-placeholder" : "Bank",
+        "IBAN-placeholder" : "IBAN",
+        "BIC-placeholder" : "BIC",
         "username-placeholder" : "Username",
         "email-placeholder" : "Email",
         "password-placeholder" : "Password",
         "cpassword-placeholder" : "Confirm Password",
         "invalid-input" : "Invalid input",
-        "submit" : "Submit"
+        "submit" : "Change"
     }
 }

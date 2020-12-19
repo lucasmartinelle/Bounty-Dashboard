@@ -11,6 +11,7 @@
         private $_role;
         private $_lang;
         private $_active;
+        private $_billing_active;
         private $_createdat;
         private $_updatedat;
         private $_bad_attempt;
@@ -82,6 +83,12 @@
             }
         }
 
+        private function setBillingactive($active){
+            if(is_string($active) && ($active == "N" || $active == "Y")){
+                $this->_billing_active = $active;
+            }
+        }
+
         private function setCreatedat($createdat){
             $this->_createdat = $createdat;
         }
@@ -133,6 +140,10 @@
 
         public function active(){
             return $this->_active;
+        }
+
+        public function billingactive(){
+            return $this->_billing_active;
         }
 
         public function createdat(){

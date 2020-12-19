@@ -149,6 +149,15 @@
             );
 
             $this->create(
+                "/dashboard/profile/changeBilling",
+                "changeBilling",
+                "Change Billing",
+                "controllerDashboard",
+                null,
+                null
+            );
+
+            $this->create(
                 "/dashboard/admin/addUser",
                 "adduser",
                 "Add a user",

@@ -85,12 +85,17 @@
         "not-activate-error" : "Vous devez confirmer votre compte par mail.",
         "logout-message" : "Vous avez été déconnecté.",
         "password-changed" : "Votre mot de passe a été changé !",
-        "email-confirmed" : "Votre adresse email a été confirmée. Vous pouvez maintenant vous connecter."
+        "email-confirmed" : "Votre adresse email a été confirmée. Vous pouvez maintenant vous connecter.",
+        "not-unique" : "Ce champ doit être unique."
     }, 
     "controllerDashboard" : {
         "global-error" : "Une erreur s'est produite lors du traitement de votre demande",
         "user-created" : "Un nouvel utilisateur a été ajouté.",
-        "language-change" : "La langue a été changée."
+        "language-change" : "La langue a été changée.",
+        "username-change" : "Votre nom d'utilisateur a été modifié.",
+        "password-change" : "Votre nom d'utilisateur a été modifié.",
+        "billing-enable" : "Vous avez activé la facturation",
+        "not-unique" : "Ce champ doit être unique."
     },
     "dashboard" : {
         "content-header" : "Page blanche"
@@ -115,15 +120,25 @@
         "table-last-login-failed" : "dernière connexion échouée le"
     },
     "profil" : {
-        "header" : "Profile",
+        "header" : "Profil",
         "header-change-username" : "Changer de nom d'utilisateur",
         "header-change-email" : "Change email",
         "header-change-password" : "Changer de mot de passe",
+        "header-change-billing" : "activer/désactiver la facturation",
+        "name-placeholder" : "Nom",
+        "firstname-placeholder" : "Prénom",
+        "address-placeholder" : "Adresse",
+        "phone-placeholder" : "Téléphone",
+        "SIRET-placeholder" : "SIRET",
+        "VAT-placeholder" : "TVA",
+        "bank-placeholder" : "Banque",
+        "IBAN-placeholder" : "IBAN",
+        "BIC-placeholder" : "BIC",
         "username-placeholder" : "Nom d'utilisateur",
         "email-placeholder" : "Email",
         "password-placeholder" : "Mot de passe",
         "cpassword-placeholder" : "Confirmer le mot de passe",
-        "username-change" : "Votre nom d'utilisateur a été changé",
-        "submit" : "Envoyer"
+        "invalid-input" : "Entrée non valable",
+        "submit" : "modifier"
     }
 }

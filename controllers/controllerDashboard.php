@@ -8,12 +8,14 @@
     require_once("utils/Captcha.php");
     require_once("app/Routes.php");
     require_once("app/languages/languageManager.php");
+    require_once("models/billingHandler.php");
 
     use app\Routes;
     use Utils\Session;
     use Utils\Validator;
     use Utils\Captcha;
     use Models\UserHandler;
+    use Models\BillingHandler;
     use view\View;
     use app\languages\languageManager;
 
@@ -25,6 +27,7 @@
         private $_routes;
         private $_captcha;
         private $_lang;
+        private $_billingHandler; 
         
         public function __construct($label, $name, $view, $template, $data){
             if($label == "dashboard"){
@@ -41,6 +44,8 @@
                 $this->changeEmail();
             } elseif($label == "changePassword"){
                 $this->changePassword();
+            } elseif($label == "changeBilling"){
+                $this->changeBilling();
             }
         }
 
@@ -253,9 +258,17 @@
         
         private function profile($name, $view, $template){
             $this->_session = new Session;
+            $this->_userHandler = new UserHandler;
+            $users = $this->_userHandler->getUsers(array('id' => htmlspecialchars($_SESSION['id'], ENT_QUOTES)));
+            $billingActivate = false;
+            foreach($users as $user){
+                if($user->billingactive() == 'Y'){
+                    $billingActivate = true;
+                }
+            }
             $token = $this->_session->getToken();
             $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name, "token" => $token));
+            $this->_view->generate(array("titre" => $name, "token" => $token, "billing" => $billingActivate));
         }
 
         private function changeUsername() {
@@ -472,6 +485,209 @@
                                     exit;
                                 }
                             } catch(Exception $e){
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                $_SESSION['typeAlert'] = "error";
+                                header('Location: ' . $this->_routes->url("profile"));
+                                exit;
+                            }
+                        }
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("profile"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url('profile'));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function changeBilling(){
+            $this->_session = new Session;
+            $last_token = $this->_session->getToken();
+            $this->_routes = new Routes;
+            if($this->_session->isAuth()){
+                if($_POST){
+                    $this->_lang = new languageManager;
+                    if($this->postDataValid($last_token)){
+                        $_SESSION['inputValueName'] = htmlspecialchars($_POST['name'], ENT_QUOTES);
+                        $_SESSION['inputValueFirstname'] = htmlspecialchars($_POST['firstname'], ENT_QUOTES);
+                        $_SESSION['inputValueAddress'] = htmlspecialchars($_POST['address'], ENT_QUOTES);
+                        $_SESSION['inputValuePhone'] = htmlspecialchars($_POST['phone'], ENT_QUOTES);
+                        $_SESSION['inputValueEmail'] = htmlspecialchars($_POST['email'], ENT_QUOTES);
+                        $_SESSION['inputValueSIRET'] = htmlspecialchars($_POST['SIRET'], ENT_QUOTES);
+                        $_SESSION['inputValueVAT'] = htmlspecialchars($_POST['VAT'], ENT_QUOTES);
+                        $_SESSION['inputValueBank'] = htmlspecialchars($_POST['bank'], ENT_QUOTES);
+                        $_SESSION['inputValueBIC'] = htmlspecialchars($_POST['BIC'], ENT_QUOTES);
+                        $_SESSION['inputValueIBAN'] = htmlspecialchars($_POST['IBAN'], ENT_QUOTES);
+
+                        $this->_userHandler = new UserHandler;
+                        $token = $this->_session->updateToken();
+
+                        $data = array(
+                            array('name', $_POST['name'], 'required'),
+                            array('firstname', $_POST['firstname'], 'required'),
+                            array('address', $_POST['address'], 'required'),
+                            array('phone', $_POST['phone'], 'required', 'onlyNumber'),
+                            array('email', $_POST['email'], 'required', 'min:3', 'max:255', 'email'),
+                            array('SIRET', $_POST['SIRET'], 'required', 'max:14'),
+                            array('VAT', $_POST['VAT'], 'required', 'max:100'),
+                            array('bank', $_POST['bank'], 'required'),
+                            array('BIC', $_POST['BIC'], 'required', 'max:11'),
+                            array('IBAN', $_POST['IBAN'], 'required', 'max:34')
+                        );
+
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
+
+                        if($response['success'] == 'false'){
+                            // register validity of input
+                            $_SESSION['inputResponseName'] = $response['name'];
+                            $_SESSION['inputResponseFirstname'] = $response['firstname'];
+                            $_SESSION['inputResponseAddress'] = $response['address'];
+                            $_SESSION['inputResponsePhone'] = $response['phone'];
+                            $_SESSION['inputResponseEmail2'] = $response['email'];
+                            $_SESSION['inputResponseSIRET'] = $response['SIRET'];
+                            $_SESSION['inputResponseVAT'] = $response['VAT'];
+                            $_SESSION['inputResponseBank'] = $response['bank'];
+                            $_SESSION['inputResponseBIC'] = $response['BIC'];
+                            $_SESSION['inputResponseIBAN'] = $response['IBAN'];
+
+                            // register error message by input
+                            if($_SESSION['inputResponseName'] == 'invalid'){
+                                $_SESSION['inputResponseNameMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['name'] as $e){
+                                    $_SESSION['inputResponseNameMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseNameMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseFirstname'] == 'invalid'){
+                                $_SESSION['inputResponseFirstnameMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['firstname'] as $e){
+                                    $_SESSION['inputResponseFirstnameMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseFirstnameMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseAddress'] == 'invalid'){
+                                $_SESSION['inputResponseAddressMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['address'] as $e){
+                                    $_SESSION['inputResponseAddressMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseAddressMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponsePhone'] == 'invalid'){
+                                $_SESSION['inputResponsePhoneMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['phone'] as $e){
+                                    $_SESSION['inputResponsePhoneMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponsePhoneMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseEmail2'] == 'invalid'){
+                                $_SESSION['inputResponseEmail2Message'] = "<span class='text-danger'>";
+                                foreach($response['message']['email'] as $e){
+                                    $_SESSION['inputResponseEmail2Message'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseEmail2Message'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseSIRET'] == 'invalid'){
+                                $_SESSION['inputResponseSIRETMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['SIRET'] as $e){
+                                    $_SESSION['inputResponseSIRETMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseSIRETMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseVAT'] == 'invalid'){
+                                $_SESSION['inputResponseVATMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['VAT'] as $e){
+                                    $_SESSION['inputResponseVATMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseVATMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseBank'] == 'invalid'){
+                                $_SESSION['inputResponseBankMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['bank'] as $e){
+                                    $_SESSION['inputResponseBankMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseBankMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseBIC'] == 'invalid'){
+                                $_SESSION['inputResponseBICMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['BIC'] as $e){
+                                    $_SESSION['inputResponseBICMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseBICMessage'] .= "</span>";
+                            }
+
+                            if($_SESSION['inputResponseIBAN'] == 'invalid'){
+                                $_SESSION['inputResponseIBANMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['IBAN'] as $e){
+                                    $_SESSION['inputResponseIBANMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseIBANMessage'] .= "</span>";
+                            }
+
+                            header('Location: ' . $this->_routes->url("profile"));
+                            exit;
+                        } else {
+                            $exist = false;
+                            $work = false;
+                            $this->_billingHandler = new BillingHandler;
+                            $billings = $this->_billingHandler->getBillings(array('id' => htmlspecialchars($_SESSION['id'], ENT_QUOTES)));
+                            foreach($billings as $billing){
+                                $exist = true;
+                            }
+                            $name = htmlspecialchars($_POST['name'], ENT_QUOTES);
+                            $firstname = htmlspecialchars($_POST['firstname'], ENT_QUOTES);
+                            $address = htmlspecialchars($_POST['address'], ENT_QUOTES);
+                            $phone = htmlspecialchars($_POST['phone'], ENT_QUOTES);
+                            $email = htmlspecialchars($_POST['email'], ENT_QUOTES);
+                            $SIRET = htmlspecialchars($_POST['SIRET'], ENT_QUOTES);
+                            $VAT = htmlspecialchars($_POST['VAT'], ENT_QUOTES);
+                            $bank = htmlspecialchars($_POST['bank'], ENT_QUOTES);
+                            $BIC = htmlspecialchars($_POST['BIC'], ENT_QUOTES);
+                            $IBAN = htmlspecialchars($_POST['IBAN'], ENT_QUOTES);
+
+                            try {
+                                if(!$exist){
+                                    $id = $this->GUIDv4();
+                                    if($this->_billingHandler->newBilling(array($id, htmlspecialchars($_SESSION['id'], ENT_QUOTES), $name, $firstname, $address, $phone, $email, $SIRET, $VAT, $bank, $BIC, $IBAN))){
+                                        $work = true;
+                                    } else {
+                                        $work = false;
+                                    }
+                                } else {
+                                    if($this->_billingHandler->updateBilling(array("name" => $name, "firstname" => $firstname, "address" => $address, "phone" => $phone, "email" => $email, "SIRET" => $SIRET, "VAT" => $VAT, "bank" => $bank, "BIC" => $BIC, "IBAN" => $IBAN))){
+                                        $work = true;
+                                    } else {
+                                        $work = false;
+                                    }
+                                }
+                                if(!$this->_userHandler->updateUser(array("active_billing" => 'Y', 'updated_at' => date('Y-m-d H:i:s')), array('id' => htmlspecialchars($_SESSION['id'], ENT_QUOTES)))){
+                                    $work = true;
+                                }
+                            } catch(Exception $e){
+                                $work = false;
+                            }
+
+                            if($work){
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "billing-enable");
+                                $_SESSION['typeAlert'] = "success";
+                                header('Location: ' . $this->_routes->url("profile"));
+                                exit;
+                            } else {
                                 $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
                                 $_SESSION['typeAlert'] = "error";
                                 header('Location: ' . $this->_routes->url("profile"));

@@ -113,6 +113,42 @@
             );
 
             $this->create(
+                "/dashboard/profile",
+                "profile",
+                "Profile",
+                "controllerDashboard",
+                "dashboard/viewProfile",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/profile/changeUsername",
+                "changeUsername",
+                "Change Username",
+                "controllerDashboard",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/profile/changeEmail",
+                "changeEmail",
+                "Change Email",
+                "controllerDashboard",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/profile/changePassword",
+                "changePassword",
+                "Change Password",
+                "controllerDashboard",
+                null,
+                null
+            );
+
+            $this->create(
                 "/dashboard/admin/addUser",
                 "adduser",
                 "Add a user",

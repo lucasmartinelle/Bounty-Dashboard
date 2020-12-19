@@ -85,12 +85,16 @@
         "not-activate-error" : "You must confirm your account by email.",
         "logout-message" : "You have been disconnected.",
         "password-changed" : "Your password has been changed !",
-        "email-confirmed" : "Your email address was confirmed. You can now log in !"
+        "email-confirmed" : "Your email address was confirmed. You can now log in !",
+        "not-unique" : "This field must be unique."
     },
     "controllerDashboard" : {
         "global-error" : "An error has occurred while processing your request.",
         "user-created" : "A new user was added.",
-        "language-change" : "The language was changed."
+        "language-change" : "The language was changed.",
+        "username-change" : "Your username has been changed.",
+        "password-change" : "Your username has been changed.",
+        "not-unique" : "This field must be unique."
     },
     "dashboard" : {
         "content-header" : "Blank Page"
@@ -123,6 +127,7 @@
         "email-placeholder" : "Email",
         "password-placeholder" : "Password",
         "cpassword-placeholder" : "Confirm Password",
+        "invalid-input" : "Invalid input",
         "submit" : "Submit"
     }
 }

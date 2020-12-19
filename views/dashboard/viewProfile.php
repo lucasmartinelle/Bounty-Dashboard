@@ -215,6 +215,10 @@
         $('#emailValueModal').html($('#email').val());
     });
 
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+
     grecaptcha.ready(function() {
         grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
             document.getElementById('g-recaptcha-response').value = token;

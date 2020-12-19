@@ -252,8 +252,10 @@
 
         
         private function profile($name, $view, $template){
+            $this->_session = new Session;
+            $token = $this->_session->getToken();
             $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name));
+            $this->_view->generate(array("titre" => $name, "token" => $token));
         }
 
         private function changeUsername() {
@@ -264,7 +266,56 @@
                 if($_POST){
                     $this->_lang = new languageManager;
                     if($this->postDataValid($last_token)){
+                        $this->_userHandler = new UserHandler;
+                        $_SESSION['inputValueUsername'] = htmlspecialchars($_POST['username'], ENT_QUOTES);
+                        $token = $this->_session->updateToken();
 
+                        $data = array(
+                            array('username', $_POST['username'], 'required', 'max:200')
+                        );
+
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
+
+                        if($response['success'] == 'false'){
+                            // register validity of input
+                            $_SESSION['inputResponseUsername'] = $response['username'];
+
+                            // register error message by input
+                            if($_SESSION['inputResponseUsername'] == 'invalid'){
+                                $_SESSION['inputResponseUsernameMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['username'] as $e){
+                                    $_SESSION['inputResponseUsernameMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseUsernameMessage'] .= "</span>";
+                            }
+
+                            header('Location: ' . $this->_routes->url("profile"));
+                            exit;
+                        } else {
+                            $id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
+                            $username = htmlspecialchars($_POST['username'], ENT_QUOTES);
+
+                            try {
+                                if($this->_userHandler->updateUser(array('username' => $username, "updated_at" => date('Y-m-d H:i:s')), array('id' => $id))){
+                                    $_SESSION['username'] = $username;
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "username-change");
+                                    $_SESSION['typeAlert'] = "success";
+                                    header('Location: ' . $this->_routes->url("profile"));
+                                    exit;
+                                } else {
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                    $_SESSION['typeAlert'] = "error";
+                                    header('Location: ' . $this->_routes->url("profile"));
+                                    exit;
+                                }
+                            } catch(Exception $e){
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                $_SESSION['typeAlert'] = "error";
+                                header('Location: ' . $this->_routes->url("profile"));
+                                exit;
+                            }
+                        }
                     } else {
                         $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
                         $_SESSION['typeAlert'] = "error";
@@ -289,7 +340,63 @@
                 if($_POST){
                     $this->_lang = new languageManager;
                     if($this->postDataValid($last_token)){
+                        $this->_userHandler = new UserHandler;
+                        $_SESSION['inputValueEmail'] = htmlspecialchars($_POST['email'], ENT_QUOTES);
+                        $token = $this->_session->updateToken();
 
+                        $data = array(
+                            array('email', $_POST['email'], 'required', 'min:3', 'max:255', 'email', 'unique|users|email')
+                        );
+
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
+
+                        if($response['success'] == 'false'){
+                            // register validity of input
+                            $_SESSION['inputResponseEmail'] = $response['email'];
+
+                            // register error message by input
+                            if($_SESSION['inputResponseEmail'] == 'invalid'){
+                                $counterror = 0;
+                                $_SESSION['inputResponseEmailMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['email'] as $e){
+                                    $counterror++;
+                                    $_SESSION['inputResponseEmailMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                if($counterror == 0){
+                                    if($response['unique']['email'] == 'false'){
+                                        $_SESSION['inputResponseEmailMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> ". $this->_lang->getTxt('controllerDashboard', "not-unique") ." <br>";
+                                    }
+                                }
+                                $_SESSION['inputResponseEmailMessage'] .= "</span>";
+                            }
+
+                            header('Location: ' . $this->_routes->url("profile"));
+                            exit;
+                        } else {
+                            $id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
+                            $email = htmlspecialchars($_POST['email'], ENT_QUOTES);
+
+                            try {
+                                if($this->_userHandler->updateUser(array('email' => $email, "updated_at" => date('Y-m-d H:i:s')), array('id' => $id))){
+                                    $_SESSION['email'] = $email;
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "email-change");
+                                    $_SESSION['typeAlert'] = "success";
+                                    header('Location: ' . $this->_routes->url("profile"));
+                                    exit;
+                                } else {
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                    $_SESSION['typeAlert'] = "error";
+                                    header('Location: ' . $this->_routes->url("profile"));
+                                    exit;
+                                }
+                            } catch(Exception $e){
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                $_SESSION['typeAlert'] = "error";
+                                header('Location: ' . $this->_routes->url("profile"));
+                                exit;
+                            }
+                        }
                     } else {
                         $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
                         $_SESSION['typeAlert'] = "error";
@@ -314,7 +421,63 @@
                 if($_POST){
                     $this->_lang = new languageManager;
                     if($this->postDataValid($last_token)){
+                        $this->_userHandler = new UserHandler;
+                        $token = $this->_session->updateToken();
 
+                        $data = array(
+                            array('password', $_POST['password'], 'cpassword:'.$_POST['cpassword'], 'required', 'min:6', 'max:32', 'requiredSpecialCharacter', 'requiredNumber', 'requiredLetter')
+                        );
+
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
+
+                        if($response['success'] == 'false'){
+                            // register validity of input
+                            $_SESSION['inputResponsePassword'] = $response['password'];
+                            $_SESSION['inputResponseCPassword'] = $response['cpassword'];
+
+                            if($response['password'] == 'invalid'){
+                                $_SESSION['inputResponsePasswordMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['password'] as $e){
+                                    $_SESSION['inputResponsePasswordMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponsePasswordMessage'] .= "</span>";
+                            }
+        
+                            if($response['cpassword'] == 'invalid'){
+                                $_SESSION['inputResponseCPasswordMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['cpassword'] as $e){
+                                    $_SESSION['inputResponseCPasswordMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseCPasswordMessage'] .= "</span>";
+                            }
+
+                            header('Location: ' . $this->_routes->url("profile"));
+                            exit;
+                        } else {
+                            $id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
+                            $password = password_hash(htmlspecialchars($_POST['password'], ENT_QUOTES), PASSWORD_ARGON2ID);
+
+                            try {
+                                if($this->_userHandler->updateUser(array('password' => $password, "updated_at" => date('Y-m-d H:i:s')), array('id' => $id))){
+                                    $_SESSION['password'] = $password;
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "password-change");
+                                    $_SESSION['typeAlert'] = "success";
+                                    header('Location: ' . $this->_routes->url("profile"));
+                                    exit;
+                                } else {
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                    $_SESSION['typeAlert'] = "error";
+                                    header('Location: ' . $this->_routes->url("profile"));
+                                    exit;
+                                }
+                            } catch(Exception $e){
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                $_SESSION['typeAlert'] = "error";
+                                header('Location: ' . $this->_routes->url("profile"));
+                                exit;
+                            }
+                        }
                     } else {
                         $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
                         $_SESSION['typeAlert'] = "error";

@@ -1,24 +1,26 @@
 .sidebar {
-    background-color : #66573c;
+    background-color : #3f8394;
 }
 
-#registration .card, #login .card, #forgot .card, #emailSent .card, #validationForgot .card, #settings .card {
+/*
+* AUTH
+*/
+
+#registration .card, #login .card, #forgot .card, #emailSent .card, #validationForgot .card {
     background: transparent;
     width: 400px;
     border-radius: 25px;
     border-color: transparent;
 }
 
-#registration input, #login input, #forgot input, #validationForgot input, #settings input:not([type='search']) {
-    background: transparent;
-    height: 40px;
-    border-radius: 0;
-    border-color: #000000;
-    box-shadow: unset;
-    color: #000000;
+@media screen and (max-width: 420px){
+    #registration .card, #login .card, #forgot .card, #emailSent .card, #validationForgot .card {
+        width: 80%;
+    }
 }
 
-#settings select:not([name="dataTable_length"]) {
+#registration input, #login input, #forgot input, #validationForgot input, #settings input:not([type='search']), #profile input {
+    background: transparent;
     height: 40px;
     border-radius: 0;
     border-color: #000000;
@@ -41,6 +43,33 @@ form span {
 	position: absolute;
 	top: 10px;
 	right: 11px;
+}
+
+/*
+* DASHBOARD
+*/
+
+#settings .card-listuser {
+    padding: 20px;
+}
+
+#settings .wrapper-form, #profile .wrapper-form {
+    width: 400px;
+    margin:auto;
+}
+
+@media screen and (max-width: 1050px){
+    #settings .wrapper-form, #profile .wrapper-form {
+        width: 80%;
+    }
+}
+
+#settings select:not([name="dataTable_length"]) {
+    height: 40px;
+    border-radius: 0;
+    border-color: #000000;
+    box-shadow: unset;
+    color: #000000;
 }
 
 #settings .userManagement {

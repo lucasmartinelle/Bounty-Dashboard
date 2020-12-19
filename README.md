@@ -150,7 +150,7 @@ pie charts (**canvasJS**)
 
 ---
 
-### Invoice
+### billings
 
 * Manually generated
   * The user selects the platform and the desired month.
@@ -280,7 +280,7 @@ window.onload = function() {
 | ---------------- | ------------ | ---- | ------ | ------------------- | ----- |
 | id               | varchar(36)  | NO   | UNIQUE |                     |       |
 | creator_id       | varchar(36)  | NO   |        |                     |       |
-| title            | varchar(200) | NO   |        |                     |       |
+| title            | varchar(200) | NO   | UNIQUE |                     |       |
 | severity         | float(8,5)   | NO   |        |                     |       |
 | endpoint         | text         | NO   |        |                     |       |
 | stepsToReproduce | longtext     | NO   |        |                     |       |
@@ -304,4 +304,19 @@ window.onload = function() {
 | updated_at  | datetime             | YES  |        | current_timestamp() |       |
 | bad_attempt | smallint(1) unsigned | YES  |        | 0                   |       |
 | last_failed | datetime             | YES  |        | NULL                |       |
+
+| Field     | Type         | Null | Key    | Default | Extra |
+| --------- | ------------ | ---- | ------ | ------- | ----- |
+| id        | varchar(36)  | NO   | UNIQUE |         |       |
+| user_id   | varchar(36)  | NO   |        |         |       |
+| name      | text         | NO   |        |         |       |
+| firstname | text         | NO   |        |         |       |
+| address   | text         | NO   |        |         |       |
+| phone     | text         | NO   |        |         |       |
+| email     | varchar(255) | NO   |        |         |       |
+| SIRET     | varchar(14)  | NO   |        |         |       |
+| VAT       | varchar(100) | NO   |        |         |       |
+| BANK      | text         | NO   |        |         |       |
+| BIC       | varchar(11)  | NO   |        |         |       |
+| IBAN      | varchar(14)  | NO   |        |         |       |
 

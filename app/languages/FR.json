@@ -123,6 +123,7 @@
         "email-placeholder" : "Email",
         "password-placeholder" : "Mot de passe",
         "cpassword-placeholder" : "Confirmer le mot de passe",
+        "username-change" : "Votre nom d'utilisateur a été changé",
         "submit" : "Envoyer"
     }
 }

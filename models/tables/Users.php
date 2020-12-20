@@ -83,7 +83,7 @@
             }
         }
 
-        private function setBillingactive($active){
+        private function setActivebilling($active){
             if(is_string($active) && ($active == "N" || $active == "Y")){
                 $this->_billing_active = $active;
             }
@@ -142,7 +142,7 @@
             return $this->_active;
         }
 
-        public function billingactive(){
+        public function activeBilling(){
             return $this->_billing_active;
         }
 

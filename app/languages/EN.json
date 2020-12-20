@@ -95,6 +95,7 @@
         "username-change" : "Your username has been changed.",
         "password-change" : "Your username has been changed.",
         "billing-enable" : "You have activated billing",
+        "billing-disable" : "You have disabled billing",
         "not-unique" : "This field must be unique."
     },
     "dashboard" : {

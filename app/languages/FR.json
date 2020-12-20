@@ -95,6 +95,7 @@
         "username-change" : "Votre nom d'utilisateur a été modifié.",
         "password-change" : "Votre nom d'utilisateur a été modifié.",
         "billing-enable" : "Vous avez activé la facturation",
+        "billing-disable" : "Vous avez désactivé la facturation",
         "not-unique" : "Ce champ doit être unique."
     },
     "dashboard" : {

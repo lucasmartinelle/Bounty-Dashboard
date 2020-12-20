@@ -98,6 +98,10 @@
         "billing-disable" : "You have disabled billing",
         "not-unique" : "This field must be unique."
     },
+    "controllerReports" : {
+        "global-error" : "An error has occurred while processing your request.",
+        "platform-create" : "The platform was created."
+    },
     "dashboard" : {
         "content-header" : "Blank Page"
     },
@@ -141,5 +145,11 @@
         "cpassword-placeholder" : "Confirm Password",
         "invalid-input" : "Invalid input",
         "submit" : "Change"
+    },
+    "platforms" : {
+        "header" : "Platforms",
+        "name-placeholder" : "Name",
+        "description-placeholder" : "Description",
+        "invalid-input" : "Invalid input"
     }
 }

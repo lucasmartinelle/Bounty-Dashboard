@@ -269,10 +269,12 @@ window.onload = function() {
 
 ### platforms
 
-| Field | Type         | Null | Key    | Default | Extra |
-| ----- | ------------ | ---- | ------ | ------- | ----- |
-| id    | varchar(36)  | NO   | UNIQUE |         |       |
-| name  | varchar(200) | NO   | UNIQUE |         |       |
+| Field       | Type         | Null | Key    | Default | Extra |
+| ----------- | ------------ | ---- | ------ | ------- | ----- |
+| id          | varchar(36)  | NO   | UNIQUE |         |       |
+| name        | varchar(200) | NO   | UNIQUE |         |       |
+| description | text         | NO   |        |         |       |
+| logo        | varchar(40)  | NO   |        |         |       |
 
 ### templates
 

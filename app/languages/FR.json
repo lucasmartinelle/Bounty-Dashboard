@@ -98,6 +98,10 @@
         "billing-disable" : "Vous avez désactivé la facturation",
         "not-unique" : "Ce champ doit être unique."
     },
+    "controllerReports" : {
+        "global-error" : "Une erreur s'est produite lors du traitement de votre demande",
+        "platform-create" : "La plateforme a été créée."
+    },
     "dashboard" : {
         "content-header" : "Page blanche"
     },
@@ -120,7 +124,7 @@
         "table-bad-login-attempt" : "tentative de connexion erronée",
         "table-last-login-failed" : "dernière connexion échouée le"
     },
-    "profil" : {
+    "profile" : {
         "header" : "Profil",
         "header-change-username" : "Changer de nom d'utilisateur",
         "header-change-email" : "Change email",
@@ -141,5 +145,11 @@
         "cpassword-placeholder" : "Confirmer le mot de passe",
         "invalid-input" : "Entrée non valable",
         "submit" : "modifier"
+    },
+    "platforms" : {
+        "header" : "Plateformes",
+        "name-placeholder" : "Nom",
+        "description-placeholder" : "Description",
+        "entrée non valable" : "Entrée non valable"
     }
 }

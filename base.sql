@@ -60,7 +60,11 @@ CREATE TABLE `programs` (
 
 CREATE TABLE `platforms` (
   `id` varchar(36) NOT NULL,
+  `creator_id` varchar(36) NOT NULL,
   `name` varchar(200) NOT NULL,
+  `description` text NOT NULL,
+  `logo` varchar(40) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
   UNIQUE KEY (`id`),
   UNIQUE KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

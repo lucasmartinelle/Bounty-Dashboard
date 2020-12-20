@@ -52,7 +52,7 @@
 
                 <!-- Nav Item - Platforms -->
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                    <a class="nav-link" href="<?= $routes->url('platforms'); ?>">
                         <i class="fas fa-pager"></i>
                         <span><?= $lang->getTxt('navbar', 'navitem-platforms'); ?></span>
                     </a>

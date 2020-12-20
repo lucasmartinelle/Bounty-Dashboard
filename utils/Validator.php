@@ -22,7 +22,7 @@
                     'success' => 'true',
                     'message' => array(),
                     'unique' => array(),
-                    'uploaded' => array(),
+                    'uploaded' => '',
                 );
 
                 for($i = 0; $i < count($data); $i++){
@@ -124,7 +124,7 @@
                             $dt = explode("|", $param);
                             $table = $dt[1];
                             $column = $dt[2];
-                            if(!$this->unique($table, $value, $column)){
+                            if(!$this->unique($table, htmlspecialchars($value, ENT_QUOTES), $column)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
                                 $validator['unique'][$input] = 'false';
@@ -133,7 +133,7 @@
                             $dt = explode("|", $param);
                             $table = $dt[1];
                             $column = $dt[2];
-                            if($this->unique($table, $value, $column)){
+                            if($this->unique($table, htmlspecialchars($value, ENT_QUOTES), $column)){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
                                 $validator['unique'][$input] = 'false';
@@ -165,6 +165,54 @@
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
                                 $validator['message'][$input][] = $this->_lang->getTxt('validator', 'equal');
+                            }
+                        } else if(strpos($param,"upload") !== false){
+                            $dt = explode(":", $param);
+                            $typeAccept = explode("|", trim($dt[1]));
+                            $extensionsAccept = explode("|", trim($dt[2]));
+                            if(isset($value) && !empty($value) && $value['error'] != UPLOAD_ERR_NO_FILE){
+                                $file_name = htmlspecialchars($value['name'], ENT_QUOTES);
+                                $file_size = (int) htmlspecialchars($value['size'], ENT_QUOTES);
+                                $file_tmp = htmlspecialchars($value['tmp_name'], ENT_QUOTES);
+                                $file_type= htmlspecialchars(strtolower($value['type']), ENT_QUOTES);
+                                $file_name_explode = explode(".", $file_name);
+                                $file_extension = htmlspecialchars(strtolower(end($file_name_explode)), ENT_QUOTES);
+                                $upload_dir = "assets/uploads";
+                                $newName = bin2hex(openssl_random_pseudo_bytes(5));
+
+                                if($file_size > 0){
+                                    if($file_size > 2097152){
+                                        $validator['success'] = 'false';
+                                        $validator[$input] = 'invalid';
+                                        $validator['message'][$input][] = 'Limit of 2 MB not respected.';
+                                    }
+
+                                    if(!in_array($file_type, $typeAccept)){
+                                        $validator['success'] = 'false';
+                                        $validator[$input] = 'invalid';
+                                        $validator['message'][$input][] = 'Type refused.';
+                                    }
+
+                                    if(!in_array($file_extension, $extensionsAccept)){
+                                        $validator['success'] = 'false';
+                                        $validator[$input] = 'invalid';
+                                        $validator['message'][$input][] = 'Extension refused.';
+                                    }
+                                    
+                                    if($validator[$input] == 'valid'){
+                                        if(!move_uploaded_file($file_tmp,$upload_dir."/".$newName.".".$file_extension)){
+                                            $validator['success'] = 'false';
+                                            $validator[$input] = 'invalid';
+                                            $validator['message'][$input][] = 'move failure.';
+                                        } else {
+                                            $validator['uploaded'] = $newName.".".$file_extension;
+                                        }
+                                    }
+                                }
+                            } else {
+                                $validator['success'] = 'false';
+                                $validator[$input] = 'invalid';
+                                $validator['message'][$input][] = 'This field is required.';
                             }
                         }
                     }

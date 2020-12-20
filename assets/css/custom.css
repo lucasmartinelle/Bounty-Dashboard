@@ -19,7 +19,7 @@
     }
 }
 
-#registration input, #login input, #forgot input, #validationForgot input, #settings input:not([type='search']), #profile input {
+#registration input, #login input, #forgot input, #validationForgot input {
     background: transparent;
     height: 40px;
     border-radius: 0;
@@ -64,15 +64,41 @@ form span {
     }
 }
 
-#settings select:not([name="dataTable_length"]) {
-    height: 40px;
-    border-radius: 0;
-    border-color: #000000;
-    box-shadow: unset;
-    color: #000000;
-}
-
 #settings .userManagement {
     margin-top: 100px !important;
     width: 85%;
+}
+
+#platforms .input-group-btn {
+    top: unset;
+    right: unset;
+}
+
+#platforms .btn-file {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #d1d3e2 !important;
+    background-color: #fff !important;
+    top: unset;
+    right: unset;
+}
+
+#platforms #filename {
+    padding-left: 70px;
+}
+
+#platforms .btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
 }

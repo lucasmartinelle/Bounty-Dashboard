@@ -32,8 +32,19 @@
         *  return : true if platform created successfuly
         *           false if platform couldn't be created
         */
-        public function newPlatform($value){
+        public function newPlatform($values){
+            $stmt = 'INSERT INTO platforms (`id`, `creator_id`, `name`, `description`, `logo`) VALUES (';
+            foreach($values as $val){
+                $stmt.="'".$val . "', ";
+            }
+            $stmt = substr($stmt, 0, -2) . ')';
 
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* update platform

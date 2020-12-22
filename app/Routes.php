@@ -157,6 +157,7 @@
                 null
             );
 
+            //admin
             $this->create(
                 "/dashboard/admin/addUser",
                 "adduser",
@@ -166,6 +167,16 @@
                 null
             );
 
+            $this->create(
+                "/dashboard/admin/removeUser/{string}",
+                "removeuser",
+                "Remove a user",
+                "controllerDashboard",
+                null,
+                null
+            );
+
+            // reports
             $this->create(
                 "/dashboard/platforms",
                 "platforms",
@@ -193,6 +204,16 @@
                 "dashboard"
             );
 
+            $this->create(
+                "/dashboard/programDelete/{string}",
+                "programDelete",
+                "Delete a program",
+                "controllerReports",
+                null,
+                null
+            );
+
+            // autocomplete URL
             $this->create(
                 "/dashboard/scope",
                 "scope",

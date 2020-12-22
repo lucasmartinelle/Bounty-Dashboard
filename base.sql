@@ -5,6 +5,7 @@ CREATE TABLE `users` (
   `password` text NOT NULL,
   `token` text NOT NULL,
   `role` varchar(6) DEFAULT 'hunter',
+  `lang` varchar(2) DEFAULT 'EN',
   `active` char(1) DEFAULT 'N',
   `active_billing` char(1) DEFAULT 'N',
   `created_at` datetime DEFAULT current_timestamp(),
@@ -85,6 +86,6 @@ CREATE TABLE `billings` (
   `VAT` varchar(100) NOT NULL,
   `BANK` text NOT NULL,
   `BIC` varchar(11) NOT NULL,
-  `IBAN` varchar(14) NOT NULL,
+  `IBAN` varchar(34) NOT NULL,
   UNIQUE KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

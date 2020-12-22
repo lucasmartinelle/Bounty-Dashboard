@@ -131,7 +131,7 @@
         *           false if users couldn't be deleted
         */
         public function deleteUser($where){
-            $stmt = "DELETE users WHERE ";
+            $stmt = "DELETE FROM users WHERE ";
             foreach($where as $key => $value){
                 $stmt .= "`". $key . "` = '".$value."' AND ";
             }

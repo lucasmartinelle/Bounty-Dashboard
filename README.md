@@ -79,11 +79,14 @@ pie charts (**canvasJS**)
 
 - Adding and deleting a program  **(auth required)**
 
+  * **Name**
+
   * **Scope** (1 or more URLs)
 
   - **start date**
   - **status** (open / close)
   - **Tags** (the user can add tags of his choice on the program)
+  - **Program** (select)
 
 - Pie chart with the number of bugs found by severity
 
@@ -259,22 +262,26 @@ window.onload = function() {
 
 ### programs
 
-| Field       | Type        | Null | Key    | Default             | Extra |
-| ----------- | ----------- | ---- | ------ | ------------------- | ----- |
-| id          | varchar(36) | NO   | UNIQUE |                     |       |
-| scope       | text        | NO   |        |                     |       |
-| status      | varchar(5)  | YES  |        | 'open'              |       |
-| platform_id | varchar(36) | NO   |        |                     |       |
-| created_at  | datetime    | YES  |        | current_timestamp() |       |
+| Field       | Type         | Null | Key    | Default             | Extra |
+| ----------- | ------------ | ---- | ------ | ------------------- | ----- |
+| id          | varchar(36)  | NO   | UNIQUE |                     |       |
+| creator_id  | varchar(36)  | NO   |        |                     |       |
+| name        | varchar(200) | NO   |        |                     |       |
+| scope       | text         | NO   |        |                     |       |
+| status      | varchar(5)   | YES  |        | 'open'              |       |
+| platform_id | varchar(36)  | NO   |        |                     |       |
+| created_at  | datetime     | YES  |        | current_timestamp() |       |
 
 ### platforms
 
-| Field       | Type         | Null | Key    | Default | Extra |
-| ----------- | ------------ | ---- | ------ | ------- | ----- |
-| id          | varchar(36)  | NO   | UNIQUE |         |       |
-| name        | varchar(200) | NO   | UNIQUE |         |       |
-| description | text         | NO   |        |         |       |
-| logo        | varchar(40)  | NO   |        |         |       |
+| Field       | Type         | Null | Key    | Default             | Extra |
+| ----------- | ------------ | ---- | ------ | ------------------- | ----- |
+| id          | varchar(36)  | NO   | UNIQUE |                     |       |
+| creator_id  | varchar(36)  | NO   |        |                     |       |
+| name        | varchar(200) | NO   | UNIQUE |                     |       |
+| description | text         | NO   |        |                     |       |
+| logo        | varchar(40)  | NO   |        |                     |       |
+| created_at  | datetime     | YES  |        | current_timestamp() |       |
 
 ### templates
 
@@ -301,6 +308,7 @@ window.onload = function() {
 | password       | text                 | NO   |        |                     |       |
 | token          | text                 | NO   |        |                     |       |
 | role           | varchar(6)           | YES  |        | 'hunter'            |       |
+| lang           | varchar(2)           | YES  |        | 'EN'                |       |
 | active         | char(1)              | YES  |        | 'N'                 |       |
 | active_billing | char(1)              | YES  |        | 'N'                 |       |
 | created_at     | datetime             | YES  |        | current_timestamp() |       |

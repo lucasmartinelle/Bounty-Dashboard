@@ -45,6 +45,7 @@
                             <th>email</th>
                             <th>role</th>
                             <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
+                            <th>action</th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -53,6 +54,7 @@
                             <th>email</th>
                             <th>role</th>
                             <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
+                            <th>action</th>
                         </tr>
                     </tfoot>
                     <tbody>
@@ -66,6 +68,13 @@
                                     echo '<span class="badge badge-pill badge-secondary">' . $user->role() . '</span>'; 
                                 } ?></td>
                                 <td><?= $user->active(); ?></td>
+                                <td class="text-center">
+                                    <?php if($user->role() == "hunter"): ?>
+                                        <a href="<?= $routes->urlReplace("removeuser", array($user->id())); ?>" class="text-danger"><i class="fas fa-trash"></i></a>
+                                    <?php else: ?>
+                                        <i class="fas fa-trash"></i>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

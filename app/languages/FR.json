@@ -92,6 +92,7 @@
     "controllerDashboard" : {
         "global-error" : "Une erreur s'est produite lors du traitement de votre demande",
         "user-created" : "Un nouvel utilisateur a été ajouté.",
+        "delete-user" : "Un utilisateur a été supprimé",
         "language-change" : "La langue a été changée.",
         "username-change" : "Votre nom d'utilisateur a été modifié.",
         "password-change" : "Votre nom d'utilisateur a été modifié.",

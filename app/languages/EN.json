@@ -92,12 +92,14 @@
     "controllerDashboard" : {
         "global-error" : "An error has occurred while processing your request.",
         "user-created" : "A new user was added.",
+        "delete-user" : "A user has been deleted.",
         "language-change" : "The language was changed.",
         "username-change" : "Your username has been changed.",
         "password-change" : "Your username has been changed.",
         "billing-enable" : "You have activated billing",
         "billing-disable" : "You have disabled billing",
         "not-unique" : "This field must be unique."
+        
     },
     "controllerReports" : {
         "global-error" : "An error has occurred while processing your request.",

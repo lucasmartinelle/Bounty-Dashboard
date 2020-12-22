@@ -36,6 +36,8 @@
                 $this->settings($name,$view,$template);
             } elseif($label == "adduser"){
                 $this->adduser();
+            } elseif($label == "removeuser"){
+                $this->removeuser($data);
             } elseif($label == "profile"){
                 $this->profile($name,$view,$template);
             } elseif($label == "changeUsername"){
@@ -251,6 +253,45 @@
                 }
             } else {
                 header('Location: ' . $this->_routes->url('dashboard'));
+                exit;
+            }
+        }
+
+        private function removeuser($data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            if($this->_session->isAdmin()){
+                if($this->_session->isAuth()){
+                    $this->_userHandler = new UserHandler;
+                    $users = $this->_userHandler->getUsers(array("id" => $id));
+                    foreach($users as $user){
+                        if($user->role() != "admin"){
+                            $id = htmlspecialchars($data[3], ENT_QUOTES);
+                            if($this->_userHandler->deleteUser(array("id" => $id))){
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "delete-user");
+                                $_SESSION['typeAlert'] = "success";
+                                header('Location: ' . $this->_routes->url('settings'));
+                                exit;
+                            } else {
+                                $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                $_SESSION['typeAlert'] = "error";
+                                header('Location: ' . $this->_routes->url('settings'));
+                                exit;
+                            }
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url('settings'));
+                            exit;
+                        }
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url('login'));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('settings'));
                 exit;
             }
         }

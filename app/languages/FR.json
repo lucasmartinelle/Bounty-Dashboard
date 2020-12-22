@@ -76,6 +76,7 @@
         "max-2" : " caractères.",
         "cpassword" : "Les mots de passe doivent correspondre.",
         "email" : "Format d'email invalide.",
+        "date" : "Format de date non valide",
         "URL" : "Format d'URL non valide",
         "equal" : "Valeur refusée."
     },
@@ -100,7 +101,9 @@
     },
     "controllerReports" : {
         "global-error" : "Une erreur s'est produite lors du traitement de votre demande",
-        "platform-create" : "La plateforme a été créée."
+        "platform-create" : "La plateforme a été créée.",
+        "programme-create" : "Le programme a été créé.",
+        "platform-deleted" : "Vous avez supprimé une plateforme"
     },
     "dashboard" : {
         "content-header" : "Page blanche"
@@ -114,15 +117,12 @@
         "email-placeholder" : "Email",
         "password-placeholder" : "Mot de passe",
         "cpassword-placeholder" : "Confirmer le mot de passe",
+        "language-option" : "Langage",
         "role-admin" : "admin",
         "role-hunter" : "hunter",
         "submit" : "Envoyer",
         "invalid-input" : "Entrée non valable",
-        "table-active" : "actif",
-        "table-created-at" : "créé le",
-        "table-updated-at" : "mis à jour le",
-        "table-bad-login-attempt" : "tentative de connexion erronée",
-        "table-last-login-failed" : "dernière connexion échouée le"
+        "table-active" : "actif"
     },
     "profile" : {
         "header" : "Profil",
@@ -130,6 +130,8 @@
         "header-change-email" : "Change email",
         "header-change-password" : "Changer de mot de passe",
         "header-change-billing" : "activer/désactiver la facturation",
+        "header-enable-billing" : "activer la facturation",
+        "header-disable-billing" : "désactiver la facturation",
         "name-placeholder" : "Nom",
         "firstname-placeholder" : "Prénom",
         "address-placeholder" : "Adresse",
@@ -144,12 +146,38 @@
         "password-placeholder" : "Mot de passe",
         "cpassword-placeholder" : "Confirmer le mot de passe",
         "invalid-input" : "Entrée non valable",
+        "confirmation-username-change" : "Êtes-vous sûr de vouloir changer votre nom d'utilisateur par",
+        "confirmation-email-change" : "Etes-vous sûr de vouloir changer votre email par",
+        "confirmation-password-change" : "Etes-vous sûr de vouloir changer votre mot de passe ?",
+        "confirmation-disable-billing" : "Êtes-vous sûr de vouloir désactiver le système de facturation ?",
+        "modal-nav-close" : "Fermer",
+        "modal-nav-confirm" : "Enregistrer",
         "submit" : "modifier"
     },
     "platforms" : {
         "header" : "Plateformes",
         "name-placeholder" : "Nom",
         "description-placeholder" : "Description",
-        "entrée non valable" : "Entrée non valable"
+        "entrée non valable" : "Entrée non valable",
+        "header-platforms" : "Plateformes",
+        "header-bug-by-severity" : "Bugs trouvés par sévérité",
+        "modal-nav-close" : "Fermer",
+        "modal-nav-confirm" : "Créer",
+        "add-platform" : "Ajouter une plateforme"
+    },
+    "programs" : {
+        "header" : "Programmes",
+        "name-placeholder" : "Nom",
+        "date-placeholder" : "Date de début",
+        "tags-placeholder" : "Tags",
+        "platform" : "Platformes",
+        "status-open" : "Ouvert",
+        "status-close" : "Fermé",
+        "invalid input" : "Entrée non valable",
+        "header-bug-by-severity" : "Bugs trouvés par gravité",
+        "scope-placeholder" : "Cible",
+        "add-program" : "Ajouter un programme",
+        "modal-nav-close" : "Fermer",
+        "modal-nav-confirm" : "Créer"
     }
 }

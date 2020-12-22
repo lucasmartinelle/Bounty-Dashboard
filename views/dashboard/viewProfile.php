@@ -64,17 +64,17 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="saveUsernameLabel">Change your username</h5>
+                                        <h5 class="modal-title" id="saveUsernameLabel"><?= $lang->getTxt($idPage, "header-change-username"); ?></h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body text-center">
-                                        <p>Are you sure you want to change your username by <span class="text-danger" id="usernameValueModal" style="position: static;"></span> ?</p>
+                                        <p><?= $lang->getTxt($idPage, "confirmation-username-change"); ?> <span class="text-danger" id="usernameValueModal" style="position: static;"></span> ?</p>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
                                     </div>
                                 </div>
                             </div>
@@ -114,17 +114,17 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="saveEmailLabel">Change your email</h5>
+                                        <h5 class="modal-title" id="saveEmailLabel"><?= $lang->getTxt($idPage, "header-change-email"); ?></h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body text-center">
-                                        <p>Are you sure you want to change your email by <span class="text-danger" id="emailValueModal" style="position: static;"></span> ?</p>
+                                        <p><?= $lang->getTxt($idPage, "confirmation-email-change"); ?> <span class="text-danger" id="emailValueModal" style="position: static;"></span> ?</p>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
                                     </div>
                                 </div>
                             </div>
@@ -180,17 +180,17 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="savePasswordLabel">Change your password</h5>
+                                        <h5 class="modal-title" id="savePasswordLabel"><?= $lang->getTxt($idPage, "header-change-password"); ?></h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body text-center">
-                                        <p>Are you sure you want to change your password ?</p>
+                                        <p><?= $lang->getTxt($idPage, "confirmation-password-change"); ?></p>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +223,7 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="changeBillingLabel">Enable billing</h5>
+                                            <h5 class="modal-title" id="changeBillingLabel"><?= $lang->getTxt($idPage, "header-enable-billing"); ?></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -321,8 +321,8 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Save</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                                            <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
                                         </div>
                                     </div>
                                 </div>
@@ -332,17 +332,17 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="changeBillingLabel">Disable billing</h5>
+                                            <h5 class="modal-title" id="changeBillingLabel"><?= $lang->getTxt($idPage, "header-disable-billing"); ?></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body text-center">
-                                            <p>Are you sure you want to disable billing system ?</p>
+                                            <p><?= $lang->getTxt($idPage, "confirmation-disable-billing"); ?></p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                                            <button type="submit" class="btn btn-primary">Yes</button>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                                            <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
                                         </div>
                                     </div>
                                 </div>

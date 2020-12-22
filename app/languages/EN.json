@@ -76,6 +76,7 @@
         "max-2" : " characters.",
         "cpassword" : "Passwords must match.",
         "email" : "Invalid email format.",
+        "date" : "Invalid date format.",
         "URL" : "Invalid URL format.",
         "equal" : "Value denied."
     },
@@ -100,7 +101,9 @@
     },
     "controllerReports" : {
         "global-error" : "An error has occurred while processing your request.",
-        "platform-create" : "The platform was created."
+        "platform-create" : "The platform was created.",
+        "program-create" : "The program was created.",
+        "platform-deleted" : "You have deleted a platform"
     },
     "dashboard" : {
         "content-header" : "Blank Page"
@@ -114,22 +117,21 @@
         "email-placeholder" : "Email",
         "password-placeholder" : "Password",
         "cpassword-placeholder" : "Confirm Password",
+        "language-option" : "Language",
         "role-admin" : "admin",
         "role-hunter" : "hunter",
         "submit" : "Submit",
         "invalid-input" : "Invalid input",
-        "table-active" : "active",
-        "table-created-at" : "created at",
-        "table-updated-at" : "updated at",
-        "table-bad-login-attempt" : "bad login attempt",
-        "table-last-login-failed" : "last login failed"
+        "table-active" : "active"
     },
     "profile" : {
         "header" : "Profile",
-        "header-change-username" : "Change username",
-        "header-change-email" : "Change email",
-        "header-change-password" : "Change password",
+        "header-change-username" : "Change your username",
+        "header-change-email" : "Change your email",
+        "header-change-password" : "Change your password",
         "header-change-billing" : "enable/disable billing",
+        "header-enable-billing" : "enable billing",
+        "header-disable-billing" : "disable billing",
         "name-placeholder" : "Name",
         "firstname-placeholder" : "First name",
         "address-placeholder" : "Address",
@@ -144,12 +146,38 @@
         "password-placeholder" : "Password",
         "cpassword-placeholder" : "Confirm Password",
         "invalid-input" : "Invalid input",
+        "confirmation-username-change" : "Are you sure you want to change your username by",
+        "confirmation-email-change" : "Are you sure you want to change your email by",
+        "confirmation-password-change" : "Are you sure you want to change your password ?",
+        "confirmation-disable-billing" : "Are you sure you want to disable billing system ?",
+        "modal-nav-close" : "Close",
+        "modal-nav-confirm" : "Save",
         "submit" : "Change"
     },
     "platforms" : {
         "header" : "Platforms",
         "name-placeholder" : "Name",
         "description-placeholder" : "Description",
-        "invalid-input" : "Invalid input"
+        "invalid-input" : "Invalid input",
+        "header-platforms" : "Platforms",
+        "header-bug-by-severity" : "Bugs found by severity",
+        "modal-nav-close" : "Close",
+        "modal-nav-confirm" : "Create",
+        "add-platform" : "Add a platform"
+    },
+    "programs" : {
+        "header" : "Programs",
+        "name-placeholder" : "Name",
+        "date-placeholder" : "Start date",
+        "tags-placeholder" : "Tags",
+        "platform" : "Platforms",
+        "status-open" : "Open",
+        "status-close" : "Close",
+        "invalid-input" : "Invalid input",
+        "header-bug-by-severity" : "Bugs found by severity",
+        "scope-placeholder" : "Scope",
+        "add-program" : "Add a program",
+        "modal-nav-close" : "Close",
+        "modal-nav-confirm" : "Create"
     }
 }

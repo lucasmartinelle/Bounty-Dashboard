@@ -4,6 +4,7 @@
     require_once("views/View.php");
     require_once("models/userHandler.php");
     require_once("models/platformHandler.php");
+    require_once("models/programHandler.php");
     require_once("utils/Validator.php");
     require_once("utils/Session.php");
     require_once("utils/Captcha.php");
@@ -18,6 +19,7 @@
     use Models\UserHandler;
     use Models\BillingHandler;
     use Models\PlatformHandler;
+    use Models\ProgramHandler;
     use view\View;
     use app\languages\languageManager;
 
@@ -31,10 +33,17 @@
         private $_lang;
         private $_billingHandler; 
         private $_platformHandler;
+        private $_programHandler;
         
         public function __construct($label, $name, $view, $template, $data){
             if($label == "platforms"){
                 $this->platforms($name, $view, $template);
+            } elseif($label == "platformDelete"){
+                $this->deletePlatform($data);
+            } elseif($label == "programs"){
+                $this->programs($name, $view, $template);
+            } elseif($label == "scope"){
+                $this->scope();
             }
         }
 
@@ -46,10 +55,12 @@
             } else {
                 if($this->_session->isAuth()){
                     $this->_userHandler = new UserHandler;
+                    $this->_platformHandler = new platformHandler;
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
+                    $platforms = $this->_platformHandler->getPlatforms();
                     $this->_view = new View($view, $template);
-                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin));
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms));
                 } else {
                     header('Location: ' . $this->_routes->url('login'));
                     exit;
@@ -116,7 +127,6 @@
                         $name = htmlspecialchars($_POST['name'], ENT_QUOTES);
                         $description = htmlspecialchars($_POST['description'], ENT_QUOTES);
                         $logo = htmlspecialchars($response['uploaded'], ENT_QUOTES);
-                        // on ajoute la platforme dans la base de données
                         $this->_platformHandler = new platformHandler;
                         if($this->_platformHandler->newPlatform(array($id, $creator_id, $name, $description, $logo))){
                             $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "platform-create");
@@ -142,6 +152,201 @@
             }
         }
 
+        private function deletePlatform($data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            if($this->_session->isAuth()){
+                if($this->_session->isAdmin()){
+                    $id = htmlspecialchars($data[2], ENT_QUOTES);
+                    $this->_platformHandler = new platformHandler;
+                    $platforms = $this->_platformHandler->getPlatforms(array("id" => $id));
+                    $exist = false;
+                    foreach($platforms as $platform){
+                        $exist = true;
+                        if($this->_platformHandler->deletePlatform($id)){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "platform-deleted");
+                            $_SESSION['typeAlert'] = "success";
+                            header('Location: ' . $this->_routes->url("platforms"));
+                            exit;
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("platforms"));
+                            exit;
+                        }
+                    }
+                    if(!$exist){
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("platforms"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url("platforms"));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function programs($name, $view, $template){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_platformHandler = new platformHandler;
+            $platforms = $this->_platformHandler->getPlatforms();
+            if($_POST){
+                $this->postPrograms($platforms);
+            } else {
+                if($this->_session->isAuth()){
+                    $this->_userHandler = new UserHandler;
+                    $admin = $this->_session->isAdmin();
+                    $token = $this->_session->getToken();
+                    $this->_view = new View($view, $template);
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms));
+                } else {
+                    header('Location: ' . $this->_routes->url('login'));
+                    exit;
+                }
+            }
+        }
+
+        private function postPrograms($platforms){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){
+                if($this->postDataValid($last_token)){
+                    $listPlatforms = "";
+                    foreach($platforms as $platform){
+                        $listPlatforms .= $platform->id() . "|";
+                    }
+                    $listPlatforms = substr($listPlatforms, 0, -1);
+                    $_SESSION['inputValueName'] = htmlspecialchars($_POST['name'], ENT_QUOTES);
+                    $_SESSION['inputValueScope'] = htmlspecialchars($_POST['scope'], ENT_QUOTES);
+                    $_SESSION['inputValueDate'] = htmlspecialchars($_POST['date'], ENT_QUOTES);
+                    $_SESSION['inputValueTags'] = htmlspecialchars($_POST['tags'], ENT_QUOTES);
+
+                    $token = $this->_session->updateToken();
+
+                    $data = array(
+                        array("name", $_POST['name'], 'required', "max:200", "unique|programs|name"),
+                        array("scope", $_POST['scope'], 'required'),
+                        array("date", $_POST['date'], 'required', 'date'),
+                        array("status", $_POST['status'], 'required', 'equal|open|close'),
+                        array("tags", $_POST['tags'], 'required'),
+                        array("platform", $_POST['platform'], 'required', 'equal|'.$listPlatforms)
+                    );
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseName'] = $response['name'];
+                        $_SESSION['inputResponseScope'] = $response['scope'];
+                        $_SESSION['inputResponseDate'] = $response['date'];
+                        $_SESSION['inputResponseStatus'] = $response['status'];
+                        $_SESSION['inputResponseTags'] = $response['tags'];
+                        $_SESSION['inputResponsePlatform'] = $response['platform'];
+
+                        if($response['name'] == 'invalid'){
+                            $_SESSION['inputResponseNameMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['name'] as $e){
+                                $_SESSION['inputResponseNameMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseNameMessage'] .= "</span>";
+                        }
+
+                        if($response['scope'] == 'invalid'){
+                            $_SESSION['inputResponseScopeMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['scope'] as $e){
+                                $_SESSION['inputResponseScopeMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseScopeMessage'] .= "</span>";
+                        }
+
+                        if($response['date'] == 'invalid'){
+                            $_SESSION['inputResponseDateMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['date'] as $e){
+                                $_SESSION['inputResponseDateMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseDateMessage'] .= "</span>";
+                        }
+
+                        if($response['status'] == 'invalid'){
+                            $_SESSION['inputResponseStatusMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['status'] as $e){
+                                $_SESSION['inputResponseStatusMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseStatusMessage'] .= "</span>";
+                        }
+
+                        if($response['tags'] == 'invalid'){
+                            $_SESSION['inputResponseTagsMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['tags'] as $e){
+                                $_SESSION['inputResponseTagsMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseTagsMessage'] .= "</span>";
+                        }
+
+                        if($response['platform'] == 'invalid'){
+                            $_SESSION['inputResponsePlatformMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['platform'] as $e){
+                                $_SESSION['inputResponsePlatformMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponsePlatformMessage'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("programs"));
+                        exit;
+                    } else {
+                        $id = $this->GUIDv4();
+                        $creator_id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
+                        $name = htmlspecialchars($_POST['name'], ENT_QUOTES);
+                        $scope = htmlspecialchars($_POST['scope'], ENT_QUOTES);
+                        $date = htmlspecialchars($_POST['date'], ENT_QUOTES);
+                        $date = strtotime($date);
+                        $date = date('Y-m-d H:i:s', $date);
+                        $status = htmlspecialchars($_POST['status'], ENT_QUOTES);
+                        $platform_id = htmlspecialchars($_POST['platform'], ENT_QUOTES);
+                        $this->_programHandler = new ProgramHandler;
+                        if($this->_programHandler->newProgram(array($id, $creator_id, $name, $scope, $date, $status, $platform_id))){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "program-create");
+                            $_SESSION['typeAlert'] = "success";
+                            header('Location: ' . $this->_routes->url("programs"));
+                            exit;
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("programs"));
+                            exit;
+                        }
+                    }
+                } else {
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url("programs"));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function scope(){
+            $term;
+            if(isset($_GET['term'])){
+                $term = htmlspecialchars($_GET['term'], ENT_QUOTES);
+            }
+            $array = array('test', 'pomme');
+            echo json_encode($array);
+        }
+
+        
         private function postDataValid($token) {
             if($token != null){
                 $this->_session = new Session;

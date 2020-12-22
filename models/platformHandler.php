@@ -70,8 +70,21 @@
         *  return : true if platform deleted successfuly
         *           false if platform couldn't be deleted
         */
-        public function deletePlatform($where){
+        public function deletePlatform($id){
+            $stmt = "DELETE FROM platforms WHERE `id`='".$id."'";
+            try {
+                $this->statement($stmt);
+            } catch(Exception $e) {
+                return false;
+            }
 
+            $stmt = "DELETE FROM programs WHERE `platform_id`='".$id."'";
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
     }
 ?>

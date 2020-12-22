@@ -32,17 +32,63 @@
         <div class="row justify-content-between">
             <h1 class="h3 mb-1 text-gray-800 mb-3"><?= $lang->getTxt($idPage, "header"); ?></h1>
             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createPlatform" style="height: max-content;">
-                Add a platform
+                <?= $lang->getTxt($idPage, "add-platform"); ?>
             </button>
         </div>
     </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-severity"); ?></h6>
+                    </div>
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-severity"); ?></h6>
+                    </div>
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <?php foreach($platforms as $platform): ?>
+    <div class="container sh-dark bd-callout bd-callout-info py-3" style="margin-bottom: 50px;">
+        <div class="card" style="background: transparent; border: 0;">
+            <div class="row">
+                <div class="col-lg-2 col-md-3 col-sm-4 mb-4 mb-sm-0">
+                    <img src="<?= $asset; ?>uploads/<?= $platform->logo(); ?>" class="w-100">
+                </div>
+                <div class="col-lg-10 col-md-9 col-sm-8 px-3">
+                    <div class="card-block px-3">
+                        <h4 class="card-title badge badge-pill badge-warning" style="font-size: 20px;"><?= $platform->name(); ?></h4>
+                        <p class="card-text"><?= $platform->description(); ?></p>
+                        <a href="#" class="btn btn-primary">Read More</a>
+                        <?php if($admin): ?>
+                            <a href="<?= $routes->urlReplace("platformDelete", array($platform->id())); ?>" class="btn btn-danger">Delete</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+
 
     <!-- Modal -->
     <div class="modal fade" id="createPlatform" tabindex="-1" role="dialog" aria-labelledby="#createPlatformLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createPlatformLabel">Add a platform</h5>
+                    <h5 class="modal-title" id="createPlatformLabel"><?= $lang->getTxt($idPage, "add-platform"); ?></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -88,8 +134,8 @@
                         <!-- End Captcha and crsf token -->
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
                     </div>
                 </form>
             </div>

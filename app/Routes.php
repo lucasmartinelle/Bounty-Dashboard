@@ -165,6 +165,42 @@
                 null,
                 null
             );
+
+            $this->create(
+                "/dashboard/platforms",
+                "platforms",
+                "Platforms",
+                "controllerReports",
+                "reports/viewPlatforms",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/platformDelete/{string}",
+                "platformDelete",
+                "Delete a platform",
+                "controllerReports",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/programs",
+                "programs",
+                "Programs",
+                "controllerReports",
+                "reports/viewPrograms",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/scope",
+                "scope",
+                "Scope",
+                "controllerReports",
+                null,
+                null
+            );
         }
 
         public function load($label){

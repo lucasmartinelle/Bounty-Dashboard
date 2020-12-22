@@ -41,34 +41,23 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>id</th>
                             <th>username</th>
                             <th>email</th>
                             <th>role</th>
                             <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-created-at"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-updated-at"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-bad-login-attempt"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-last-login-failed"); ?></th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
-                            <th>id</th>
                             <th>username</th>
                             <th>email</th>
                             <th>role</th>
                             <th><?= $lang->getTxt($idPage, "table-active"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-created-at"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-updated-at"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-bad-login-attempt"); ?></th>
-                            <th><?= $lang->getTxt($idPage, "table-last-login-failed"); ?></th>
                         </tr>
                     </tfoot>
                     <tbody>
                         <?php foreach($users as $user): ?>
                             <tr>
-                                <td><?= $user->id(); ?></td>
                                 <td><?= '<span class="badge badge-pill badge-warning">' . $user->username() . '</span>'; ?></td>
                                 <td><?= '<span class="badge badge-pill badge-warning">' . $user->email() . '</span>'; ?></td>
                                 <td><?php if($user->role() == "admin"){ 
@@ -77,10 +66,6 @@
                                     echo '<span class="badge badge-pill badge-secondary">' . $user->role() . '</span>'; 
                                 } ?></td>
                                 <td><?= $user->active(); ?></td>
-                                <td><?= '<span class="badge badge-pill badge-info">' . $user->createdat() . '</span>'; ?></td>
-                                <td><?= '<span class="badge badge-pill badge-info">' . $user->updatedat() . '</span>'; ?></td>
-                                <td><?= $user->badattempt(); ?></td>
-                                <td><?= $user->lastfailed(); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -102,8 +87,9 @@
                         <div class="form-row justify-content-center">
                             <div class="col-md-10 mb-3 mt-2">
                                 <select name="language" class="custom-select <?php if(!empty(htmlspecialchars($_SESSION['inputResponseLanguage'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseLanguage'], ENT_QUOTES); } ?>">
-                                    <option value="en" selected>EN</option>
-                                    <option value="fr" selected>FR</option>
+                                    <option hidden><?= $lang->getTxt($idPage, "language-option"); ?></option>
+                                    <option value="en">EN</option>
+                                    <option value="fr">FR</option>
                                 </select>
                                 <!-- == If validation failed == -->
                                 <?php if(isset($_SESSION['inputResponseLanguage']) && !empty($_SESSION['inputResponseLanguage']) && $_SESSION['inputResponseLanguage'] == 'invalid'): ?>
@@ -175,8 +161,9 @@
                             <div class="form-row justify-content-center">
                                 <div class="col-md-10 mb-3 mt-2">
                                     <select name="role" class="custom-select <?php if(!empty(htmlspecialchars($_SESSION['inputResponseRole'], ENT_QUOTES))) { echo htmlspecialchars($_SESSION['inputResponseRole'], ENT_QUOTES); } ?>">
-                                        <option value="admin" selected><?= $lang->getTxt($idPage, "role-admin"); ?></option>
-                                        <option value="hunter" selected><?= $lang->getTxt($idPage, "role-hunter"); ?></option>
+                                        <option hidden>role</option>
+                                        <option value="admin"><?= $lang->getTxt($idPage, "role-admin"); ?></option>
+                                        <option value="hunter"><?= $lang->getTxt($idPage, "role-hunter"); ?></option>
                                     </select>
                                     <!-- == If validation failed == -->
                                     <?php if(isset($_SESSION['inputResponseRole']) && !empty($_SESSION['inputResponseRole']) && $_SESSION['inputResponseRole'] == 'invalid'): ?>

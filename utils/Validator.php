@@ -120,6 +120,13 @@
                                 $validator[$input] = 'invalid';
                                 $validator['message'][$input][] = $this->_lang->getTxt('validator', 'email');
                             }
+                        } else if($param == "date" && !empty($value)){
+                            $date = date_parse($value);
+                            if (!checkdate($date['month'], $date['day'], $date['year'])) {
+                                $validator['success'] = 'false';
+                                $validator[$input] = 'invalid';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'date');
+                            }
                         } else if(strpos($param, "unique") !== false && !empty($value)){
                             $dt = explode("|", $param);
                             $table = $dt[1];

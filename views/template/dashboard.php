@@ -60,7 +60,7 @@
 
                 <!-- Nav Item - Programs -->
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                    <a class="nav-link" href="<?= $routes->url('programs'); ?>">
                         <i class="fas fa-file-alt"></i>
                         <span><?= $lang->getTxt('navbar', 'navitem-programs'); ?></span>
                     </a>

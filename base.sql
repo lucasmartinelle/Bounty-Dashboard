@@ -51,11 +51,15 @@ CREATE TABLE `reports` (
 
 CREATE TABLE `programs` (
   `id` varchar(36) NOT NULL,
+  `creator_id` varchar(36) NOT NULL,
+  `name` varchar(200) NOT NULL,
   `scope` text NOT NULL,
+  `date` datetime NOT NULL,
   `status` varchar(5) DEFAULT 'open',
   `platform_id` varchar(36) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  UNIQUE KEY (`id`)
+  UNIQUE KEY (`id`),
+  UNIQUE KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `platforms` (

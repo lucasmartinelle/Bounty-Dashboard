@@ -5,6 +5,7 @@
     require_once("models/userHandler.php");
     require_once("models/platformHandler.php");
     require_once("models/programHandler.php");
+    require_once("models/reportHandler.php");
     require_once("utils/Validator.php");
     require_once("utils/Session.php");
     require_once("utils/Captcha.php");
@@ -20,6 +21,7 @@
     use Models\BillingHandler;
     use Models\PlatformHandler;
     use Models\ProgramHandler;
+    use Models\ReportHandler;
     use view\View;
     use app\languages\languageManager;
 
@@ -34,6 +36,7 @@
         private $_billingHandler; 
         private $_platformHandler;
         private $_programHandler;
+        private $_reportHandler;
         
         public function __construct($label, $name, $view, $template, $data){
             if($label == "platforms"){
@@ -44,6 +47,16 @@
                 $this->programs($name, $view, $template);
             } elseif($label == "scope"){
                 $this->scope();
+            } elseif($label == "reports"){
+                $this->reports($name, $view, $template);
+            } elseif($label == "deleteReport"){
+                $this->deleteReport($data);
+            } elseif($label == "createReport"){
+                $this->createReport($name, $view, $template);
+            } elseif($label == "editReport"){
+                $this->editReport($name, $view, $template, $data);
+            } elseif($label == "showReport"){
+                $this->showReport($name, $view, $template, $data);
             }
         }
 
@@ -337,13 +350,571 @@
             }
         }
 
-        private function scope(){
-            $term;
-            if(isset($_GET['term'])){
-                $term = htmlspecialchars($_GET['term'], ENT_QUOTES);
+        private function reports($name, $view, $template){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            if($_POST){
+                $this->postreport();
+            } else {
+                if($this->_session->isAuth()){
+                    $this->_reportHandler = new ReportHandler;
+                    $this->_userHandler = new UserHandler;
+                    $admin = $this->_session->isAdmin();
+                    $token = $this->_session->getToken();
+                    $reports = $this->_reportHandler->getReports();
+                    $this->_view = new View($view, $template);
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "reports" => $reports));
+                } else {
+                    header('Location: ' . $this->_routes->url('login'));
+                    exit;
+                }
             }
-            $array = array('test', 'pomme');
-            echo json_encode($array);
+        }
+
+        private function postReport(){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){
+                if($this->postDataValid($last_token)){
+                    $token = $this->_session->updateToken();
+
+                    $data = array(
+                        array("idReport", $_POST['idReport'], 'required', 'max:36'),
+                        array("status", $_POST['status'], 'required', "max:100", "equal|accepted|resolved|NA|OOS|informative")
+                    );
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseStatus'] = $response['status'];
+
+                        if($response['idReport'] == 'invalid'){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        }
+
+                        if($response['status'] == 'invalid'){
+                            $_SESSION['inputResponseStatusMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['status'] as $e){
+                                $_SESSION['inputResponseStatusMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseStatusMessage'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("reports"));
+                        exit;
+                    } else {
+                        $id = htmlspecialchars($_POST['idReport'], ENT_QUOTES);
+                        $status = htmlspecialchars($_POST['status'], ENT_QUOTES);  
+                        $this->_reportHandler = new ReportHandler;
+                        if($this->_reportHandler->updateReport(array("status" => $status), array("id" => $id))){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "status-change");
+                            $_SESSION['typeAlert'] = "success";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        }
+                    }
+                } else {
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url("reports"));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function deleteReport($data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            if($this->_session->isAuth()){
+                $this->_reportHandler = new ReportHandler;
+                $id = htmlspecialchars($data[2], ENT_QUOTES);
+                $reports = $this->_reportHandler->getReports(array("id" => $id));
+                foreach($reports as $report){
+                    if($this->_reportHandler->deleteReport(array("id" => $id))){
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "report-delete");
+                        $_SESSION['typeAlert'] = "success";
+                        header('Location: ' . $this->_routes->url('reports'));
+                        exit;
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url('reports'));
+                        exit;
+                    }
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function editReport($name, $view, $template, $data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_programHandler = new ProgramHandler;
+            $this->_reportHandler = new ReportHandler;
+            $id = htmlspecialchars($data[2], ENT_QUOTES);
+            $exist = false;
+            $reports = $this->_reportHandler->getReports(array("id" => $id));
+            foreach($reports as $report){
+                $exist = true;
+                $programs = $this->_programHandler->getPrograms();
+                if($_POST){
+                    $this->postEditReport($programs, $id, $report);
+                } else {
+                    if($this->_session->isAuth()){
+                        $admin = $this->_session->isAdmin();
+                        $token = $this->_session->getToken();
+                        $this->_view = new View($view, $template);
+                        $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "programs" => $programs, "report" => $report));
+                    } else {
+                        header('Location: ' . $this->_routes->url('login'));
+                        exit;
+                    }
+                }
+            }
+            if(!$exist){
+                $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                $_SESSION['typeAlert'] = "error";
+                header('Location: ' . $this->_routes->url('reports'));
+                exit;
+            }
+        }
+
+        private function postEditReport($programs, $id, $report){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_programHandler = new ProgramHandler;
+            $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){
+                if($this->postDataValid($last_token)){
+                    $listPrograms = "";
+                    foreach($programs as $program){
+                        $listPrograms .= $program->id() . "|";
+                    }
+                    $listPrograms = substr($listPrograms, 0, -1);
+                    $_SESSION['inputValueTitle'] = htmlspecialchars($_POST['title'], ENT_QUOTES);
+                    $_SESSION['inputValueIdentifiant'] = htmlspecialchars($_POST['identifiant'], ENT_QUOTES);
+                    $_SESSION['inputValueDate'] = htmlspecialchars($_POST['date'], ENT_QUOTES);
+                    $_SESSION['inputValueSeverity'] = htmlspecialchars($_POST['severity'], ENT_QUOTES);
+                    $_SESSION['inputValueEndpoint'] = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
+                    $_SESSION['inputValueImpact'] = htmlspecialchars($_POST['impact'], ENT_QUOTES);
+                    $_SESSION['inputValueRessources'] = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
+                    $_SESSION['inputValueStepstoreproduce'] = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
+                    $_SESSION['inputValueMitigation'] = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+
+                    $token = $this->_session->updateToken();
+
+                    $data = array(
+                        array("title", $_POST['title'], 'required', "max:200", "unique|reports|title:".$report->title()),
+                        array("identifiant", $_POST['identifiant'], 'required', 'max:200', "unique|reports|identifiant:".$report->identifiant()),
+                        array("date", $_POST['date'], 'required', 'date'),
+                        array("severity", $_POST['severity'], 'required', 'float'),
+                        array("endpoint", $_POST['endpoint'], 'required', 'text'),
+                        array("program", $_POST['program'], 'required', 'equal|'.$listPrograms),
+                        array("impact", $_POST['impact'], 'required'),
+                        array("ressources", $_POST['ressources'], 'required'),
+                        array("stepstoreproduce", $_POST['stepstoreproduce'], 'required'),
+                        array("mitigation", $_POST['mitigation'], 'required'),
+                    );
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseTitle'] = $response['title'];
+                        $_SESSION['inputResponseIdentifiant'] = $response['identifiant'];
+                        $_SESSION['inputResponseDate'] = $response['date'];
+                        $_SESSION['inputResponseSeverity'] = $response['severity'];
+                        $_SESSION['inputResponseEndpoint'] = $response['endpoint'];
+                        $_SESSION['inputResponseProgram'] = $response['program'];
+                        $_SESSION['inputResponseImpact'] = $response['impact'];
+                        $_SESSION['inputResponseRessources'] = $response['ressources'];
+                        $_SESSION['inputResponseStepstoreproduce'] = $response['stepstoreproduce'];
+                        $_SESSION['inputResponseMitigation'] = $response['mitigation'];
+
+                        if($response['title'] == 'invalid'){
+                            $_SESSION['inputResponseTitleMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['title'] as $e){
+                                $_SESSION['inputResponseTitleMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseTitleMessage'] .= "</span>";
+                        }
+
+                        if($response['identifiant'] == 'invalid'){
+                            $_SESSION['inputResponseIdentifiantMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['identifiant'] as $e){
+                                $_SESSION['inputResponseIdentifiantMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseIdentifiantMessage'] .= "</span>";
+                        }
+
+                        if($response['date'] == 'invalid'){
+                            $_SESSION['inputResponseDateMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['date'] as $e){
+                                $_SESSION['inputResponseDateMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseDateMessage'] .= "</span>";
+                        }
+
+                        if($response['severity'] == 'invalid'){
+                            $_SESSION['inputResponseSeverityMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['severity'] as $e){
+                                $_SESSION['inputResponseSeverityMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseSeverityMessage'] .= "</span>";
+                        }
+
+                        if($response['endpoint'] == 'invalid'){
+                            $_SESSION['inputResponseEndpointMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['endpoint'] as $e){
+                                $_SESSION['inputResponseEndpointMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseEndpointMessage'] .= "</span>";
+                        }
+
+                        if($response['program'] == 'invalid'){
+                            $_SESSION['inputResponseProgramMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['program'] as $e){
+                                $_SESSION['inputResponseProgramMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseProgramMessage'] .= "</span>";
+                        }
+
+                        if($response['impact'] == 'invalid'){
+                            $_SESSION['inputResponseImpactMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['impact'] as $e){
+                                $_SESSION['inputResponseImpactMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseImpactMessage'] .= "</span>";
+                        }
+
+                        if($response['ressources'] == 'invalid'){
+                            $_SESSION['inputResponseRessourcesMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['ressources'] as $e){
+                                $_SESSION['inputResponseRessourcesMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseRessourcesMessage'] .= "</span>";
+                        }
+
+                        if($response['stepstoreproduce'] == 'invalid'){
+                            $_SESSION['inputResponseStepstoreproduceMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['stepstoreproduce'] as $e){
+                                $_SESSION['inputResponseStepstoreproduceMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseStepstoreproduceMessage'] .= "</span>";
+                        }
+
+                        if($response['mitigation'] == 'invalid'){
+                            $_SESSION['inputResponseMitigationMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['mitigation'] as $e){
+                                $_SESSION['inputResponseMitigationMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseMitigationMessage'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("editReport"));
+                        exit;
+                    } else {
+                        $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
+                        $identifiant = htmlspecialchars($_POST['identifiant'], ENT_QUOTES);
+                        $date = htmlspecialchars($_POST['date'], ENT_QUOTES);
+                        $date = strtotime($date);
+                        $date = date('Y-m-d H:i:s', $date);
+                        $severity = htmlspecialchars($_POST['severity'], ENT_QUOTES);
+                        $endpoint = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
+                        $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
+                        $impact = htmlspecialchars($_POST['impact'], ENT_QUOTES);
+                        $ressources = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
+                        $stepstoreproduce = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
+                        $mitigation = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+                        $this->_reportHandler = new ReportHandler;
+                        if($this->_reportHandler->updateReport(array("title" => $title, "severity" => $severity, "endpoint" => $endpoint, "identifiant" => $identifiant, "date" => $date, "program_id" => $program, "stepstoreproduce" => $stepstoreproduce, "impact" => $impact, "mitigation" => $mitigation, "resources" => $ressources), array("id" => $id))){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "report-edit");
+                            $_SESSION['typeAlert'] = "success";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        }
+                    }
+                } else {
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url("reports"));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function showReport($name, $view, $template, $data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_programHandler = new ProgramHandler;
+            $this->_reportHandler = new ReportHandler;
+            $id = htmlspecialchars($data[2], ENT_QUOTES);
+            $exist = false;
+            $reports = $this->_reportHandler->getReports(array("id" => $id));
+            foreach($reports as $report){
+                $exist = true;
+                $programs = $this->_programHandler->getPrograms(array("id" => $report->programid()));
+                foreach($programs as $program){
+                    if($this->_session->isAuth()){
+                        $admin = $this->_session->isAdmin();
+                        $token = $this->_session->getToken();
+                        $this->_view = new View($view, $template);
+                        $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "program" => $program, "report" => $report));
+                    } else {
+                        header('Location: ' . $this->_routes->url('login'));
+                        exit;
+                    }
+                }
+            }
+            if(!$exist){
+                $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                $_SESSION['typeAlert'] = "error";
+                header('Location: ' . $this->_routes->url('reports'));
+                exit;
+            }
+        }
+
+        private function createReport($name, $view, $template){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_programHandler = new ProgramHandler;
+            $programs = $this->_programHandler->getPrograms();
+            if($_POST){
+                $this->postCreateReport($programs);
+            } else {
+                if($this->_session->isAuth()){
+                    $this->_userHandler = new UserHandler;
+                    $admin = $this->_session->isAdmin();
+                    $token = $this->_session->getToken();
+                    $this->_view = new View($view, $template);
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "programs" => $programs));
+                } else {
+                    header('Location: ' . $this->_routes->url('login'));
+                    exit;
+                }
+            }
+        }
+
+        private function postCreateReport($programs){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_programHandler = new ProgramHandler;
+            $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){
+                if($this->postDataValid($last_token)){
+                    $listPrograms = "";
+                    foreach($programs as $program){
+                        $listPrograms .= $program->id() . "|";
+                    }
+                    $listPrograms = substr($listPrograms, 0, -1);
+                    $_SESSION['inputValueTitle'] = htmlspecialchars($_POST['title'], ENT_QUOTES);
+                    $_SESSION['inputValueIdentifiant'] = htmlspecialchars($_POST['identifiant'], ENT_QUOTES);
+                    $_SESSION['inputValueDate'] = htmlspecialchars($_POST['date'], ENT_QUOTES);
+                    $_SESSION['inputValueSeverity'] = htmlspecialchars($_POST['severity'], ENT_QUOTES);
+                    $_SESSION['inputValueEndpoint'] = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
+                    $_SESSION['inputValueImpact'] = htmlspecialchars($_POST['impact'], ENT_QUOTES);
+                    $_SESSION['inputValueRessources'] = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
+                    $_SESSION['inputValueStepstoreproduce'] = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
+                    $_SESSION['inputValueMitigation'] = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+
+                    $token = $this->_session->updateToken();
+
+                    $data = array(
+                        array("title", $_POST['title'], 'required', "max:200", "unique|reports|title"),
+                        array("identifiant", $_POST['identifiant'], 'required', 'max:200', "unique|reports|identifiant"),
+                        array("date", $_POST['date'], 'required', 'date'),
+                        array("severity", $_POST['severity'], 'required', 'float'),
+                        array("endpoint", $_POST['endpoint'], 'required', 'text'),
+                        array("program", $_POST['program'], 'required', 'equal|'.$listPrograms),
+                        array("impact", $_POST['impact'], 'required'),
+                        array("ressources", $_POST['ressources'], 'required'),
+                        array("stepstoreproduce", $_POST['stepstoreproduce'], 'required'),
+                        array("mitigation", $_POST['mitigation'], 'required'),
+                    );
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseTitle'] = $response['title'];
+                        $_SESSION['inputResponseIdentifiant'] = $response['identifiant'];
+                        $_SESSION['inputResponseDate'] = $response['date'];
+                        $_SESSION['inputResponseSeverity'] = $response['severity'];
+                        $_SESSION['inputResponseEndpoint'] = $response['endpoint'];
+                        $_SESSION['inputResponseProgram'] = $response['program'];
+                        $_SESSION['inputResponseImpact'] = $response['impact'];
+                        $_SESSION['inputResponseRessources'] = $response['ressources'];
+                        $_SESSION['inputResponseStepstoreproduce'] = $response['stepstoreproduce'];
+                        $_SESSION['inputResponseMitigation'] = $response['mitigation'];
+
+                        if($response['title'] == 'invalid'){
+                            $_SESSION['inputResponseTitleMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['title'] as $e){
+                                $_SESSION['inputResponseTitleMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseTitleMessage'] .= "</span>";
+                        }
+
+                        if($response['identifiant'] == 'invalid'){
+                            $_SESSION['inputResponseIdentifiantMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['identifiant'] as $e){
+                                $_SESSION['inputResponseIdentifiantMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseIdentifiantMessage'] .= "</span>";
+                        }
+
+                        if($response['date'] == 'invalid'){
+                            $_SESSION['inputResponseDateMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['date'] as $e){
+                                $_SESSION['inputResponseDateMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseDateMessage'] .= "</span>";
+                        }
+
+                        if($response['severity'] == 'invalid'){
+                            $_SESSION['inputResponseSeverityMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['severity'] as $e){
+                                $_SESSION['inputResponseSeverityMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseSeverityMessage'] .= "</span>";
+                        }
+
+                        if($response['endpoint'] == 'invalid'){
+                            $_SESSION['inputResponseEndpointMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['endpoint'] as $e){
+                                $_SESSION['inputResponseEndpointMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseEndpointMessage'] .= "</span>";
+                        }
+
+                        if($response['program'] == 'invalid'){
+                            $_SESSION['inputResponseProgramMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['program'] as $e){
+                                $_SESSION['inputResponseProgramMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseProgramMessage'] .= "</span>";
+                        }
+
+                        if($response['impact'] == 'invalid'){
+                            $_SESSION['inputResponseImpactMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['impact'] as $e){
+                                $_SESSION['inputResponseImpactMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseImpactMessage'] .= "</span>";
+                        }
+
+                        if($response['ressources'] == 'invalid'){
+                            $_SESSION['inputResponseRessourcesMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['ressources'] as $e){
+                                $_SESSION['inputResponseRessourcesMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseRessourcesMessage'] .= "</span>";
+                        }
+
+                        if($response['stepstoreproduce'] == 'invalid'){
+                            $_SESSION['inputResponseStepstoreproduceMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['stepstoreproduce'] as $e){
+                                $_SESSION['inputResponseStepstoreproduceMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseStepstoreproduceMessage'] .= "</span>";
+                        }
+
+                        if($response['mitigation'] == 'invalid'){
+                            $_SESSION['inputResponseMitigationMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['mitigation'] as $e){
+                                $_SESSION['inputResponseMitigationMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseMitigationMessage'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("createReport"));
+                        exit;
+                    } else {
+                        $id = $this->GUIDv4();
+                        $creator_id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
+                        $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
+                        $identifiant = htmlspecialchars($_POST['identifiant'], ENT_QUOTES);
+                        $date = htmlspecialchars($_POST['date'], ENT_QUOTES);
+                        $date = strtotime($date);
+                        $date = date('Y-m-d H:i:s', $date);
+                        $severity = htmlspecialchars($_POST['severity'], ENT_QUOTES);
+                        $endpoint = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
+                        $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
+                        $impact = htmlspecialchars($_POST['impact'], ENT_QUOTES);
+                        $ressources = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
+                        $stepstoreproduce = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
+                        $mitigation = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+                        $this->_reportHandler = new ReportHandler;
+                        if($this->_reportHandler->newReport(array($id,$creator_id,$title,$severity, $date, $endpoint, $identifiant,$program,$stepstoreproduce,$impact,$mitigation,$ressources))){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "report-create");
+                            $_SESSION['typeAlert'] = "success";
+                            header('Location: ' . $this->_routes->url("createReport"));
+                            exit;
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("createReport"));
+                            exit;
+                        }
+                    }
+                } else {
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url("createReport"));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function scope(){
+            if(isset($_GET['term'])){
+                $term = htmlspecialchars($_GET['term'], ENT_QUOTES);            
+                $this->_programHandler = new ProgramHandler;
+                $array = array();
+                $programs = $this->_programHandler->getPrograms();
+                foreach($programs as $program){
+                    $scopes = explode("|", $program->scope());
+                    foreach($scopes as $scope){
+                        if(!in_array($scope,$array)){
+                            array_push($array, $scope);
+                        }
+                    }
+                }
+                echo json_encode($array);
+            } else {
+                header('Location: ' . $this->_routes->url("programs"));
+                exit;
+            }
         }
 
         

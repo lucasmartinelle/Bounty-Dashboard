@@ -7,7 +7,7 @@
 
     use PDO;
 
-    class reportHandler extends Model {
+    class ReportHandler extends Model {
 
         /* get all reports
         *
@@ -32,8 +32,25 @@
         *  return : true if report created successfuly
         *           false if report couldn't be created
         */
-        public function newReport($value){
+        public function newReport($values, $template = false){
+            $stmt;
+            if($template){
+                $stmt = 'INSERT INTO reports (`id`, `creator_id`, `title`, `severity`, `date`, `endpoint`, `identifiant`, `template_id`, `program_id`, `stepsToReproduce`, `impact`, `mitigation`, `resources`) VALUES (';
+            } else {
+                $stmt = 'INSERT INTO reports (`id`, `creator_id`, `title`, `severity`, `date`, `endpoint`, `identifiant`, `program_id`, `stepsToReproduce`, `impact`, `mitigation`, `resources`) VALUES (';
+            }
+            
+            foreach($values as $val){
+                $stmt.="'".$val . "', ";
+            }
+            $stmt = substr($stmt, 0, -2) . ')';
 
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* update report
@@ -46,7 +63,23 @@
         *           false if report couldn't be updated
         */
         public function updateReport($set, $where){
+            $stmt = "UPDATE reports SET ";
+            foreach($set as $key => $value){
+                $stmt .="`". $key . "` = '".$value."', ";
+            }
+            $stmt = substr($stmt, 0, -2);
+            $stmt .= ' WHERE ';
+            foreach($where as $key => $value){
+                $stmt .= "`". $key . "` = '".$value."' AND ";
+            }
+            $stmt = substr($stmt, 0, -5);
 
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* delete report
@@ -60,7 +93,18 @@
         *           false if report couldn't be deleted
         */
         public function deleteReport($where){
+            $stmt = "DELETE FROM reports WHERE ";
+            foreach($where as $key => $value){
+                $stmt .= "`". $key . "` = '".$value."' AND ";
+            }
+            $stmt = substr($stmt, 0, -5);
 
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* list of bugs with multiple filters

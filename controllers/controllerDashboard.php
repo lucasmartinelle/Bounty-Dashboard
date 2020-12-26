@@ -264,10 +264,10 @@
             if($this->_session->isAdmin()){
                 if($this->_session->isAuth()){
                     $this->_userHandler = new UserHandler;
+                    $id = htmlspecialchars($data[3], ENT_QUOTES);
                     $users = $this->_userHandler->getUsers(array("id" => $id));
                     foreach($users as $user){
                         if($user->role() != "admin"){
-                            $id = htmlspecialchars($data[3], ENT_QUOTES);
                             if($this->_userHandler->deleteUser(array("id" => $id))){
                                 $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "delete-user");
                                 $_SESSION['typeAlert'] = "success";

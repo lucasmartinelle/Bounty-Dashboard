@@ -216,7 +216,15 @@
 <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#dataTable').DataTable();
+        <?php if(htmlspecialchars($_COOKIE['lang']) == 'EN'): ?>
+            $('#dataTable').DataTable();
+        <?php else: ?>
+            $('#dataTable').DataTable( {
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                }
+            });
+        <?php endif; ?>
     });
 
     $(function () {

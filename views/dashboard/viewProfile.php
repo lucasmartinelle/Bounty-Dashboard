@@ -51,7 +51,7 @@
                         </div>
                         <div class="form-row justify-content-center">
                             <div class="col-md-10 mb-3 mt-2">
-                                <button class="btn btn-dark w-100" type="button" data-toggle="modal" data-target="#saveUsername"><?= $lang->getTxt($idPage, "submit"); ?></button>
+                                <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#saveUsername"><?= $lang->getTxt($idPage, "submit"); ?></button>
                             </div>
                         </div>
                         <!-- == Captcha and crsf token == -->
@@ -101,7 +101,7 @@
                         </div>
                         <div class="form-row justify-content-center">
                             <div class="col-md-10 mb-3 mt-2">
-                                <button class="btn btn-dark w-100" type="button" data-toggle="modal" data-target="#saveEmail"><?= $lang->getTxt($idPage, "submit"); ?></button>
+                                <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#saveEmail"><?= $lang->getTxt($idPage, "submit"); ?></button>
                             </div>
                         </div>
                         <!-- == Captcha and crsf token == -->
@@ -167,7 +167,7 @@
                         </div>
                         <div class="form-row justify-content-center">
                             <div class="col-md-10 mb-3 mt-2">
-                                <button class="btn btn-dark w-100" type="button" data-toggle="modal" data-target="#savePassword"><?= $lang->getTxt($idPage, "submit"); ?></button>
+                                <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#savePassword"><?= $lang->getTxt($idPage, "submit"); ?></button>
                             </div>
                         </div>
                         <!-- == Captcha and crsf token == -->
@@ -209,7 +209,7 @@
 
                         <div class="form-row justify-content-center">
                             <div class="col-md-10 mb-3 mt-2">
-                                <button class="btn btn-dark w-100" type="button" data-toggle="modal" data-target="#changeBilling"><?= $lang->getTxt($idPage, "submit"); ?></button>
+                                <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#changeBilling"><?= $lang->getTxt($idPage, "submit"); ?></button>
                             </div>
                         </div>
 

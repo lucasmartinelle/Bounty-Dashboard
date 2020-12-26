@@ -91,6 +91,16 @@
                                 $validator[$input] = 'invalid';
                                 $validator['message'][$input][] = $this->_lang->getTxt('validator', 'onlyLetter');
                             }
+                        } else if($param == "float" && !empty($value)){
+                            $float_value = explode("|", $param);
+                            $maxvalue = $float_value[1];
+                            $minvalue = $float_value[0];
+                            if(!filter_var($value, FILTER_VALIDATE_FLOAT, array('min_range' => $minvalue,
+                            'max_range' => $maxvalue))){
+                                $validator['success'] = 'false';
+                                $validator[$input] = 'invalid';
+                                $validator['message'][$input][] = $this->_lang->getTxt('validator', 'not-float');
+                            }
                         } else if (strpos($param, "min") !== false && !empty($value)){
                             $min_value = explode(":", $param);
                             if(strlen($value) < $min_value[1]){
@@ -129,12 +139,15 @@
                             }
                         } else if(strpos($param, "unique") !== false && !empty($value)){
                             $dt = explode("|", $param);
+                            $ignore = explode(":", $param)[1];
                             $table = $dt[1];
-                            $column = $dt[2];
-                            if(!$this->unique($table, htmlspecialchars($value, ENT_QUOTES), $column)){
-                                $validator['success'] = 'false';
-                                $validator[$input] = 'invalid';
-                                $validator['unique'][$input] = 'false';
+                            $column = explode(":",$dt[2])[0];
+                            if($value != $ignore){
+                                if(!$this->unique($table, htmlspecialchars($value, ENT_QUOTES), $column)){
+                                    $validator['success'] = 'false';
+                                    $validator[$input] = 'invalid';
+                                    $validator['unique'][$input] = 'false';
+                                }
                             }
                         } else if(strpos($param, "exist") !== false && !empty($value)){
                             $dt = explode("|", $param);

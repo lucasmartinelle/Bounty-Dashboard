@@ -49,7 +49,40 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
+
+    <div class="card card-listuser shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-list-programs"); ?></h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th><?= $lang->getTxt($idPage, "name-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "gain-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "scope-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "tags-table"); ?></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th><?= $lang->getTxt($idPage, "name-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "gain-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "scope-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "tags-table"); ?></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="createProgram" tabindex="-1" role="dialog" aria-labelledby="#createProgramLabel" aria-hidden="true">
@@ -164,7 +197,9 @@
     ob_start();
 ?>
 
+<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
 <link href="<?= $asset ?>dist/datepicker.css" rel="stylesheet">
+
 <?php
     $css = ob_get_clean();
     ob_start();
@@ -172,6 +207,11 @@
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" 
 crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 <script src="<?= $asset ?>dist/datepicker.js"></script>
 
 <script type="text/javascript">
@@ -180,6 +220,15 @@ crossorigin="anonymous"></script>
     });
 
     $( document ).ready(function() {
+        <?php if(htmlspecialchars($_COOKIE['lang']) == 'EN'): ?>
+            $('#dataTable').DataTable();
+        <?php else: ?>
+            $('#dataTable').DataTable( {
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                }
+            });
+        <?php endif; ?>
         var scope = $("#scopehide").val();
         var arr = scope.split('|');
         $.each( arr, function( index, value ) {

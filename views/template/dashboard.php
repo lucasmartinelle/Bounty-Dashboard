@@ -29,7 +29,7 @@
         <div id="wrapper">
 
             <!-- Sidebar -->
-            <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" >
+            <ul class="navbar-nav sidebar bg-gradient-primary sidebar-dark accordion" id="accordionSidebar" >
 
                 <!-- Sidebar - Brand -->
                 <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= $routes->url(DEFAULT_PAGE); ?>">
@@ -68,7 +68,7 @@
 
                 <!-- Nav Item - Reports -->
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                    <a class="nav-link" href="<?= $routes->url('reports'); ?>">
                         <i class="fas fa-bug"></i>
                         <span><?= $lang->getTxt('navbar', 'navitem-reports'); ?></span>
                     </a>

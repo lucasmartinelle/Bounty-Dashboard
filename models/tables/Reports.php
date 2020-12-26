@@ -7,7 +7,9 @@
         private $_creator_id;
         private $_title;
         private $_severity;
+        private $_date;
         private $_endpoint;
+        private $_identifiant;
         private $_template_id;
         private $_program_id;
         private $_stepsToReproduce;
@@ -53,19 +55,40 @@
         }
 
         private function setSeverity($severity){
-            $severity = (float) $severity;
-
-            $split_severity = explode(",",$severity);
-            $reel = (int) $split_severity[0];
-            $decimal = (int) $split_severity[1];
-            if(count($split_severity) == 2 && ($reel >= 0 && $reel <= 100) && ($decimal >= 0 && $decimal <= 99999)){
-                $this->_severity = $severity;
+            $split_severity = explode(".",$severity);
+            if(count($split_severity) == 1){
+                $reel = (int) $split_severity[0];
+                if($reel >= 0 && $reel <= 99){
+                    $this->_severity = $severity;
+                }
+            } else {
+                $reel = (int) $split_severity[0];
+                $decimal = (int) $split_severity[1];
+                if(count($split_severity) == 2 && ($reel >= 0 && $reel <= 100) && ($decimal >= 0 && $decimal <= 99999)){
+                    $this->_severity = $severity;
+                }
             }
+        }
+
+        private function setDate($date){
+            $this->_date = $date;
         }
 
         private function setEndpoint($endpoint){
             if(is_string($endpoint)){
                 $this->_endpoint = $endpoint;
+            }
+        }
+
+        private function setIdentifiant($identifiant){
+            if(is_string($identifiant) && (strlen($identifiant) > 0 && strlen($identifiant) <= 200)){
+                $this->_identifiant = $identifiant;
+            }
+        }
+
+        private function setStatus($status){
+            if(is_string($status) && (strlen($status) > 0 && strlen($status) <= 100)){
+                $this->_status = $status;
             }
         }
 
@@ -122,8 +145,20 @@
             return $this->_severity;
         }
 
+        public function date(){
+            return $this->_date;
+        }
+
         public function endpoint(){
             return $this->_endpoint;
+        }
+
+        public function identifiant(){
+            return $this->_identifiant;
+        }
+
+        public function status(){
+            return $this->_status;
         }
 
         public function templateid(){

@@ -49,6 +49,8 @@
                 $this->scope();
             } elseif($label == "reports"){
                 $this->reports($name, $view, $template);
+            } elseif($label == "filterReports"){
+                $this->filterReports($name, $view, $template);
             } elseif($label == "deleteReport"){
                 $this->deleteReport($data);
             } elseif($label == "createReport"){
@@ -359,11 +361,15 @@
                 if($this->_session->isAuth()){
                     $this->_reportHandler = new ReportHandler;
                     $this->_userHandler = new UserHandler;
+                    $this->_programHandler = new ProgramHandler;
+                    $this->_platformHandler = new platformHandler;
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
                     $reports = $this->_reportHandler->getReports();
+                    $programs = $this->_programHandler->getPrograms();
+                    $platforms = $this->_platformHandler->getPlatforms();
                     $this->_view = new View($view, $template);
-                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "reports" => $reports));
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "reports" => $reports, "programs" => $programs, "platforms" => $platforms));
                 } else {
                     header('Location: ' . $this->_routes->url('login'));
                     exit;
@@ -433,6 +439,142 @@
             } else {
                 header('Location: ' . $this->_routes->url('login'));
                 exit;
+            }
+        }
+
+        private function filterReports($name, $view, $template){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            if(!$_POST){
+                header('Location: ' . $this->_routes->url("reports"));
+                exit;
+            } else {
+                $this->_lang = new languageManager;
+                $last_token = $this->_session->getToken();
+                if($this->_session->isAuth()){
+                    if($this->postDataValid($last_token)){
+                        $token = $this->_session->updateToken();
+                        $this->_programHandler = new ProgramHandler;
+                        $programs = $this->_programHandler->getPrograms();
+                        $this->_platformHandler = new platformHandler;
+                        $platforms = $this->_platformHandler->getPlatforms();
+
+                        $listPrograms = "";
+                        foreach($programs as $program){
+                            $listPrograms .= $program->id() . "|";
+                        }
+                        $listPrograms = substr($listPrograms, 0, -1);
+
+                        $listPlatforms = "";
+                        foreach($platforms as $platform){
+                            $listPlatforms .= $platform->id() . "|";
+                        }
+                        $listPlatforms = substr($listPlatforms, 0, -1);
+
+                        $data = array(
+                            array("program", $_POST['program'], 'equal|'.$listPrograms),
+                            array("platform", $_POST['platform'], 'equal|'.$listPlatforms),
+                            array("status2", $_POST['status2'], "max:100", "equal|new|accepted|resolved|NA|OOS|informative"),
+                            array("severitymin", $_POST['severitymin'], 'float'),
+                            array("severitymax", $_POST['severitymax'], 'float')
+                        );
+
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
+
+                        if($response['success'] == 'false'){
+                            $_SESSION['inputResponseProgram'] = $response['program'];
+                            $_SESSION['inputResponsePlatform'] = $response['platform'];
+                            $_SESSION['inputResponseStatus2'] = $response['status2'];
+                            $_SESSION['inputResponseSeveritymin'] = $response['severitymin'];
+                            $_SESSION['inputResponseSeveritymax'] = $response['severitymax'];
+
+                            if($response['program'] == 'invalid'){
+                                $_SESSION['inputResponseProgramMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['program'] as $e){
+                                    $_SESSION['inputResponseProgramMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseProgramMessage'] .= "</span>";
+                            }
+
+                            if($response['platform'] == 'invalid'){
+                                $_SESSION['inputResponsePlatformMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['platform'] as $e){
+                                    $_SESSION['inputResponsePlatformMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponsePlatformMessage'] .= "</span>";
+                            }
+
+                            if($response['status2'] == 'invalid'){
+                                $_SESSION['inputResponseStatusMessage2'] = "<span class='text-danger'>";
+                                foreach($response['message']['status2'] as $e){
+                                    $_SESSION['inputResponseStatusMessage2'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseStatusMessage2'] .= "</span>";
+                            }
+
+                            if($response['severitymin'] == 'invalid'){
+                                $_SESSION['inputResponseSeverityminMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['severitymin'] as $e){
+                                    $_SESSION['inputResponseSeverityminMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseSeverityminMessage'] .= "</span>";
+                            }
+
+                            if($response['severitymax'] == 'invalid'){
+                                $_SESSION['inputResponseSeveritymaxMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['severitymax'] as $e){
+                                    $_SESSION['inputResponseSeveritymaxMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseSeveritymaxMessage'] .= "</span>";
+                            }
+                            
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        } else {
+                            $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
+                            if(empty($program) || !isset($program)){
+                                $program = null;
+                            }
+                            $platform = htmlspecialchars($_POST['platform'], ENT_QUOTES);
+                            if(empty($platform) || !isset($platform)){
+                                $platform = null;
+                            }
+                            $status = htmlspecialchars($_POST['status2'], ENT_QUOTES);
+                            if(empty($status) || !isset($status)){
+                                $status = null;
+                            }
+                            $severitymin = htmlspecialchars($_POST['severitymin'], ENT_QUOTES);
+                            if(empty($severitymin) || !isset($severitymin)){
+                                $severitymin = null;
+                            }
+                            $severitymax = htmlspecialchars($_POST['severitymax'], ENT_QUOTES);
+                            if(empty($severitymax) || !isset($severitymax)){
+                                $severitymax = null;
+                            }
+                            $this->_reportHandler = new ReportHandler;
+                            $reports = $this->_reportHandler->bugs(false, $program, $platform, $status, $severitymin, $severitymax);
+
+                            $this->_userHandler = new UserHandler;
+                            $this->_programHandler = new ProgramHandler;
+                            $this->_platformHandler = new platformHandler;
+                            $admin = $this->_session->isAdmin();
+                            $token = $this->_session->getToken();
+                            $programs = $this->_programHandler->getPrograms();
+                            $platforms = $this->_platformHandler->getPlatforms();
+                            $this->_view = new View($view, $template);
+                            $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "reports" => $reports, "programs" => $programs, "platforms" => $platforms));
+                        }
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("reports"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url('login'));
+                    exit;
+                }
             }
         }
 

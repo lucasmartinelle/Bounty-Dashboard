@@ -207,13 +207,22 @@
         "action-edit" : "Edit",
         "action-delete" : "Delete",
         "change-status" : "Change status",
+        "status-new" : "New",
         "status-accepted" : "Accepted",
         "status-resolved" : "Resolved",
         "status-NA" : "NA",
         "status-OOS" : "OOS",
         "status-informative" : "Informative",
+        "filters" : "filters",
+        "apply-filter" : "Apply a filter",
+        "filter-program-header" : "Program",
+        "filter-platform-header" : "Platform",
+        "filter-status-header" : "Status",
+        "severitymin-placeholder" : "Severity min (CVSS Scale)",
+        "severitymax-placeholder" : "Severity max (CVSS Scale)",
+        "invalid-input" : "Invalid input",
         "modal-nav-close" : "Close",
-        "modal-nav-confirm" : "Change"
+        "modal-nav-confirm" : "Confirm"
     },
     "createReport" : {
         "header" : "Create a report",

@@ -39,7 +39,10 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-list-reports"); ?></h6>
+            <div class="d-flex justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-list-reports"); ?></h6>
+                <h6 class="m-0"><span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#filters"><?= $lang->getTxt($idPage, "filters"); ?> <i class="fas fa-sort-down ml-2"></i></span></h6>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -137,6 +140,95 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="filters" tabindex="-1" role="dialog" aria-labelledby="#filtersLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtersLabel"><?= $lang->getTxt($idPage, "apply-filter"); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" class="eventForm" action="<?= $routes->url("filterReports"); ?>">
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <select class="form-control <?php if(isset($_SESSION['inputResponseProgram']) && !empty($_SESSION['inputResponseProgram'])){ echo htmlspecialchars($_SESSION['inputResponseProgram'], ENT_QUOTES); } ?>" id="program" name="program">
+                                    <option hidden selected value=""><?= $lang->getTxt($idPage, "filter-program-header"); ?></option>
+                                    <?php foreach($programs as $program): ?>
+                                        <option value="<?= $program->id(); ?>"><?= $program->name(); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseProgram']) && !empty($_SESSION['inputResponseProgram']) && $_SESSION['inputResponseProgram'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseProgramMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseProgram'] = ''; $_SESSION['inputResponseProgramMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <select class="form-control <?php if(isset($_SESSION['inputResponsePlatform']) && !empty($_SESSION['inputResponsePlatform'])){ echo htmlspecialchars($_SESSION['inputResponsePlatform'], ENT_QUOTES); } ?>" id="platform" name="platform">
+                                    <option hidden selected value=""><?= $lang->getTxt($idPage, "filter-platform-header"); ?></option>
+                                    <?php foreach($platforms as $platform): ?>
+                                        <option value="<?= $platform->id(); ?>"><?= $platform->name(); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponsePlatform']) && !empty($_SESSION['inputResponsePlatform']) && $_SESSION['inputResponsePlatform'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponsePlatformMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponsePlatform'] = ''; $_SESSION['inputResponsePlatformMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <select class="form-control <?php if(isset($_SESSION['inputResponseStatus2']) && !empty($_SESSION['inputResponseStatus2'])){ echo htmlspecialchars($_SESSION['inputResponseStatus2'], ENT_QUOTES); } ?>" id="status2" name="status2">
+                                    <option hidden selected value=""><?= $lang->getTxt($idPage, "filter-status-header"); ?></option>
+                                    <option value="new"><?= $lang->getTxt($idPage, "status-new"); ?></option>
+                                    <option value="accepted"><?= $lang->getTxt($idPage, "status-accepted"); ?></option>
+                                    <option value="resolved"><?= $lang->getTxt($idPage, "status-resolved"); ?></option>
+                                    <option value="NA"><?= $lang->getTxt($idPage, "status-NA"); ?></option>
+                                    <option value="OOS"><?= $lang->getTxt($idPage, "status-OOS"); ?></option>
+                                    <option value="informative"><?= $lang->getTxt($idPage, "status-informative"); ?></option>
+                                </select>
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseStatus2']) && !empty($_SESSION['inputResponseStatus2']) && $_SESSION['inputResponseStatus2'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseStatusMessage2'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseStatus2'] = ''; $_SESSION['inputResponseStatusMessage2'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                <input type="text" name="severitymin" id="severitymin" class="form-control <?php if(isset($_SESSION['inputResponseSeveritymin']) && !empty($_SESSION['inputResponseSeveritymin'])){ echo htmlspecialchars($_SESSION['inputResponseSeveritymin'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "severitymin-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueSeveritymin']) && !empty($_SESSION['inputValueSeveritymin'])){ echo htmlspecialchars($_SESSION['inputValueSeveritymin'], ENT_QUOTES); $_SESSION['inputValueSeveritymin'] = ''; } ?>">
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseSeveritymin']) && !empty($_SESSION['inputResponseSeveritymin']) && $_SESSION['inputResponseSeveritymin'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseSeverityminMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseSeveritymin'] = ''; $_SESSION['inputResponseSeverityminMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                <input type="text" name="severitymax" id="severitymax" class="form-control <?php if(isset($_SESSION['inputResponseSeveritymax']) && !empty($_SESSION['inputResponseSeveritymax'])){ echo htmlspecialchars($_SESSION['inputResponseSeveritymax'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "severitymax-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueSeveritymax']) && !empty($_SESSION['inputValueSeveritymax'])){ echo htmlspecialchars($_SESSION['inputValueSeveritymax'], ENT_QUOTES); $_SESSION['inputValueSeveritymax'] = ''; } ?>">
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseSeveritymax']) && !empty($_SESSION['inputResponseSeveritymax']) && $_SESSION['inputResponseSeveritymax'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseSeveritymaxMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseSeveritymax'] = ''; $_SESSION['inputResponseSeveritymaxMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                    <input type="hidden" id="token" name="token" value="<?= $token ?>">
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 <?php 
     $content = ob_get_clean();
     ob_start();
@@ -177,6 +269,7 @@ crossorigin="anonymous"></script>
         grecaptcha.ready(function() {
             grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
                 document.getElementById('g-recaptcha-response').value = token;
+                document.getElementById('g-recaptcha-response-2').value = token;
             });
         });
     });

@@ -207,11 +207,20 @@
         "action-edit" : "Modifier",
         "action-delete" : "Supprimer",
         "change-status" : "Changer de statut",
+        "status-new" : "Nouveau",
         "statut-accepted" : "Accepté",
         "status-resolved" : "Résolu",
         "status-NA" : "NA",
         "status-OOS" : "OOS",
         "statut-informative" : "Informatif",
+        "filters" : "filtres",
+        "apply-filter" : "Appliquer un filtre",
+        "filter-program-header" : "Programme",
+        "filter-platform-header" : "Platforme",
+        "filter-status-header" : "Statut",
+        "severitymin-placeholder" : "Sévérité minimale (échelle CVSS)",
+        "severitymax-placeholder" : "Sévérité maximale (échelle CVSS)",
+        "invalid-input" : "Champ invalide",
         "modal-nav-close" : "Fermer",
         "modal-nav-confirm" : "Changer"
     },
@@ -262,5 +271,5 @@
         "program-placeholder" : "Programme",
         "invalid-input" : "Champ invalide",
         "submit" : "Créer"
-    },
+    }
 }

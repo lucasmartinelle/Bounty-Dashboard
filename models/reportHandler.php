@@ -2,7 +2,9 @@
     namespace Models;
 
     require_once("models/Model.php");
+    require_once("models/tables/Reports.php");
 
+    use Model\Tables\Reports;
     use Models\Model;
 
     use PDO;
@@ -114,7 +116,7 @@
         *
         *  return : The amount of bugs in relation to the filter
         */
-        public function bugs($count = false, $platform = null, $program = null, $severity = null, $status = null){
+        public function bugs($count = false, $program = null, $platform = null, $status = null, $severitymin = null, $severitymax = null){
             $stmt = '';
 
             if($count){
@@ -138,29 +140,38 @@
                     $join .= ' JOIN platforms AS Pf ON Pg.platform_id = Pf.id';
                     $addPlatform = true;
                 }
-                $where .= ' Pf.id = ' . $platform . ' AND';
+                $where .= " Pf.id = '" . $platform . "' AND";
             }
 
             if($program != null){
                 if(!$addProgram){
                     $join .= ' JOIN programs AS Pg ON reports.program_id = Pg.id';
                 }
-                $where .= ' Pg.id = ' . $program . ' AND';
-            }
-
-            if($severity != null){
-                if($platform == null && $programm == null){
-                    $where .= ' severity = ' . $severity . ' AND';
-                } else {
-                    $where .= ' reports.severity = ' . $severity . ' AND';
-                }
+                $where .= " Pg.id = '" . $program . "' AND";
             }
 
             if($status != null){
-                if($platform == null && $programm == null){
-                    $where .= ' status = ' . $status . ' AND';
+                if($platform == null && $program == null){
+                    $where .= " status = '" . $status . "' AND";
                 } else {
-                    $where .= ' reports.status = ' . $status . ' AND';
+                    $where .= " reports.status = '" . $status . "' AND";
+                }
+            }
+
+            if($severitymin != null){
+                if($platform == null && $program == null){
+                    $where .= ' severity > ' . $severitymin . ' AND';
+                } else {
+                    $where .= ' reports.severity > ' . $severitymin . ' AND';
+                }
+            }
+
+            
+            if($severitymax != null){
+                if($platform == null && $program == null){
+                    $where .= ' severity < ' . $severitymax . ' AND';
+                } else {
+                    $where .= ' reports.severity < ' . $severitymax . ' AND';
                 }
             }
             
@@ -171,6 +182,16 @@
             }
 
             $stmt .= $join . $where;
+            $var = array();
+            $req = $this->statement($stmt);
+            if($count){
+                return $req->fetch(PDO::FETCH_ASSOC)['count(*)'];
+            } else {
+                while($data = $req->fetch(PDO::FETCH_ASSOC)){
+                    $var[] = new Reports($data);
+                }
+                return $var;
+            }
         }
     }
 ?>

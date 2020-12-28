@@ -258,6 +258,8 @@
     },
     "showReport" : {
         "header" : "Edit a report",
+        "generate-report-html" : "Export PDF",
+        "generate-report-markdown" : "Export Markdown",
         "header-show-report" : "Basic informations",
         "header-steps-to-reproduce" : "Steps to reproduce",
         "header-impact" : "Impact",

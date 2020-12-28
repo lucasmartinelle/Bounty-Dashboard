@@ -59,6 +59,8 @@
                 $this->editReport($name, $view, $template, $data);
             } elseif($label == "showReport"){
                 $this->showReport($name, $view, $template, $data);
+            } elseif($label == "generateMarkdown"){
+                $this->generateMarkdown();
             }
         }
 
@@ -842,6 +844,93 @@
             }
         }
 
+        private function generateMarkdown(){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_programHandler = new ProgramHandler;
+            $this->_lang = new languageManager;
+            $programs = $this->_programHandler->getPrograms();
+            $listPrograms = "";
+            foreach($programs as $program){
+                $listPrograms .= $program->id() . "|";
+            }
+            $listPrograms = substr($listPrograms, 0, -1);
+            $data = array(
+                array("title", $_POST['title'], 'required', "max:200"),
+                array("date", $_POST['date'], 'required', 'date'),
+                array("severity", $_POST['severity'], 'required', 'float|0.0|10.0'),
+                array("endpoint", $_POST['endpoint'], 'required', 'text'),
+                array("program", $_POST['program'], 'required', 'equal|'.$listPrograms),
+                array("impact", $_POST['impact'], 'required'),
+                array("ressources", $_POST['ressources'], 'required'),
+                array("stepstoreproduce", $_POST['stepstoreproduce'], 'required'),
+                array("mitigation", $_POST['mitigation'], 'required'),
+            );
+
+            $this->_validator = new Validator();
+            $response = $this->_validator->validator($data);
+
+            if($response['success'] == 'true'){
+                $id = $this->GUIDv4();
+                $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
+                $date = htmlspecialchars($_POST['date'], ENT_QUOTES);
+                $severity = htmlspecialchars($_POST['severity'], ENT_QUOTES);
+                $endpoint = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
+                $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
+                $impact = htmlspecialchars($_POST['impact'], ENT_QUOTES);
+                $ressources = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
+                $stepstoreproduce = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
+                $mitigation = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+
+                $markdown = '# '.$title.'
+
+---
+
+**date**: '.$date.'
+
+**severity (CVSS Scale)**: '.$severity.'
+
+**endpoint**: '.$endpoint.'
+
+**program**: '.$program.'
+
+---
+
+## Impact
+
+'.$impact.'
+
+---
+
+## Steps to reproduce
+
+'.$stepstoreproduce.'
+
+---
+
+## Ressources
+
+'.$ressources.'
+
+---
+
+## Mitigation
+
+'.$mitigation . '
+
+---';
+
+                $newName = bin2hex(openssl_random_pseudo_bytes(5));
+                $path = WEBSITE_PATH."assets/markdown/".$newName.".md";
+                $myfile = fopen($path, "w") or die("Unable to open file!");
+                fwrite($myfile, $markdown);
+                fclose($myfile);
+                echo $newName;
+            } else {
+                echo 'invalid';
+            }
+        }
+
         private function createReport($name, $view, $template){
             $this->_session = new Session;
             $this->_routes = new Routes;
@@ -892,7 +981,7 @@
                         array("title", $_POST['title'], 'required', "max:200", "unique|reports|title"),
                         array("identifiant", $_POST['identifiant'], 'required', 'max:200', "unique|reports|identifiant"),
                         array("date", $_POST['date'], 'required', 'date'),
-                        array("severity", $_POST['severity'], 'required', 'float'),
+                        array("severity", $_POST['severity'], 'required', 'float|0.0|10.0'),
                         array("endpoint", $_POST['endpoint'], 'required', 'text'),
                         array("program", $_POST['program'], 'required', 'equal|'.$listPrograms),
                         array("impact", $_POST['impact'], 'required'),

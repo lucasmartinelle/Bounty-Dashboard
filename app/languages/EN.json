@@ -111,7 +111,10 @@
         "report-edit" : "You have edited a report.",
         "status-change" : "You have changed the status of a report.",
         "report-delete" : "You have deleted a report.",
-        "gain-change" : "You have modified the gains of the report."
+        "gain-change" : "You have modified the gains of the report.",
+        "template-create" : "You have created a new template.",
+        "template-delete" : "You have deleted a template.",
+        "template-edit" : "You have edited a template."
     },
     "dashboard" : {
         "content-header" : "Blank Page"
@@ -271,7 +274,7 @@
         "submit" : "Update"
     },
     "showReport" : {
-        "header" : "Edit a report",
+        "header" : "Watch a report",
         "generate-report-html" : "Export PDF",
         "generate-report-markdown" : "Export Markdown",
         "header-show-report" : "Basic informations",
@@ -285,7 +288,63 @@
         "severity-placeholder" : "Severity (CVSS scale)",
         "endpoint-placeholder" : "Endpoint",
         "program-placeholder" : "Program",
+    },
+    "templates" : {
+        "header" : "Templates",
+        "header-list-templates" : "List of templates",
+        "add-template": "Add a template",
+        "title-table" : "Title",
+        "severity-table" : "Severity",
+        "endpoint-table" : "Endpoint",
+        "description-table" : "Description",
+        "action-table" : "Action",
+        "action-view" : "View",
+        "action-edit" : "Edit",
+        "action-delete" : "Delete",
+        "invalid-input" : "Invalid input",
+        "delete-template" : "Delete a template",
+        "confirmation-delete-template" : "Are you sure you want to delete this template ?",
+        "modal-nav-close" : "Close",
+        "modal-nav-confirm" : "Confirm"
+    },
+    "createTemplate" : {
+        "header" : "Create a template",
+        "header-create-template" : "Basic informations",
+        "header-steps-to-reproduce" : "Steps to reproduce",
+        "header-impact" : "Impact",
+        "header-mitigation" : "Mitigation",
+        "header-ressources" : "Ressources",
+        "title-placeholder" : "Title",
+        "severity-placeholder" : "Severity (CVSS scale)",
+        "endpoint-placeholder" : "Endpoint",
+        "description-placeholder" : "Description",
+        "invalid-input" : "Invalid input",
+        "submit" : "Submit"
+    },
+    "editTemplate" : {
+        "header" : "Edit a template",
+        "header-edit-template" : "Basic informations",
+        "header-steps-to-reproduce" : "Steps to reproduce",
+        "header-impact" : "Impact",
+        "header-mitigation" : "Mitigation",
+        "header-ressources" : "Ressources",
+        "title-placeholder" : "Title",
+        "severity-placeholder" : "Severity (CVSS scale)",
+        "endpoint-placeholder" : "Endpoint",
+        "description-placeholder" : "Description",
         "invalid-input" : "Invalid input",
         "submit" : "Update"
+    },
+    "showTemplate" : {
+        "header" : "Watch a template",
+        "header-show-report" : "Basic informations",
+        "header-steps-to-reproduce" : "Steps to reproduce",
+        "header-impact" : "Impact",
+        "header-mitigation" : "Mitigation",
+        "header-ressources" : "Ressources",
+        "title-placeholder" : "Title",
+        "description-placeholder" : "Description",
+        "severity-placeholder" : "Severity (CVSS scale)",
+        "endpoint-placeholder" : "Endpoint"
     }
 }

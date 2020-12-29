@@ -21,6 +21,7 @@ CREATE TABLE `templates` (
   `id` varchar(36) NOT NULL,
   `creator_id` varchar(36) NOT NULL,
   `title` varchar(200) NOT NULL,
+  `description` text NOT NULL,
   `severity` float(8,5) NOT NULL,
   `endpoint` text NOT NULL,
   `stepsToReproduce` longtext NOT NULL,

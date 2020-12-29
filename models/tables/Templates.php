@@ -6,6 +6,7 @@
         private $_id;
         private $_creator_id;
         private $_title;
+        private $_description;
         private $_severity;
         private $_endpoint;
         private $_stepsToReproduce;
@@ -50,14 +51,25 @@
             }
         }
 
-        private function setSeverity($severity){
-            $severity = (float) $severity;
+        private function setDescription($description){
+            if(is_string($description)){
+                $this->_description = $description;
+            }
+        }
 
-            $split_severity = explode(",",$severity);
-            $reel = (int) $split_severity[0];
-            $decimal = (int) $split_severity[1];
-            if(count($split_severity) == 2 && ($reel >= 0 && $reel <= 100) && ($decimal >= 0 && $decimal <= 99999)){
-                $this->_severity = $severity;
+        private function setSeverity($severity){
+            $split_severity = explode(".",$severity);
+            if(count($split_severity) == 1){
+                $reel = (int) $split_severity[0];
+                if($reel >= 0 && $reel <= 99){
+                    $this->_severity = $severity;
+                }
+            } else {
+                $reel = (int) $split_severity[0];
+                $decimal = (int) $split_severity[1];
+                if(count($split_severity) == 2 && ($reel >= 0 && $reel <= 100) && ($decimal >= 0 && $decimal <= 99999)){
+                    $this->_severity = $severity;
+                }
             }
         }
 
@@ -102,6 +114,10 @@
 
         public function title(){
             return $this->_title;
+        }
+
+        public function description(){
+            return $this->_description;
         }
 
         public function severity(){

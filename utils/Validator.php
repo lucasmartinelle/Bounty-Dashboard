@@ -91,12 +91,11 @@
                                 $validator[$input] = 'invalid';
                                 $validator['message'][$input][] = $this->_lang->getTxt('validator', 'onlyLetter');
                             }
-                        } else if($param == "float" && !empty($value)){
+                        } else if(strpos($param, "float") !== false && !empty($value)){
                             $float_value = explode("|", $param);
-                            $maxvalue = $float_value[1];
-                            $minvalue = $float_value[0];
-                            if(!filter_var($value, FILTER_VALIDATE_FLOAT, array('min_range' => $minvalue,
-                            'max_range' => $maxvalue))){
+                            $maxvalue = $float_value[2];
+                            $minvalue = $float_value[1];
+                            if(!filter_var($value, FILTER_VALIDATE_FLOAT) || (float) $value < (float) $minvalue || (float) $value > (float) $maxvalue){
                                 $validator['success'] = 'false';
                                 $validator[$input] = 'invalid';
                                 $validator['message'][$input][] = $this->_lang->getTxt('validator', 'not-float');

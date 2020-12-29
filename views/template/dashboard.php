@@ -76,7 +76,7 @@
 
                 <!-- Nav Item - Templates -->
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                    <a class="nav-link" href="<?= $routes->url('templates'); ?>">
                         <i class="fas fa-clipboard"></i>
                         <span><?= $lang->getTxt('navbar', 'navitem-templates'); ?></span>
                     </a>

@@ -12,8 +12,8 @@
     $session = new Session;
     $lang = new languageManager;
 
-    $asset = "../assets/";
-    $idPage = "createReport";
+    $asset = "../../assets/";
+    $idPage = "editTemplate";
     ob_start();
 ?>
     <!-- == Global alert == -->
@@ -36,12 +36,12 @@
                 <div class="col-md-6">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-create-report"); ?></h6>
+                            <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-edit-template"); ?></h6>
                         </div>
                         <div class="card-body">
                             <div class="form-row justify-content-center">
                                 <div class="col-md-10 mb-3 mt-1">
-                                    <input type="text" name="title" class="form-control <?php if(isset($_SESSION['inputResponseTitle']) && !empty($_SESSION['inputResponseTitle'])){ echo htmlspecialchars($_SESSION['inputResponseTitle'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValueTitle']) && !empty($_SESSION['inputValueTitle'])){ echo htmlspecialchars($_SESSION['inputValueTitle'], ENT_QUOTES); $_SESSION['inputValueTitle'] = ''; } ?>" id="title" placeholder="<?= $lang->getTxt($idPage, "title-placeholder"); ?>">
+                                    <input type="text" name="title" class="form-control <?php if(isset($_SESSION['inputResponseTitle']) && !empty($_SESSION['inputResponseTitle'])){ echo htmlspecialchars($_SESSION['inputResponseTitle'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValueTitle']) && !empty($_SESSION['inputValueTitle'])){ echo htmlspecialchars($_SESSION['inputValueTitle'], ENT_QUOTES); $_SESSION['inputValueTitle'] = ''; } else { echo $template->title(); } ?>" id="title" placeholder="<?= $lang->getTxt($idPage, "title-placeholder"); ?>">
                                     <!-- == If validation failed == -->
                                     <?php if(isset($_SESSION['inputResponseTitle']) && !empty($_SESSION['inputResponseTitle']) && $_SESSION['inputResponseTitle'] == 'invalid'): ?>
                                         <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseTitleMessage'], ENT_QUOTES); ?>"></i></span>
@@ -49,26 +49,8 @@
                                 </div>
                             </div>
                             <div class="form-row justify-content-center">
-                                <div class="col-md-10 mb-3 mt-1">
-                                    <input type="text" name="identifiant" class="form-control <?php if(isset($_SESSION['inputResponseIdentifiant']) && !empty($_SESSION['inputResponseIdentifiant'])){ echo htmlspecialchars($_SESSION['inputResponseIdentifiant'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValueIdentifiant']) && !empty($_SESSION['inputValueIdentifiant'])){ echo htmlspecialchars($_SESSION['inputValueIdentifiant'], ENT_QUOTES); $_SESSION['inputValueIdentifiant'] = ''; } ?>" id="identifiant" placeholder="<?= $lang->getTxt($idPage, "identifiant-placeholder"); ?>">
-                                    <!-- == If validation failed == -->
-                                    <?php if(isset($_SESSION['inputResponseIdentifiant']) && !empty($_SESSION['inputResponseIdentifiant']) && $_SESSION['inputResponseIdentifiant'] == 'invalid'): ?>
-                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseIdentifiantMessage'], ENT_QUOTES); ?>"></i></span>
-                                    <?php endif; $_SESSION['inputResponseIdentifiant'] = ''; $_SESSION['inputResponseIdentifiantMessage'] = ''; ?> <!-- End of validation failed -->
-                                </div>
-                            </div>
-                            <div class="form-row justify-content-center">
                                 <div class="col-md-10 mb-3 mt-2">
-                                    <input type="text" name="date" id="datepicker" data-toggle="datepicker" class="form-control <?php if(isset($_SESSION['inputResponseDate']) && !empty($_SESSION['inputResponseDate'])){ echo htmlspecialchars($_SESSION['inputResponseDate'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "date-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueDate']) && !empty($_SESSION['inputValueDate'])){ echo htmlspecialchars($_SESSION['inputValueDate'], ENT_QUOTES); $_SESSION['inputValueDate'] = ''; } ?>">
-                                    <!-- == If validation failed == -->
-                                    <?php if(isset($_SESSION['inputResponseDate']) && !empty($_SESSION['inputResponseDate']) && $_SESSION['inputResponseDate'] == 'invalid'): ?>
-                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseDateMessage'], ENT_QUOTES); ?>"></i></span>
-                                    <?php endif; $_SESSION['inputResponseDate'] = ''; $_SESSION['inputResponseDateMessage'] = ''; ?> <!-- End of validation failed -->
-                                </div>
-                            </div>
-                            <div class="form-row justify-content-center">
-                                <div class="col-md-10 mb-3 mt-2">
-                                    <input type="text" name="severity" id="severity" class="form-control <?php if(isset($_SESSION['inputResponseSeverity']) && !empty($_SESSION['inputResponseSeverity'])){ echo htmlspecialchars($_SESSION['inputResponseSeverity'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "severity-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueSeverity']) && !empty($_SESSION['inputValueSeverity'])){ echo htmlspecialchars($_SESSION['inputValueSeverity'], ENT_QUOTES); $_SESSION['inputValueSeverity'] = ''; } ?>">
+                                    <input type="text" name="severity" id="severity" class="form-control <?php if(isset($_SESSION['inputResponseSeverity']) && !empty($_SESSION['inputResponseSeverity'])){ echo htmlspecialchars($_SESSION['inputResponseSeverity'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "severity-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueSeverity']) && !empty($_SESSION['inputValueSeverity'])){ echo htmlspecialchars($_SESSION['inputValueSeverity'], ENT_QUOTES); $_SESSION['inputValueSeverity'] = ''; } else { echo $template->severity(); } ?>">
                                     <!-- == If validation failed == -->
                                     <?php if(isset($_SESSION['inputResponseSeverity']) && !empty($_SESSION['inputResponseSeverity']) && $_SESSION['inputResponseSeverity'] == 'invalid'): ?>
                                         <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseSeverityMessage'], ENT_QUOTES); ?>"></i></span>
@@ -77,25 +59,20 @@
                             </div>
                             <div class="form-row justify-content-center">
                                 <div class="col-md-10 mb-3 mt-2">
-                                    <input type="text" name="endpoint" id="endpoint" class="form-control <?php if(isset($_SESSION['inputResponseEndpoint']) && !empty($_SESSION['inputResponseEndpoint'])){ echo htmlspecialchars($_SESSION['inputResponseEndpoint'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "endpoint-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueEndpoint']) && !empty($_SESSION['inputValueEndpoint'])){ echo htmlspecialchars($_SESSION['inputValueEndpoint'], ENT_QUOTES); $_SESSION['inputValueEndpoint'] = ''; } ?>">
+                                    <input type="text" name="endpoint" id="endpoint" class="form-control <?php if(isset($_SESSION['inputResponseEndpoint']) && !empty($_SESSION['inputResponseEndpoint'])){ echo htmlspecialchars($_SESSION['inputResponseEndpoint'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "endpoint-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueEndpoint']) && !empty($_SESSION['inputValueEndpoint'])){ echo htmlspecialchars($_SESSION['inputValueEndpoint'], ENT_QUOTES); $_SESSION['inputValueEndpoint'] = ''; } else { echo $template->endpoint(); } ?>">
                                     <!-- == If validation failed == -->
                                     <?php if(isset($_SESSION['inputResponseEndpoint']) && !empty($_SESSION['inputResponseEndpoint']) && $_SESSION['inputResponseEndpoint'] == 'invalid'): ?>
                                         <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseEndpointMessage'], ENT_QUOTES); ?>"></i></span>
                                     <?php endif; $_SESSION['inputResponseEndpoint'] = ''; $_SESSION['inputResponseEndpointMessage'] = ''; ?> <!-- End of validation failed -->
                                 </div>
                             </div>
-                            <div class="form-row selectformrow justify-content-center">
+                            <div class="form-row justify-content-center">
                                 <div class="col-md-10 mb-3 mt-2">
-                                    <select class="form-control <?php if(isset($_SESSION['inputResponseProgram']) && !empty($_SESSION['inputResponseProgram'])){ echo htmlspecialchars($_SESSION['inputResponseProgram'], ENT_QUOTES); } ?>" id="program" name="program">
-                                        <option hidden ><?= $lang->getTxt($idPage, "program-placeholder"); ?></option>
-                                        <?php foreach($programs as $program): ?>
-                                            <option value="<?= $program->id(); ?>"><?= $program->name(); ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <textarea class="form-control <?php if(isset($_SESSION['inputResponseDescription']) && !empty($_SESSION['inputResponseDescription'])){ echo htmlspecialchars($_SESSION['inputResponseDescription'], ENT_QUOTES); } ?>" name="description" id="description" placeholder="<?= $lang->getTxt($idPage, "description-placeholder"); ?>" rows="3"><?php if(isset($_SESSION['inputValueDescription']) && !empty($_SESSION['inputValueDescription'])){ echo htmlspecialchars($_SESSION['inputValueDescription'], ENT_QUOTES); $_SESSION['inputValueDescription'] = ''; } else { echo $template->description(); } ?></textarea>
                                     <!-- == If validation failed == -->
-                                    <?php if(isset($_SESSION['inputResponseProgram']) && !empty($_SESSION['inputResponseProgram']) && $_SESSION['inputResponseProgram'] == 'invalid'): ?>
-                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseProgramMessage'], ENT_QUOTES); ?>"></i></span>
-                                    <?php endif; $_SESSION['inputResponseProgram'] = ''; $_SESSION['inputResponseProgramMessage'] = ''; ?> <!-- End of validation failed -->
+                                    <?php if(isset($_SESSION['inputResponseDescription']) && !empty($_SESSION['inputResponseDescription']) && $_SESSION['inputResponseDescription'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseDescriptionMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponseDescription'] = ''; $_SESSION['inputResponseDescriptionMessage'] = ''; ?> <!-- End of validation failed -->
                                 </div>
                             </div>
                         </div>
@@ -118,7 +95,7 @@
                         <?php endif; ?>
                         <div class="card-body">
                             <div id="impact" class="w-100">
-                                <textarea style="display:none;" name="impact"><?php if(isset($_SESSION['inputValueImpact']) && !empty($_SESSION['inputValueImpact'])){ echo htmlspecialchars_decode($_SESSION['inputValueImpact'], ENT_QUOTES); $_SESSION['inputValueImpact'] = ''; } ?></textarea>
+                                <textarea style="display:none;" name="impact"><?php if(isset($_SESSION['inputValueImpact']) && !empty($_SESSION['inputValueImpact'])){ echo htmlspecialchars_decode($_SESSION['inputValueImpact'], ENT_QUOTES); $_SESSION['inputValueImpact'] = ''; } else { echo $template->impact(); } ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -140,7 +117,7 @@
                         <?php endif; ?>
                         <div class="card-body">
                             <div id="ressources" class="w-100">
-                                <textarea style="display:none;" name="ressources"><?php if(isset($_SESSION['inputValueRessources']) && !empty($_SESSION['inputValueRessources'])){ echo htmlspecialchars_decode($_SESSION['inputValueRessources'], ENT_QUOTES); $_SESSION['inputValueRessources'] = ''; } ?></textarea>
+                                <textarea style="display:none;" name="ressources"><?php if(isset($_SESSION['inputValueRessources']) && !empty($_SESSION['inputValueRessources'])){ echo htmlspecialchars_decode($_SESSION['inputValueRessources'], ENT_QUOTES); $_SESSION['inputValueRessources'] = ''; } else { echo $template->resources(); } ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -164,7 +141,7 @@
                         <?php endif; ?>
                         <div class="card-body">
                             <div id="stepstoreproduce" class="w-100">
-                                <textarea style="display:none;" name="stepstoreproduce"><?php if(isset($_SESSION['inputValueStepstoreproduce']) && !empty($_SESSION['inputValueStepstoreproduce'])){ echo htmlspecialchars_decode($_SESSION['inputValueStepstoreproduce'], ENT_QUOTES); $_SESSION['inputValueStepstoreproduce'] = ''; } ?></textarea>
+                                <textarea style="display:none;" name="stepstoreproduce"><?php if(isset($_SESSION['inputValueStepstoreproduce']) && !empty($_SESSION['inputValueStepstoreproduce'])){ echo htmlspecialchars_decode($_SESSION['inputValueStepstoreproduce'], ENT_QUOTES); $_SESSION['inputValueStepstoreproduce'] = ''; } else { echo $template->stepstoreproduce(); } ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -186,7 +163,7 @@
                         <?php endif; ?>
                         <div class="card-body">
                             <div id="mitigation" class="w-100">
-                                <textarea style="display:none;" name="mitigation"><?php if(isset($_SESSION['inputValueMitigation']) && !empty($_SESSION['inputValueMitigation'])){ echo htmlspecialchars_decode($_SESSION['inputValueMitigation'], ENT_QUOTES); $_SESSION['inputValueMitigation'] = ''; } ?></textarea>
+                                <textarea style="display:none;" name="mitigation"><?php if(isset($_SESSION['inputValueMitigation']) && !empty($_SESSION['inputValueMitigation'])){ echo htmlspecialchars_decode($_SESSION['inputValueMitigation'], ENT_QUOTES); $_SESSION['inputValueMitigation'] = ''; } else { echo $template->mitigation(); } ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -224,6 +201,7 @@
     var stepstoreproduce, impact, mitigation, ressources;
 
     $(function() {
+
         var stepstoreproduce = editormd("stepstoreproduce", {
             height: '500px',
             path   : "<?= $asset ?>dist/editormd/lib/",

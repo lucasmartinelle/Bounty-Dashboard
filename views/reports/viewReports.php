@@ -52,6 +52,7 @@
                             <th><?= $lang->getTxt($idPage, "title-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "severity-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "endpoint-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "gain-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "identifiant-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "date-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
@@ -63,6 +64,7 @@
                             <th><?= $lang->getTxt($idPage, "title-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "severity-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "endpoint-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "gain-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "identifiant-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "date-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
@@ -75,6 +77,7 @@
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $report->title() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $report->severity() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-warning">' . $report->endpoint() . '</span>'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-success" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeGain">' . $report->gain() . ' € <i class="fas fa-pen text-light ml-2"></i></span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $report->identifiant() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $report->date() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-danger" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeStatus">' . $report->status() . ' <i class="fas fa-pen text-light ml-2"></i></span>'; ?></td>
@@ -85,7 +88,7 @@
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <a class="dropdown-item" href="<?= $routes->urlReplace("showReport",array($report->id())); ?>"><?= $lang->getTxt($idPage, "action-view"); ?></a>
                                         <a class="dropdown-item" href="<?= $routes->urlReplace("editReport",array($report->id())); ?>"><?= $lang->getTxt($idPage, "action-edit"); ?></a>
-                                        <a class="dropdown-item" href="<?= $routes->urlReplace("deleteReport",array($report->id())); ?>"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-url="<?= $routes->urlReplace("deleteReport", array($report->id())); ?>" data-target="#confirmDelete" id="deleteReport"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
                                     </div>
                                     </div>
                                 </td>
@@ -229,6 +232,64 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel"><?= $lang->getTxt($idPage, "delete-report"); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p><?= $lang->getTxt($idPage, "confirmation-delete-report"); ?></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                    <a class="btn btn-primary" href="" id="deleteReportLink"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="changeGain" tabindex="-1" role="dialog" aria-labelledby="#changeGainLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeGainLabel"><?= $lang->getTxt($idPage, "change-gain"); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" class="eventForm" action="<?= $routes->url('gainReport'); ?>">
+                    <div class="modal-body">
+                        
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <input type="text" name="gain" id="gain" class="form-control <?php if(isset($_SESSION['inputResponseGain']) && !empty($_SESSION['inputResponseGain'])){ echo htmlspecialchars($_SESSION['inputResponseGain'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "gain-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueGain']) && !empty($_SESSION['inputValueGain'])){ echo htmlspecialchars($_SESSION['inputValueGain'], ENT_QUOTES); $_SESSION['inputValueGain'] = ''; } ?>">
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseGain']) && !empty($_SESSION['inputResponseGain']) && $_SESSION['inputResponseGain'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseGainMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseGain'] = ''; $_SESSION['inputResponseGainMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="idReportGain" name="idReport">
+                        <input type="hidden" id="g-recaptcha-response-3" name="g-recaptcha-response">
+                        <input type="hidden" id="token" name="token" value="<?= $token ?>">
+                        <!-- End Captcha and crsf token -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 <?php 
     $content = ob_get_clean();
     ob_start();
@@ -270,6 +331,7 @@ crossorigin="anonymous"></script>
             grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
                 document.getElementById('g-recaptcha-response').value = token;
                 document.getElementById('g-recaptcha-response-2').value = token;
+                document.getElementById('g-recaptcha-response-3').value = token;
             });
         });
     });
@@ -279,7 +341,21 @@ crossorigin="anonymous"></script>
         var idReport = button.data('id');
         var modal = $(this)
         modal.find('#idReport').val(idReport)
-    })
+    });
+
+    $('#confirmDelete').on('shown.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
+        var url = button.data('url');
+        var modal = $(this)
+        modal.find('#deleteReportLink').attr('href', url)
+    });
+
+    $('#changeGain').on('shown.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
+        var idReport = button.data('id');
+        var modal = $(this)
+        modal.find('#idReportGain').val(idReport)
+    });
 </script>
 
 <?php

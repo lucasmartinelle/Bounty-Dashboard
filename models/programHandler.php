@@ -2,7 +2,9 @@
     namespace Models;
 
     require_once("models/Model.php");
+    require_once("models/tables/Programs.php");
 
+    use Model\Tables\Programs;
     use Models\Model;
 
     use PDO;
@@ -24,6 +26,32 @@
             }
         }
 
+        public function getLikePrograms($where){
+            $stmt = 'SELECT * FROM programs WHERE ';
+            foreach($where as $key => $value){
+                $stmt .= "`". $key . "` LIKE '%".$value."%'";
+            }
+            $stmt = substr($stmt, 0, -5);
+            $var = array();
+            $req = $this->statement($stmt);
+            while($data = $req->fetch(PDO::FETCH_ASSOC)){
+                $var[] = new Programs($data);
+            }
+            return $var;
+        }
+
+        public function countBugs($id){
+            $stmt = "SELECT count(*) FROM reports WHERE `program_id`='".$id."'";
+            $req = $this->statement($stmt);
+            return $req->fetch(PDO::FETCH_ASSOC)['count(*)'];
+        }
+
+        public function getGains($id){
+            $stmt = "SELECT sum(gain) FROM reports WHERE `program_id`='".$id."'";
+            $req = $this->statement($stmt);
+            return $req->fetch(PDO::FETCH_ASSOC)['sum(gain)'];
+        }
+
         /* create new program
         *
         *  ex : $value = array('id' => '...', 'title' => '...')
@@ -33,7 +61,7 @@
         *           false if program couldn't be created
         */
         public function newProgram($values){
-            $stmt = 'INSERT INTO programs (`id`, `creator_id`, `name`, `scope`, `date`, `status`, `platform_id`) VALUES (';
+            $stmt = 'INSERT INTO programs (`id`, `creator_id`, `name`, `scope`, `date`, `status`, `tags`, `platform_id`) VALUES (';
             foreach($values as $val){
                 $stmt.="'".$val . "', ";
             }
@@ -70,8 +98,23 @@
         *  return : true if program deleted successfuly
         *           false if program couldn't be deleted
         */
-        public function deleteProgram($where){
+        public function deleteProgram($id){
+            $stmt = "DELETE FROM programs WHERE `id`='".$id."'";
 
+            try {
+                $this->statement($stmt);
+            } catch(Exception $e) {
+                return false;
+            }
+
+            $stmt = "DELETE FROM reports WHERE `program_id`='".$id."'";
+
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* list of bugs with multiple filters

@@ -2,8 +2,10 @@
     namespace Models;
 
     require_once("models/Model.php");
+    require_once("models/programHandler.php");
 
     use Models\Model;
+    use Models\ProgramHandler;
 
     use PDO;
 
@@ -33,7 +35,7 @@
         *           false if platform couldn't be created
         */
         public function newPlatform($values){
-            $stmt = 'INSERT INTO platforms (`id`, `creator_id`, `name`, `description`, `logo`) VALUES (';
+            $stmt = 'INSERT INTO platforms (`id`, `creator_id`, `name`) VALUES (';
             foreach($values as $val){
                 $stmt.="'".$val . "', ";
             }
@@ -71,14 +73,27 @@
         *           false if platform couldn't be deleted
         */
         public function deletePlatform($id){
-            $stmt = "DELETE FROM platforms WHERE `id`='".$id."'";
+            $pr = new ProgramHandler;
+            $programs = $pr->getPrograms(array("platform_id" => $id));
+            
+            foreach($programs as $program){
+                $programid = $program->id();
+                $stmt = "DELETE FROM reports WHERE `program_id`='".$programid."'";
+                try {
+                    $this->statement($stmt);
+                } catch(Exception $e) {
+                    return false;
+                }
+            }
+
+            $stmt = "DELETE FROM programs WHERE `platform_id`='".$id."'";
             try {
                 $this->statement($stmt);
             } catch(Exception $e) {
                 return false;
             }
 
-            $stmt = "DELETE FROM programs WHERE `platform_id`='".$id."'";
+            $stmt = "DELETE FROM platforms WHERE `id`='".$id."'";
             try {
                 $this->statement($stmt);
                 return true;

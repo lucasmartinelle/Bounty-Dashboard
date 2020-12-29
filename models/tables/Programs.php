@@ -9,6 +9,7 @@
         private $_scope;
         private $_date;
         private $_status;
+        private $_tags;
         private $_platform_id;
         private $_created_at;
 
@@ -64,6 +65,12 @@
             }
         }
 
+        private function setTags($tags){
+            if(is_string($tags)){
+                $this->_tags = $tags;
+            }
+        }
+
         private function setPlatformid($id){
             if(is_string($id) && strlen($id) == 36){
                 $this->_platform_id = $id;
@@ -93,6 +100,14 @@
 
         public function date(){
             return $this->_date;
+        }
+
+        public function status(){
+            return $this->_status;
+        }
+
+        public function tags(){
+            return $this->_tags;
         }
 
         public function platformid(){

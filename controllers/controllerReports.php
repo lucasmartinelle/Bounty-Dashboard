@@ -41,12 +41,16 @@
         public function __construct($label, $name, $view, $template, $data){
             if($label == "platforms"){
                 $this->platforms($name, $view, $template);
-            } elseif($label == "platformDelete"){
-                $this->deletePlatform($data);
+            } elseif($label == "deletePlatform"){
+                $this->deletePlatform();
             } elseif($label == "programs"){
                 $this->programs($name, $view, $template);
+            } elseif($label == "deleteProgram"){
+                $this->deleteProgram();
             } elseif($label == "scope"){
                 $this->scope();
+            } elseif($label == "tags"){
+                $this->tags();
             } elseif($label == "reports"){
                 $this->reports($name, $view, $template);
             } elseif($label == "filterReports"){
@@ -59,6 +63,8 @@
                 $this->editReport($name, $view, $template, $data);
             } elseif($label == "showReport"){
                 $this->showReport($name, $view, $template, $data);
+            } elseif($label == "gainReport"){
+                $this->gainReport();
             } elseif($label == "generateMarkdown"){
                 $this->generateMarkdown();
             }
@@ -93,33 +99,18 @@
             if($this->_session->isAuth()){
                 if($this->postDataValid($last_token)){
                     $_SESSION['inputValueName'] = htmlspecialchars($_POST['name'], ENT_QUOTES);
-                    $_SESSION['inputValueDescription'] = htmlspecialchars($_POST['description'], ENT_QUOTES);
 
                     $token = $this->_session->updateToken();
 
                     $data = array(
-                        array('file', $_FILES['file'], 'upload:image/gif|image/png|image/jpg|image/jpeg:gif|png|jpg|jpeg'),
-                        array('name', $_POST['name'], 'required', 'max:200'),
-                        array('description', $_POST['description'], 'required')
+                        array('name', $_POST['name'], 'required', 'max:200')
                     );
 
                     $this->_validator = new Validator();
                     $response = $this->_validator->validator($data);
 
                     if($response['success'] == 'false'){
-                        $_SESSION['inputResponseFile'] = $response['file'];
                         $_SESSION['inputResponseName'] = $response['name'];
-                        $_SESSION['inputResponseDescription'] = $response['description'];
-
-                        if($response['file'] == 'invalid'){
-                            $_SESSION['inputResponseFileMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['file'] as $e){
-                                $_SESSION['inputResponseFileMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseFileMessage'] .= "</span>";
-                        } else {
-                            unlink(WEBSITE_PATH . 'assets/uploads/' . $response['uploaded']);
-                        }
 
                         if($response['name'] == 'invalid'){
                             $_SESSION['inputResponseNameMessage'] = "<span class='text-danger'>";
@@ -129,23 +120,14 @@
                             $_SESSION['inputResponseNameMessage'] .= "</span>";
                         }
 
-                        if($response['description'] == 'invalid'){
-                            $_SESSION['inputResponseDescriptionMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['description'] as $e){
-                                $_SESSION['inputResponseDescriptionMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseDescriptionMessage'] .= "</span>";
-                        }
                         header('Location: ' . $this->_routes->url("platforms"));
                         exit;
                     } else {
                         $id = $this->GUIDv4();
                         $creator_id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
                         $name = htmlspecialchars($_POST['name'], ENT_QUOTES);
-                        $description = htmlspecialchars($_POST['description'], ENT_QUOTES);
-                        $logo = htmlspecialchars($response['uploaded'], ENT_QUOTES);
                         $this->_platformHandler = new platformHandler;
-                        if($this->_platformHandler->newPlatform(array($id, $creator_id, $name, $description, $logo))){
+                        if($this->_platformHandler->newPlatform(array($id, $creator_id, $name))){
                             $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "platform-create");
                             $_SESSION['typeAlert'] = "success";
                             header('Location: ' . $this->_routes->url("platforms"));
@@ -169,31 +151,64 @@
             }
         }
 
-        private function deletePlatform($data){
+        private function deletePlatform(){
             $this->_session = new Session;
             $this->_routes = new Routes;
             $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
             if($this->_session->isAuth()){
                 if($this->_session->isAdmin()){
-                    $id = htmlspecialchars($data[2], ENT_QUOTES);
-                    $this->_platformHandler = new platformHandler;
-                    $platforms = $this->_platformHandler->getPlatforms(array("id" => $id));
-                    $exist = false;
-                    foreach($platforms as $platform){
-                        $exist = true;
-                        if($this->_platformHandler->deletePlatform($id)){
-                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "platform-deleted");
-                            $_SESSION['typeAlert'] = "success";
+                    if($this->postDataValid($last_token)){
+                        $this->_platformHandler = new platformHandler;
+                        $platforms = $this->_platformHandler->getPlatforms();
+                        $listPlatforms = "";
+                        foreach($platforms as $platform){
+                            $listPlatforms .= $platform->id() . "|";
+                        }
+                        $listPlatforms = substr($listPlatforms, 0, -1);
+    
+                        $token = $this->_session->updateToken();
+    
+                        $data = array(
+                            array("platform", $_POST['platform'], 'required', 'equal|'.$listPlatforms)
+                        );
+    
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
+    
+                        if($response['success'] == 'false'){
+                            $_SESSION['inputResponsePlatform'] = $response['platform'];
+
+                            if($response['platform'] == 'invalid'){
+                                $_SESSION['inputResponsePlatformMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['platform'] as $e){
+                                    $_SESSION['inputResponsePlatformMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponsePlatformMessage'] .= "</span>";
+                            }
+
                             header('Location: ' . $this->_routes->url("platforms"));
                             exit;
                         } else {
-                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
-                            $_SESSION['typeAlert'] = "error";
-                            header('Location: ' . $this->_routes->url("platforms"));
-                            exit;
+                            $id = htmlspecialchars($_POST['platform'], ENT_QUOTES);
+                            $platforms = $this->_platformHandler->getPlatforms(array("id" => $id));
+                            $exist = false;
+                            foreach($platforms as $platform){
+                                $exist = true;
+                                if($this->_platformHandler->deletePlatform($id)){
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "platform-deleted");
+                                    $_SESSION['typeAlert'] = "success";
+                                    header('Location: ' . $this->_routes->url("platforms"));
+                                    exit;
+                                } else {
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                                    $_SESSION['typeAlert'] = "error";
+                                    header('Location: ' . $this->_routes->url("platforms"));
+                                    exit;
+                                }
+                            }
                         }
-                    }
-                    if(!$exist){
+                    } else {
                         $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
                         $_SESSION['typeAlert'] = "error";
                         header('Location: ' . $this->_routes->url("platforms"));
@@ -213,7 +228,15 @@
             $this->_session = new Session;
             $this->_routes = new Routes;
             $this->_platformHandler = new platformHandler;
+            $this->_programHandler = new ProgramHandler;
             $platforms = $this->_platformHandler->getPlatforms();
+            $programs = $this->_programHandler->getPrograms();
+            $numberofbugs = array();
+            $gain = array();
+            foreach($programs as $program){
+                array_push($numberofbugs, $this->_programHandler->countBugs($program->id()));
+                array_push($gain, $this->_programHandler->getGains($program->id()));
+            }
             if($_POST){
                 $this->postPrograms($platforms);
             } else {
@@ -222,7 +245,7 @@
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
                     $this->_view = new View($view, $template);
-                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms));
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms, "programs" => $programs, "numberofbugs" => $numberofbugs, "gainsbyprograms" => $gain));
                 } else {
                     header('Location: ' . $this->_routes->url('login'));
                     exit;
@@ -328,9 +351,10 @@
                         $date = strtotime($date);
                         $date = date('Y-m-d H:i:s', $date);
                         $status = htmlspecialchars($_POST['status'], ENT_QUOTES);
+                        $tags = htmlspecialchars($_POST['tags'], ENT_QUOTES);
                         $platform_id = htmlspecialchars($_POST['platform'], ENT_QUOTES);
                         $this->_programHandler = new ProgramHandler;
-                        if($this->_programHandler->newProgram(array($id, $creator_id, $name, $scope, $date, $status, $platform_id))){
+                        if($this->_programHandler->newProgram(array($id, $creator_id, $name, $scope, $date, $status, $tags, $platform_id))){
                             $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "program-create");
                             $_SESSION['typeAlert'] = "success";
                             header('Location: ' . $this->_routes->url("programs"));
@@ -354,9 +378,37 @@
             }
         }
 
+        private function deleteProgram($data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            if($this->_session->isAuth()){
+                $this->_programHandler = new ProgramHandler;
+                $id = htmlspecialchars($data[2], ENT_QUOTES);
+                $programs = $this->_programHandler->getPrograms(array("id" => $id));
+                foreach($programs as $program){
+                    if($this->_reportHandler->deleteProgram($id)){
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "program-delete");
+                        $_SESSION['typeAlert'] = "success";
+                        header('Location: ' . $this->_routes->url('programs'));
+                        exit;
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url('programs'));
+                        exit;
+                    }
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
         private function reports($name, $view, $template){
             $this->_session = new Session;
             $this->_routes = new Routes;
+            $this->_lang = new languageManager;
             if($_POST){
                 $this->postreport();
             } else {
@@ -600,6 +652,73 @@
                         header('Location: ' . $this->_routes->url('reports'));
                         exit;
                     }
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function gainReport(){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){
+                if($this->postDataValid($last_token)){
+                    $_SESSION['inputValueGain'] = htmlspecialchars($_POST['gain'], ENT_QUOTES);
+
+                    $token = $this->_session->updateToken();
+
+                    $data = array(
+                        array("idReport", $_POST['idReport'], 'required', 'max:36'),
+                        array("gain", $_POST['gain'], 'required', "max:3", "onlyNumber"),
+                    );
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseGain'] = $response['gain'];
+
+                        if($response['idReport'] == 'invalid'){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        }
+
+                        if($response['gain'] == 'invalid'){
+                            $_SESSION['inputResponseGainMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['gain'] as $e){
+                                $_SESSION['inputResponseGainMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseGainMessage'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("reports"));
+                        exit;
+                    } else {
+                        $this->_reportHandler = new ReportHandler;
+                        $id = htmlspecialchars($_POST['idReport'], ENT_QUOTES);
+                        $gain = htmlspecialchars($_POST['gain'], ENT_QUOTES);  
+                        if($this->_reportHandler->updateReport(array("gain" => $gain), array("id" => $id))){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "gain-change");
+                            $_SESSION['typeAlert'] = "success";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("reports"));
+                            exit;
+                        }
+                    }
+                } else {
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url('reports'));
+                    exit;
                 }
             } else {
                 header('Location: ' . $this->_routes->url('login'));
@@ -1128,27 +1247,35 @@
         }
 
         private function scope(){
-            if(isset($_GET['term'])){
-                $term = htmlspecialchars($_GET['term'], ENT_QUOTES);            
-                $this->_programHandler = new ProgramHandler;
-                $array = array();
-                $programs = $this->_programHandler->getPrograms();
-                foreach($programs as $program){
-                    $scopes = explode("|", $program->scope());
-                    foreach($scopes as $scope){
-                        if(!in_array($scope,$array)){
-                            array_push($array, $scope);
-                        }
+            $array = array();
+            $this->_programHandler = new ProgramHandler; 
+            $programs = $this->_programHandler->getPrograms();
+            foreach($programs as $program){
+                $scopes = explode("|", $program->scope());
+                foreach($scopes as $scope){
+                    if(!in_array($scope,$array)){
+                        array_push($array, $scope);
                     }
                 }
-                echo json_encode($array);
-            } else {
-                header('Location: ' . $this->_routes->url("programs"));
-                exit;
             }
+            echo json_encode($array);
         }
 
-        
+        private function tags(){
+            $array = array();
+            $this->_programHandler = new ProgramHandler; 
+            $programs = $this->_programHandler->getPrograms();
+            foreach($programs as $program){
+                $tags = explode("|", $program->tags());
+                foreach($tags as $tag){
+                    if(!in_array($tag,$array)){
+                        array_push($array, $tag);
+                    }
+                }
+            }
+            echo json_encode($array);
+        }
+
         private function postDataValid($token) {
             if($token != null){
                 $this->_session = new Session;

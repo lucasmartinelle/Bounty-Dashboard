@@ -10,6 +10,8 @@
         private $_date;
         private $_endpoint;
         private $_identifiant;
+        private $_status;
+        private $_gain;
         private $_template_id;
         private $_program_id;
         private $_stepsToReproduce;
@@ -92,6 +94,14 @@
             }
         }
 
+        private function setGain($gain){
+            $gain = (int) $gain;
+
+            if($gain >= 0 && $gain <= 9999){
+                $this->_gain = $gain;
+            }
+        }
+
         private function setTemplateid($id){
             if(is_string($id) && strlen($id) == 36){
                 $this->_template_id = $id;
@@ -159,6 +169,10 @@
 
         public function status(){
             return $this->_status;
+        }
+
+        public function gain(){
+            return $this->_gain;
         }
 
         public function templateid(){

@@ -61,23 +61,57 @@
                     <thead>
                         <tr>
                             <th><?= $lang->getTxt($idPage, "name-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "amount-bugs-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "gain-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "scope-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "tags-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "action-table"); ?></th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <th><?= $lang->getTxt($idPage, "name-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "amount-bugs-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "gain-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "scope-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "tags-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "action-table"); ?></th>
                         </tr>
                     </tfoot>
                     <tbody>
-                        
+                        <?php foreach($programs as $program): 
+                            $count= 0; 
+                            $fullscope = '';
+                            $fulltags = '';
+                            $scopes = count(explode("|", $program->scope())) - 1;
+                            $tags = explode("|", $program->tags()); 
+                            foreach($tags as $tag){
+                                $fulltags .= '<span class="badge badge-pill badge-warning ml-1">' . $tag . '</span>';
+                            }
+                            $gain = $gainsbyprograms[$count];
+                            if(empty($gain) && !isset($gain)) $gain = 0;
+                        ?>
+                        <tr>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $program->name() . '</span>'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $numberofbugs[$count] . '</span>'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $gain . ' €</span>'; ?></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success"><?= $scopes; ?></span></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $program->status() . '</span>'; ?></td>
+                                <td class="text-center"><?= $fulltags; ?></td>
+                                <td class="text-center">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href=""><?= $lang->getTxt($idPage, "action-view"); ?></a>
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data data-toggle="modal" data-url="<?= $routes->urlReplace("deleteProgram", array($program->id())); ?>" data-target="#confirmDelete" id="deleteProgram"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
+                                    </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php $count++; endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -192,6 +226,26 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel"><?= $lang->getTxt($idPage, "delete-program"); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p><?= $lang->getTxt($idPage, "confirmation-delete-program"); ?></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                    <a class="btn btn-primary" href="" id="deleteProgramLink"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <?php 
     $content = ob_get_clean();
     ob_start();
@@ -251,7 +305,7 @@ crossorigin="anonymous"></script>
     });
 
     $('#tags').autocomplete({
-        source: '<?= $routes->url("scope"); ?>',
+        source: '<?= $routes->url("tags"); ?>',
         minLength: 0,
         blankItem: true
     }).focus(function(){            
@@ -287,6 +341,13 @@ crossorigin="anonymous"></script>
     });
 
     $('[data-toggle="datepicker"]').datepicker();
+
+    $('#confirmDelete').on('shown.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
+        var url = button.data('url');
+        var modal = $(this)
+        modal.find('#deleteProgramLink').attr('href', url)
+    });
 </script>
 
 <?php

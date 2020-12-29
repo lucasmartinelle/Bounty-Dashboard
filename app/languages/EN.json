@@ -105,11 +105,13 @@
         "global-error" : "An error has occurred while processing your request.",
         "platform-create" : "The platform was created.",
         "program-create" : "The program was created.",
+        "program-delete" : "You have deleted a program",
         "platform-deleted" : "You have deleted a platform.",
         "report-create" : "You have created a new report.",
         "report-edit" : "You have edited a report.",
         "status-change" : "You have changed the status of a report.",
-        "report-delete" : "You have deleted a report."
+        "report-delete" : "You have deleted a report.",
+        "gain-change" : "You have modified the gains of the report."
     },
     "dashboard" : {
         "content-header" : "Blank Page"
@@ -168,8 +170,9 @@
         "header-platforms" : "Platforms",
         "header-bug-by-severity" : "Bugs found by severity",
         "modal-nav-close" : "Close",
-        "modal-nav-confirm" : "Create",
-        "add-platform" : "Add a platform"
+        "modal-nav-confirm" : "Confirm",
+        "add-platform" : "Add a platform",
+        "delete-platform" : "Delete a platform"
     },
     "programs" : {
         "header" : "Programs",
@@ -184,11 +187,17 @@
         "header-bug-by-severity" : "Bugs found by severity",
         "scope-placeholder" : "Scope",
         "name-table" : "name",
+        "amount-bugs-table" : "number of bugs found",
         "gain-table" : "gain",
-        "scope-table" : "scope",
+        "scope-table" : "scopes number",
         "status-table" : "status",
         "tags-table" : "tags",
+        "action-table" : "action",
+        "action-view" : "view",
+        "action-delete" : "delete",
         "add-program" : "Add a program",
+        "delete-program" : "Delete a program",
+        "confirmation-delete-program" : "Are you sure you want to delete this program and all its reports ?",
         "modal-nav-close" : "Close",
         "modal-nav-confirm" : "Create"
     },
@@ -199,6 +208,7 @@
         "title-table" : "Title",
         "severity-table" : "Severity",
         "endpoint-table" : "Endpoint",
+        "gain-table" : "Gain",
         "identifiant-table" : "Identifiant",
         "date-table" : "Date",
         "status-table" : "Status",
@@ -220,7 +230,11 @@
         "filter-status-header" : "Status",
         "severitymin-placeholder" : "Severity min (CVSS Scale)",
         "severitymax-placeholder" : "Severity max (CVSS Scale)",
+        "gain-placeholder" : "Gain",
         "invalid-input" : "Invalid input",
+        "delete-report" : "Delete a report",
+        "confirmation-delete-report" : "Are you sure you want to delete this report ?",
+        "change-gain" : "Change the gain",
         "modal-nav-close" : "Close",
         "modal-nav-confirm" : "Confirm"
     },

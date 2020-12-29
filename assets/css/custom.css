@@ -87,9 +87,9 @@
 }
 
 form span i {
-	position: absolute;
-	top: 10px;
-	right: 11px;
+	position: absolute !important;
+	top: 10px !important;
+	right: 11px !important;
 }
 
 .addformrow span i {
@@ -164,12 +164,6 @@ form span i {
 #platforms .input-group-btn {
     top: unset;
     right: unset;
-}
-
-#platforms form span {
-	position: absolute;
-	top: 10px;
-	right: 11px;
 }
 
 #platforms .btn-file {

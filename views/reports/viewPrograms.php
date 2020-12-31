@@ -44,7 +44,8 @@
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-severity"); ?></h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="width: 100%;">
+                        <canvas id="bugBySeverity" width="100%" height="300px;"></canvas>
                     </div>
                 </div>
             </div>
@@ -267,10 +268,58 @@ crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
 <script src="<?= $asset ?>dist/datepicker.js"></script>
+<script src="<?= $asset ?>dist/chart.js/Chart.min.js"></script>
+
+<?php 
+    $keys = '';
+    $values = '';
+    foreach($severity as $key=>$value){
+        $keys .= "'" . $key . "',";
+        $values .= "'" . $value . "',";
+    }
+    $keys = substr($keys, 0,-1);
+    $values = substr($values, 0, -1);
+?>
 
 <script type="text/javascript">
     $(function () {
         $('[data-toggle="popover"]').popover()
+
+        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#858796';
+
+        // Pie Chart Example
+        var ctx = document.getElementById("bugBySeverity");
+        var bugBySeverity = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [<?= $keys ?>],
+            datasets: [{
+            data: [<?= $values ?>],
+            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#a4f542', '#ed3245', '#edbb45', '#a064fa' , '#45f1f7'],
+            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#95de3c', '#bd2232', '#d4a944', '#8f48fa', '#3dcfd4'],
+            hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+            backgroundColor: "rgb(255,255,255)",
+            bodyFontColor: "#858796",
+            borderColor: '#dddfeb',
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            caretPadding: 10,
+            },
+            legend: {
+                display: true,
+                position: 'bottom',
+            },
+            cutoutPercentage: 80,
+        },
+        });
     });
 
     $( document ).ready(function() {

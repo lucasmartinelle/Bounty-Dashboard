@@ -50,37 +50,39 @@
                     </a>
                 </li>
 
-                <!-- Nav Item - Platforms -->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('platforms'); ?>">
-                        <i class="fas fa-pager"></i>
-                        <span><?= $lang->getTxt('navbar', 'navitem-platforms'); ?></span>
-                    </a>
-                </li>
+                <?php if($session->isAuth(false)): ?>
+                    <!-- Nav Item - Platforms -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= $routes->url('platforms'); ?>">
+                            <i class="fas fa-pager"></i>
+                            <span><?= $lang->getTxt('navbar', 'navitem-platforms'); ?></span>
+                        </a>
+                    </li>
 
-                <!-- Nav Item - Programs -->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('programs'); ?>">
-                        <i class="fas fa-file-alt"></i>
-                        <span><?= $lang->getTxt('navbar', 'navitem-programs'); ?></span>
-                    </a>
-                </li>
+                    <!-- Nav Item - Programs -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= $routes->url('programs'); ?>">
+                            <i class="fas fa-file-alt"></i>
+                            <span><?= $lang->getTxt('navbar', 'navitem-programs'); ?></span>
+                        </a>
+                    </li>
 
-                <!-- Nav Item - Reports -->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('reports'); ?>">
-                        <i class="fas fa-bug"></i>
-                        <span><?= $lang->getTxt('navbar', 'navitem-reports'); ?></span>
-                    </a>
-                </li>
+                    <!-- Nav Item - Reports -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= $routes->url('reports'); ?>">
+                            <i class="fas fa-bug"></i>
+                            <span><?= $lang->getTxt('navbar', 'navitem-reports'); ?></span>
+                        </a>
+                    </li>
 
-                <!-- Nav Item - Templates -->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('templates'); ?>">
-                        <i class="fas fa-clipboard"></i>
-                        <span><?= $lang->getTxt('navbar', 'navitem-templates'); ?></span>
-                    </a>
-                </li>
+                    <!-- Nav Item - Templates -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= $routes->url('templates'); ?>">
+                            <i class="fas fa-clipboard"></i>
+                            <span><?= $lang->getTxt('navbar', 'navitem-templates'); ?></span>
+                        </a>
+                    </li>
+                <?php endif; ?>
 
                 <!-- Divider -->
                 <hr class="sidebar-divider d-none d-md-block">

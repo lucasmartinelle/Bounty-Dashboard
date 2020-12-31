@@ -26,6 +26,41 @@
             }
         }
 
+        public function countReports($where=null, $in=false, $sup = false){
+            $stmt = 'SELECT count(*) FROM reports';
+            if($where != null){
+                $stmt .= ' WHERE ';
+                foreach($where as $key => $value){
+                    if($in){
+                        $ins = '';
+                        foreach($in as $i){
+                            $ins .= "'" . $i . "',";
+                        }
+                        $ins = substr($ins, 0, -1);
+                        $stmt .= "`". $key . "` IN (".$ins.") ";
+                    } else {
+                        if(!$sup){
+                            $stmt .= "`". $key . "` = '".$value."' AND ";
+                        } else {
+                            $stmt .= "`". $key . "` > '".$value."' AND ";
+                        }
+                    }
+                }
+                if(!$in){
+                    $stmt = substr($stmt, 0, -5);
+                }
+            }
+
+            $req = $this->statement($stmt);
+            return $req->fetch(PDO::FETCH_ASSOC)['count(*)'];
+        }
+
+        public function totalGain(){
+            $stmt = 'SELECT sum(gain) FROM reports';
+            $req = $this->statement($stmt);
+            return $req->fetch(PDO::FETCH_ASSOC)['sum(gain)'];
+        }
+
         /* create new report
         *
         *  ex : $value = array('id' => '...', 'title' => '...')
@@ -104,6 +139,128 @@
             try {
                 $this->statement($stmt);
                 return true;
+            } catch(Exception $e) {
+                return false;
+            }
+        }
+
+        public function bugsByPlatforms(){
+            $platforms = array();
+            $stmt = "SELECT pf.name FROM reports JOIN programs AS pr ON reports.program_id=pr.id JOIN platforms AS pf ON pr.platform_id=pf.id";
+            try {
+                $req = $this->statement($stmt);
+
+                while($row = $req->fetch(PDO::FETCH_ASSOC)){
+                    $pf = $row['name'];
+                    if(array_key_exists($pf, $platforms)){
+                        $platforms[$pf] += 1;
+                    } else {
+                        $platforms[$pf] = 1;
+                    }
+                }
+
+                return $platforms;
+            } catch(Exception $e) {
+                return false;
+            }
+        }
+
+        public function bugsBySeverity($program = null, $platform = null){
+            $severity = array();
+            $stmt = "SELECT severity FROM reports";
+            $join = '';
+            $where = ' WHERE';
+            $addProgram = false;
+            $addPlatform = false;
+
+            if($platform != null){
+                if(!$addProgram){
+                    $join .= ' JOIN programs AS Pg ON reports.program_id = Pg.id JOIN platforms AS Pf ON Pg.platform_id = Pf.id';
+                    $addProgram = true;
+                    $addPlatform = true;
+                } else {
+                    $join .= ' JOIN platforms AS Pf ON Pg.platform_id = Pf.id';
+                    $addPlatform = true;
+                }
+                $where .= " Pf.id = '" . $platform . "' AND";
+            }
+
+            if($program != null){
+                if(!$addProgram){
+                    $join .= ' JOIN programs AS Pg ON reports.program_id = Pg.id';
+                }
+                $where .= " Pg.id = '" . $program . "' AND";
+            }
+
+            if($where != ' WHERE'){
+                $where = substr($where, 0, -4);
+            } else {
+                $where = '';
+            }
+
+            $stmt .= $join . $where;
+
+            try {
+                $req = $this->statement($stmt);
+
+                while($row = $req->fetch(PDO::FETCH_ASSOC)){
+                    $sev = (string) $row['severity'];
+                    if(array_key_exists($sev, $severity)){
+                        $severity[$sev] += 1;
+                    } else {
+                        $severity[$sev] = 1;
+                    }
+                }
+
+                return $severity;
+            } catch(Exception $e) {
+                return false;
+            }
+        }
+
+        public function bugsByMonth($platform = null){
+            $dates = array();
+            $stmt = "SELECT reports.date FROM reports";
+            $join = '';
+            $where = ' WHERE';
+            $addProgram = false;
+            $addPlatform = false;
+
+            if($platform != null){
+                if(!$addProgram){
+                    $join .= ' JOIN programs AS Pg ON reports.program_id = Pg.id JOIN platforms AS Pf ON Pg.platform_id = Pf.id';
+                    $addProgram = true;
+                    $addPlatform = true;
+                } else {
+                    $join .= ' JOIN platforms AS Pf ON Pg.platform_id = Pf.id';
+                    $addPlatform = true;
+                }
+                $where .= " Pf.id = '" . $platform . "' AND";
+            }
+
+            if($where != ' WHERE'){
+                $where = substr($where, 0, -4);
+            } else {
+                $where = '';
+            }
+
+            $stmt .= $join . $where;
+
+            try {
+                $req = $this->statement($stmt);
+
+                while($row = $req->fetch(PDO::FETCH_ASSOC)){
+                    $date = $row['date'];
+                    $explodeddate = explode("-", $date);
+                    $month = $explodeddate[1];
+                    if(array_key_exists($month, $dates)){
+                        $dates[$month] += 1;
+                    } else {
+                        $dates[$month] = 1;
+                    }
+                }
+
+                return $dates;
             } catch(Exception $e) {
                 return false;
             }

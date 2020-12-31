@@ -117,7 +117,21 @@
         "template-edit" : "You have edited a template."
     },
     "dashboard" : {
-        "content-header" : "Blank Page"
+        "content-header" : "Dashboard",
+        "header-bug-by-platform" : "Bugs founds by platforms",
+        "header-bug-by-severity" : "Bugs founds by severity",
+        "header-bug-per-month" : "Bugs founds per months",
+        "card-bug-openned" : "Bugs opened",
+        "card-bug-accepted-fixed" : "Bugs accepted and fixed",
+        "card-total-earning" : "Total earnings",
+        "card-critical-bugs-found" : "Critical bugs founds",
+        "filters" : "filters",
+        "apply-filter" : "Apply a filter",
+        "filter-program-header" : "all",
+        "filter-platform-header" : "all",
+        "invalid-input" : "Invalid input",
+        "modal-nav-close" : "Close",
+        "modal-nav-confirm" : "Confirm"
     },
     "settings" : {
         "header" : "Settings",
@@ -244,18 +258,22 @@
     "createReport" : {
         "header" : "Create a report",
         "header-create-report" : "Basic informations",
+        "header-use-template" : "Use a template",
         "header-steps-to-reproduce" : "Steps to reproduce",
         "header-impact" : "Impact",
         "header-mitigation" : "Mitigation",
         "header-ressources" : "Ressources",
         "title-placeholder" : "Title",
         "identifiant-placeholder" : "Identifiant",
+        "template-placeholder" : "Template",
         "date-placeholder" : "Date",
         "severity-placeholder" : "Severity (CVSS scale)",
         "endpoint-placeholder" : "Endpoint",
         "program-placeholder" : "Program",
         "invalid-input" : "Invalid input",
-        "submit" : "Submit"
+        "submit" : "Submit",
+        "modal-nav-close" : "Close",
+        "modal-nav-confirm" : "Confirm"
     },
     "editReport" : {
         "header" : "Edit a report",
@@ -287,7 +305,7 @@
         "date-placeholder" : "Date",
         "severity-placeholder" : "Severity (CVSS scale)",
         "endpoint-placeholder" : "Endpoint",
-        "program-placeholder" : "Program",
+        "program-placeholder" : "Program"
     },
     "templates" : {
         "header" : "Templates",

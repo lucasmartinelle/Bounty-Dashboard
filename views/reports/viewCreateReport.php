@@ -28,7 +28,12 @@
             </div>
     <?php endif; $_SESSION['alert'] = ''; $_SESSION['typeAlert'] = ''; endif; ?><!-- end global alert -->
 
-    <h1 class="h3 mb-1 text-gray-800 mb-3"><?= $lang->getTxt($idPage, "header"); ?></h1>
+    <div class="d-flex justify-content-between">
+        <h1 class="h3 mb-1 text-gray-800 mb-3"><?= $lang->getTxt($idPage, "header"); ?></h1>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#useTemplate" style="height: max-content;">
+            Use a template
+        </button>
+    </div>
 
     <div class="container-fluid">
         <form method="post">
@@ -203,6 +208,46 @@
         </form>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="useTemplate" tabindex="-1" role="dialog" aria-labelledby="useTemplateLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form method="post" action="<?= $routes->url('useTemplate'); ?>">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="useTemplateLabel"><?= $lang->getTxt($idPage, "header-use-template"); ?></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <select class="form-control <?php if(isset($_SESSION['inputResponseTemplate']) && !empty($_SESSION['inputResponseTemplate'])){ echo htmlspecialchars($_SESSION['inputResponseTemplate'], ENT_QUOTES); } ?>" id="template" name="template">
+                                    <option hidden selected value=""><?= $lang->getTxt($idPage, "template-placeholder"); ?></option>
+                                    <?php foreach($templates as $template): ?>
+                                        <option value="<?= $template->id(); ?>"><?= $template->title(); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseTemplate']) && !empty($_SESSION['inputResponseTemplate']) && $_SESSION['inputResponseTemplate'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseTemplateMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseTemplate'] = ''; $_SESSION['inputResponseTemplateMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
+                    </div>
+                    <!-- == Captcha and crsf token == -->
+                    <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                    <input type="hidden" id="token" name="token" value="<?= $token ?>">
+                    <!-- End Captcha and crsf token -->
+                </form>
+            </div>
+        </div>
+    </div>
+
 <?php
     $content = ob_get_clean();
     ob_start();
@@ -219,11 +264,14 @@
 
 <script src="<?= $asset ?>dist/editormd/editormd.min.js"></script>
 <script src="<?= $asset ?>dist/editormd/languages/en.js"></script>
+<script src="<?= $asset ?>dist/datepicker.js"></script>
 <script type="text/javascript">
 
     var stepstoreproduce, impact, mitigation, ressources;
 
     $(function() {
+        $('[data-toggle="datepicker"]').datepicker();
+        
         var stepstoreproduce = editormd("stepstoreproduce", {
             height: '500px',
             path   : "<?= $asset ?>dist/editormd/lib/",
@@ -300,6 +348,7 @@
         grecaptcha.ready(function() {
             grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
                 document.getElementById('g-recaptcha-response').value = token;
+                document.getElementById('g-recaptcha-response-2').value = token;
             });
         });
     });

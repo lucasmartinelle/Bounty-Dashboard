@@ -68,6 +68,8 @@
                 $this->showReport($name, $view, $template, $data);
             } elseif($label == "gainReport"){
                 $this->gainReport();
+            } elseif($label == "useTemplate"){
+                $this->useTemplate($data);
             } elseif($label == "templates"){
                 $this->templates($name, $view, $template);
             } elseif($label == "createTemplate"){
@@ -244,6 +246,7 @@
             $this->_programHandler = new ProgramHandler;
             $platforms = $this->_platformHandler->getPlatforms();
             $programs = $this->_programHandler->getPrograms();
+            $severity = $this->_programHandler->bugsBySeverity();
             $numberofbugs = array();
             $gain = array();
             foreach($programs as $program){
@@ -258,7 +261,7 @@
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
                     $this->_view = new View($view, $template);
-                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms, "programs" => $programs, "numberofbugs" => $numberofbugs, "gainsbyprograms" => $gain));
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms, "programs" => $programs, "numberofbugs" => $numberofbugs, "gainsbyprograms" => $gain, "severity" => $severity));
                 } else {
                     header('Location: ' . $this->_routes->url('login'));
                     exit;
@@ -1073,10 +1076,12 @@
             } else {
                 if($this->_session->isAuth()){
                     $this->_userHandler = new UserHandler;
+                    $this->_templateHandler = new TemplateHandler;
+                    $templates = $this->_templateHandler->getTemplates();
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
                     $this->_view = new View($view, $template);
-                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "programs" => $programs));
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "programs" => $programs, "templates" => $templates));
                 } else {
                     header('Location: ' . $this->_routes->url('login'));
                     exit;
@@ -1652,6 +1657,7 @@
             $this->_session = new Session;
             $this->_routes = new Routes;
             $this->_templateHandler = new TemplateHandler;
+            $this->_lang = new languageManager;
             $id = htmlspecialchars($data[2], ENT_QUOTES);
             $exist = false;
             $templates = $this->_templateHandler->getTemplates(array("id" => $id));
@@ -1670,7 +1676,7 @@
             if(!$exist){
                 $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
                 $_SESSION['typeAlert'] = "error";
-                header('Location: ' . $this->_routes->url('reports'));
+                header('Location: ' . $this->_routes->url('templates'));
                 exit;
             }
         }
@@ -1703,6 +1709,70 @@
                 }
             }
             echo json_encode($array);
+        }
+
+        public function useTemplate(){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){
+                if($this->postDataValid($last_token)){
+                    $this->_templateHandler = new TemplateHandler;
+                    $templates = $this->_templateHandler->getTemplates();
+                    $listTemplates = "";
+                    foreach($templates as $template){
+                        $listTemplates .= $template->id() . "|";
+                    }
+                    $listTemplates = substr($listTemplates, 0, -1);
+                    $token = $this->_session->updateToken();
+
+                    $data = array(
+                        array("template", $_POST['template'], 'required', 'equal|'.$listTemplates)
+                    );
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseTemplate'] = $response['template'];
+
+                        if($response['template'] == 'invalid'){
+                            $_SESSION['inputResponseTemplateMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['template'] as $e){
+                                $_SESSION['inputResponseTemplateMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseTemplateMessage'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("createReport"));
+                        exit;
+                    } else {
+                        $tlt = htmlspecialchars($_POST['template'], ENT_QUOTES);
+                        $templates = $this->_templateHandler->getTemplates(array("id" => $tlt));
+                        foreach($templates as $template){
+                            $_SESSION['inputValueTitle'] = $template->title();
+                            $_SESSION['inputValueSeverity'] = $template->severity();
+                            $_SESSION['inputValueEndpoint'] = $template->endpoint();
+                            $_SESSION['inputValueImpact'] = $template->impact();
+                            $_SESSION['inputValueRessources'] = $template->resources();
+                            $_SESSION['inputValueStepstoreproduce'] = $template->stepstoreproduce();
+                            $_SESSION['inputValueMitigation'] = $template->mitigation();
+                            
+                            header('Location: ' . $this->_routes->url("createReport"));
+                            exit;
+                        }
+                    }
+                } else {
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url('createReport'));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
         }
 
         private function postDataValid($token) {

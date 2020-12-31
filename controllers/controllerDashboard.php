@@ -9,6 +9,9 @@
     require_once("app/Routes.php");
     require_once("app/languages/languageManager.php");
     require_once("models/billingHandler.php");
+    require_once("models/reportHandler.php");
+    require_once("models/platformHandler.php");
+    require_once("models/programHandler.php");
 
     use app\Routes;
     use Utils\Session;
@@ -16,6 +19,9 @@
     use Utils\Captcha;
     use Models\UserHandler;
     use Models\BillingHandler;
+    use Models\ReportHandler;
+    use Models\PlatformHandler;
+    use Models\ProgramHandler;
     use view\View;
     use app\languages\languageManager;
 
@@ -28,6 +34,9 @@
         private $_captcha;
         private $_lang;
         private $_billingHandler; 
+        private $_platformHandler;
+        private $_programHandler;
+        private $_reportHandler;
         
         public function __construct($label, $name, $view, $template, $data){
             if($label == "dashboard"){
@@ -52,8 +61,130 @@
         }
 
         private function dashboard($name, $view, $template){
-            $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name));
+            if($_POST){
+                $this->postDashboard();
+            } else {
+                $this->_session = new Session;
+                $this->_reportHandler = new ReportHandler;
+                $this->_programHandler = new ProgramHandler;
+                $this->_platformHandler = new platformHandler;
+                $new = $this->_reportHandler->countReports(array('status' => 'new'));
+                $other = $this->_reportHandler->countReports(array('status' => 'resolved'), array('accepted', 'resolved'));
+                $gain = $this->_reportHandler->totalGain();
+                $critical = $this->_reportHandler->countReports(array('severity' => '9'), null, true);
+                $platforms = $this->_reportHandler->bugsByPlatforms();
+                $filterProgram = null;
+                $filterPlatform = null;
+                $filterPlatform2 = null;
+                $token = $this->_session->getToken();
+                if(isset($_SESSION['filterProgram']) && !empty($_SESSION['filterProgram'])){
+                    $filterProgram = htmlspecialchars($_SESSION['filterProgram'], ENT_QUOTES);
+                }
+                if(isset($_SESSION['filterPlatform']) && !empty($_SESSION['filterPlatform'])){
+                    $filterPlatform = htmlspecialchars($_SESSION['filterPlatform'], ENT_QUOTES);
+                }
+                if(isset($_SESSION['filterPlatform2']) && !empty($_SESSION['filterPlatform2'])){
+                    $filterPlatform2 = htmlspecialchars($_SESSION['filterPlatform2'], ENT_QUOTES);
+                }
+                $severity = $this->_reportHandler->bugsBySeverity($filterProgram, $filterPlatform);
+                $dates = $this->_reportHandler->bugsByMonth($filterPlatform2);
+                $platformsFilter = $this->_platformHandler->getPlatforms();
+                $programsFilter = $this->_programHandler->getPrograms();
+                $this->_view = new View($view, $template);
+                $this->_view->generate(array("titre" => $name, 'new' => $new, 'token' => $token, 'other' => $other, "gain" => $gain, "critical" => $critical, "platforms" => $platforms, "severity" => $severity, 'dates' => $dates, 'platformsFilter' => $platformsFilter, 'programsFilter' => $programsFilter));
+            }
+        }
+
+        private function postDashboard(){
+            $this->_routes = new Routes;
+            $this->_session = new Session;
+            if(!$_POST){
+                header('Location: ' . $this->_routes->url("dashboard"));
+                exit;
+            } else {
+                if($this->postDataValid()){
+                    $this->_programHandler = new ProgramHandler;
+                    $programs = $this->_programHandler->getPrograms();
+                    $this->_platformHandler = new platformHandler;
+                    $platforms = $this->_platformHandler->getPlatforms();
+
+                    $listPrograms = "";
+                    foreach($programs as $program){
+                        $listPrograms .= $program->id() . "|";
+                    }
+                    $listPrograms = substr($listPrograms, 0, -1);
+
+                    $listPlatforms = "";
+                    foreach($platforms as $platform){
+                        $listPlatforms .= $platform->id() . "|";
+                    }
+                    $listPlatforms = substr($listPlatforms, 0, -1);
+
+                    $data = array(
+                        array("program", $_POST['program'], 'equal|'.$listPrograms),
+                        array("platform", $_POST['platform'], 'equal|'.$listPlatforms),
+                        array("platform2", $_POST['platform2'], 'equal|'.$listPlatforms)
+                    );
+
+                    $token = $this->_session->updateToken();
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseProgram'] = $response['program'];
+                        $_SESSION['inputResponsePlatform'] = $response['platform'];
+                        $_SESSION['inputResponsePlatform2'] = $response['platform2'];
+
+                        if($response['program'] == 'invalid'){
+                            $_SESSION['inputResponseProgramMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['program'] as $e){
+                                $_SESSION['inputResponseProgramMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseProgramMessage'] .= "</span>";
+                        }
+
+                        if($response['platform'] == 'invalid'){
+                            $_SESSION['inputResponsePlatformMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['platform'] as $e){
+                                $_SESSION['inputResponsePlatformMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponsePlatformMessage'] .= "</span>";
+                        }
+
+                        if($response['platform2'] == 'invalid'){
+                            $_SESSION['inputResponsePlatformMessage2'] = "<span class='text-danger'>";
+                            foreach($response['message']['platform2'] as $e){
+                                $_SESSION['inputResponsePlatformMessage2'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponsePlatformMessage2'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("dashboard"));
+                        exit;
+                    } else {
+                        $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
+                        if(empty($program) || !isset($program)){
+                            $program = null;
+                        }
+                        $platform = htmlspecialchars($_POST['platform'], ENT_QUOTES);
+                        if(empty($platform) || !isset($platform)){
+                            $platform = null;
+                        }
+                        $platform2 = htmlspecialchars($_POST['platform2'], ENT_QUOTES);
+                        if(empty($platform2) || !isset($platform2)){
+                            $platform2 = null;
+                        }
+
+                        $_SESSION['filterProgram'] = $program;
+                        $_SESSION['filterPlatform'] = $platform;
+                        $_SESSION['filterPlatform2'] = $platform2;
+
+                        header('Location: ' . $this->_routes->url("dashboard"));
+                        exit;
+                    }
+                }
+            }
         }
 
         private function settings($name, $view, $template){
@@ -772,7 +903,7 @@
             }
         }
 
-        private function postDataValid($token) {
+        private function postDataValid($token=null) {
             if($token != null){
                 $this->_session = new Session;
                 if(isset($_POST['token'])){

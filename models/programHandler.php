@@ -124,28 +124,25 @@
         *
         *  return : The amount of bugs in relation to the filter
         */
-        public function bugs($count = false, $severity = null){
-            $stmt = '';
+        public function bugsBySeverity(){
+            $severity = array();
+            $stmt = "SELECT severity FROM reports";
+            try {
+                $req = $this->statement($stmt);
 
-            if($count){
-                $stmt = 'SELECT count(*) FROM programs';
-            } else {
-                $stmt = 'SELECT * FROM programs';
+                while($row = $req->fetch(PDO::FETCH_ASSOC)){
+                    $sev = (string) $row['severity'];
+                    if(array_key_exists($sev, $severity)){
+                        $severity[$sev] += 1;
+                    } else {
+                        $severity[$sev] = 1;
+                    }
+                }
+
+                return $severity;
+            } catch(Exception $e) {
+                return false;
             }
-
-            $where = ' WHERE';
-
-            if($severity != null){
-                $where .= ' programs.severity = ' . $severity . ' AND';
-            }
-            
-            if($where != ' WHERE'){
-                $where = substr($where, 0, -4);
-            } else {
-                $where = '';
-            }
-
-            $stmt .= $where;
         }
     }
 ?>

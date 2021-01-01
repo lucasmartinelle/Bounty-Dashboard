@@ -176,21 +176,20 @@
                 null
             );
 
-            // reports
             $this->create(
                 "/dashboard/platforms",
                 "platforms",
                 "Platforms",
-                "controllerReports",
-                "reports/viewPlatforms",
+                "controllerPlatforms",
+                "platforms/viewPlatforms",
                 "dashboard"
             );
 
             $this->create(
-                "/dashboard/platformDelete/{string}",
-                "platformDelete",
+                "/dashboard/deletePlatform",
+                "deletePlatform",
                 "Delete a platform",
-                "controllerReports",
+                "controllerPlatforms",
                 null,
                 null
             );
@@ -199,28 +198,172 @@
                 "/dashboard/programs",
                 "programs",
                 "Programs",
-                "controllerReports",
-                "reports/viewPrograms",
+                "controllerPrograms",
+                "programs/viewPrograms",
                 "dashboard"
             );
 
             $this->create(
-                "/dashboard/programDelete/{string}",
-                "programDelete",
+                "/dashboard/deleteProgram/{string}",
+                "deleteProgram",
                 "Delete a program",
+                "controllerPrograms",
+                null,
+                null
+            );
+
+            
+            $this->create(
+                "/dashboard/scope",
+                "scope",
+                "Scope",
+                "controllerPrograms",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/tags",
+                "tags",
+                "Tags",
+                "controllerPrograms",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/reports",
+                "reports",
+                "Reports",
+                "controllerReports",
+                "reports/viewReports",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/filterReports",
+                "filterReports",
+                "Reports",
+                "controllerReports",
+                "reports/viewReports",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/createReport",
+                "createReport",
+                "Create a Report",
+                "controllerReports",
+                "reports/viewCreateReport",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/editReport/{string}",
+                "editReport",
+                "Edit a Report",
+                "controllerReports",
+                "reports/viewEditReport",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/showReport/{string}",
+                "showReport",
+                "Show a Report",
+                "controllerReports",
+                "reports/viewShowReport",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/deleteReport/{string}",
+                "deleteReport",
+                "Delete a Report",
                 "controllerReports",
                 null,
                 null
             );
 
-            // autocomplete URL
             $this->create(
-                "/dashboard/scope",
-                "scope",
-                "Scope",
+                "/dashboard/generateMarkdown",
+                "generateMarkdown",
+                "Generate markdown",
                 "controllerReports",
                 null,
                 null
+            );
+            
+            $this->create(
+                "/dashboard/changeGain",
+                "gainReport",
+                "Set gain of a report",
+                "controllerReports",
+                null,
+                null  
+            );
+
+            $this->create(
+                "/dashboard/useTemplate",
+                "useTemplate",
+                "Use a template",
+                "controllerReports",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/templates",
+                "templates",
+                "Templates",
+                "controllerTemplates",
+                "templates/viewTemplates",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/createTemplate",
+                "createTemplate",
+                "Create a Template",
+                "controllerTemplates",
+                "templates/viewCreateTemplate",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/editTemplate/{string}",
+                "editTemplate",
+                "Edit a Template",
+                "controllerTemplates",
+                "templates/viewEditTemplate",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/showTemplate/{string}",
+                "showTemplate",
+                "Show a Template",
+                "controllerTemplates",
+                "templates/viewShowTemplate",
+                "dashboard"
+            );
+
+            $this->create(
+                "/dashboard/deleteTemplate/{string}",
+                "deleteTemplate",
+                "Delete a Template",
+                "controllerTemplates",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/invoices",
+                "invoices",
+                "Invoices",
+                "controllerInvoices",
+                "invoices/viewInvoices",
+                "dashboard",
             );
         }
 

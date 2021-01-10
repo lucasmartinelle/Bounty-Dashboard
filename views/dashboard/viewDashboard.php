@@ -11,6 +11,11 @@
 
     $asset = "assets/";
     $idPage = "dashboard";
+
+    require_once("models/captchaHandler.php");
+    use Models\CaptchaHandler;
+    $this->_captchaHandler = new CaptchaHandler;
+    $pubkey = $this->_captchaHandler->getPubKey();
     ob_start();
 ?>
 
@@ -114,6 +119,23 @@
                     <div class="card-body" style="width: 100%;">
                         <canvas id="bugBySeverity" width="100%" height="300px;"></canvas>
                     </div>
+                    <hr>
+                    <div class="container-fluid pb-3">
+                        <span class="badge badge-pill badge-primary"><?= $lang->getTxt($idPage, "platforms"); ?><span class="badge badge-pill badge-light ml-2">
+                            <?php if(isset($informationFilterPlatforms) && !empty(htmlspecialchars($informationFilterPlatforms, ENT_QUOTES))){ 
+                                echo htmlspecialchars($informationFilterPlatforms, ENT_QUOTES); 
+                            } else { 
+                                echo 'all'; 
+                            } ?>
+                        </span></span>
+                        <span class="badge badge-pill badge-primary"><?= $lang->getTxt($idPage, "programs"); ?><span class="badge badge-pill badge-light ml-2">
+                            <?php if(isset($informationFilterPrograms) && !empty(htmlspecialchars($informationFilterPrograms, ENT_QUOTES))){ 
+                                echo htmlspecialchars($informationFilterPrograms, ENT_QUOTES); 
+                            } else { 
+                                echo 'all'; 
+                            } ?>
+                        </span></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,6 +150,16 @@
                     </div>
                     <div class="card-body" style="width: 100%;">
                         <canvas id="bugPerMonth" width="100%" height="300px;"></canvas>
+                    </div>
+                    <hr>
+                    <div class="container-fluid pb-3">
+                        <span class="badge badge-pill badge-primary"><?= $lang->getTxt($idPage, "platforms"); ?><span class="badge badge-pill badge-light ml-2">
+                            <?php if(isset($informationFilterPlatform2) && !empty(htmlspecialchars($informationFilterPlatform2, ENT_QUOTES))){ 
+                                echo htmlspecialchars($informationFilterPlatform2, ENT_QUOTES); 
+                            } else { 
+                                echo 'all'; 
+                            } ?>
+                        </span></span>
                     </div>
                 </div>
             </div>
@@ -371,12 +403,14 @@
             },
         });
 
-        grecaptcha.ready(function() {
-            grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
-                document.getElementById('g-recaptcha-response').value = token;
-                document.getElementById('g-recaptcha-response-2').value = token;
+        <?php if($pubkey != null): ?>
+            grecaptcha.ready(function() {
+                grecaptcha.execute('<?= $pubkey ?>', {action: 'homepage'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('g-recaptcha-response-2').value = token;
+                });
             });
-        });
+        <?php endif; ?>
     });
 
 </script>

@@ -1,7 +1,14 @@
 <?php
     require_once("utils/Session.php");
+    require_once("models/userHandler.php");
+    require_once("models/captchaHandler.php");
     use Utils\Session;
+    use Models\UserHandler;
+    use Models\CaptchaHandler;
     $session = new Session;
+    $this->_userHandler = new UserHandler;
+    $this->_captchaHandler = new CaptchaHandler;
+    $pubkey = $this->_captchaHandler->getPubKey();
 ?>
 
 <!doctype html>
@@ -22,7 +29,9 @@
         <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-        <script src="https://www.google.com/recaptcha/api.js?render=<?= SITE_KEY ?>"></script>
+        <?php if($pubkey != null): ?>
+            <script src="https://www.google.com/recaptcha/api.js?render=<?= $pubkey ?>"></script>
+        <?php endif; ?>
     </head>
     <body class="bg-light" id="<?= $idPage ?>">
         <!-- Page Wrapper -->
@@ -82,6 +91,16 @@
                             <span><?= $lang->getTxt('navbar', 'navitem-templates'); ?></span>
                         </a>
                     </li>
+
+                    <!-- Nav Item - Invoices -->
+                    <?php $active = $this->_userHandler->getUsers(array("id" => htmlspecialchars($_SESSION['id'], ENT_QUOTES)))[0]->activeBilling(); if($active == 'Y'): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= $routes->url('invoices'); ?>">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span><?= $lang->getTxt('navbar', 'navitem-invoices'); ?></span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <!-- Divider -->

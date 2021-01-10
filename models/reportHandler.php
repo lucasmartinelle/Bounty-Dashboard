@@ -266,6 +266,29 @@
             }
         }
 
+        public function earningpermonth(){
+            $dates = array('01' => 0, '02' => 0, '03' => 0, '04' => 0, '05' => 0, '06' => 0, '07' => 0, '08' => 0, '09' => 0, '10' => 0, '11' => 0, '12' => 0);
+            $stmt = "SELECT * FROM reports";
+
+            try {
+                $req = $this->statement($stmt);
+
+                while($row = $req->fetch(PDO::FETCH_ASSOC)){
+                    $date = $row['date'];
+                    $explodeddate = explode("-", $date);
+                    $month = $explodeddate[1];
+                    if(array_key_exists($month, $dates)){
+                        $dates[$month] += $row['gain'];
+                    } else {
+                        $dates[$month] = $row['gain'];
+                    }
+                }
+                return $dates;
+            } catch(Exception $e) {
+                return false;
+            }
+        }
+
         /* list of bugs with multiple filters
         *
         *  ex : $reports = $reportHandler->bugs(true, '5', '17', null, 'close');
@@ -273,7 +296,7 @@
         *
         *  return : The amount of bugs in relation to the filter
         */
-        public function bugs($count = false, $program = null, $platform = null, $status = null, $severitymin = null, $severitymax = null){
+        public function bugs($count = false, $program = null, $platform = null, $status = null, $severitymin = null, $severitymax = null, $month = null, $bounty = null, $creator = null){
             $stmt = '';
 
             if($count){
@@ -331,6 +354,22 @@
                     $where .= ' reports.severity < ' . $severitymax . ' AND';
                 }
             }
+
+            if($bounty != null){
+                if($platform == null && $program == null){
+                    $where .= ' gain > ' . ($bounty - 1) . ' AND';
+                } else {
+                    $where .= ' reports.gain > ' . ($bounty - 1) . ' AND';
+                }
+            }
+
+            if($creator != null){
+                if($platform == null && $program == null){
+                    $where .= " creator_id = '" . $creator . "' AND";
+                } else {
+                    $where .= " reports.creator_id = '" . $creator . "' AND";
+                }
+            }
             
             if($where != ' WHERE'){
                 $where = substr($where, 0, -4);
@@ -345,7 +384,14 @@
                 return $req->fetch(PDO::FETCH_ASSOC)['count(*)'];
             } else {
                 while($data = $req->fetch(PDO::FETCH_ASSOC)){
-                    $var[] = new Reports($data);
+                    if($month != null){
+                        $dmonth = explode('-', $data['date'])[1];
+                        if($dmonth == $month){
+                            $var[] = new Reports($data);
+                        }
+                    } else {
+                        $var[] = new Reports($data);
+                    }
                 }
                 return $var;
             }

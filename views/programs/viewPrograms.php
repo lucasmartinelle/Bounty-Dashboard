@@ -14,6 +14,11 @@
 
     $asset = "../assets/";
     $idPage = "programs";
+
+    require_once("models/captchaHandler.php");
+    use Models\CaptchaHandler;
+    $this->_captchaHandler = new CaptchaHandler;
+    $pubkey = $this->_captchaHandler->getPubKey();
     ob_start();
 ?>
     <!-- == Global alert == -->
@@ -35,6 +40,13 @@
                 <?= $lang->getTxt($idPage, "add-program"); ?>
             </button>
         </div>
+        <a href="<?= $routes->url('changeWatchState'); ?>" class="btn btn-primary mb-3">
+            <?php if(isset($_SESSION['watchState']) && !empty($_SESSION['watchState']) && $_SESSION['watchState'] == 'all'): ?>
+                <?= $lang->getTxt($idPage, "watchmy"); ?>
+            <?php elseif(isset($_SESSION['watchState']) && !empty($_SESSION['watchState']) && $_SESSION['watchState'] == 'me'): ?>
+                <?= $lang->getTxt($idPage, "watchall"); ?>
+            <?php endif; ?>
+        </a>
     </div>
 
     <div class="container-fluid">
@@ -82,8 +94,7 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        <?php foreach($programs as $program): 
-                            $count= 0; 
+                        <?php $count= 0; foreach($programs as $program): 
                             $fullscope = '';
                             $fulltags = '';
                             $scopes = count(explode("|", $program->scope())) - 1;
@@ -106,7 +117,6 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" href=""><?= $lang->getTxt($idPage, "action-view"); ?></a>
                                         <a class="dropdown-item" style="color: #3a3b45 !important;" data data-toggle="modal" data-url="<?= $routes->urlReplace("deleteProgram", array($program->id())); ?>" data-target="#confirmDelete" id="deleteProgram"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
                                     </div>
                                     </div>
@@ -383,11 +393,13 @@ crossorigin="anonymous"></script>
         }
     });
 
-    grecaptcha.ready(function() {
-        grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
-            document.getElementById('g-recaptcha-response').value = token;
+    <?php if($pubkey != null): ?>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('<?= $pubkey ?>', {action: 'homepage'}).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+            });
         });
-    });
+    <?php endif; ?>
 
     $('[data-toggle="datepicker"]').datepicker();
 

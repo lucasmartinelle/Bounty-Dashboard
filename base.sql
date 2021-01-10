@@ -92,3 +92,8 @@ CREATE TABLE `billings` (
   `IBAN` varchar(34) NOT NULL,
   UNIQUE KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `captcha` (
+  `pubkey` varchar(50) NOT NULL,
+  `privkey` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

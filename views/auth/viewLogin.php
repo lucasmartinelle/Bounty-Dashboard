@@ -11,6 +11,11 @@
 
     $asset = "../assets/";
     $idPage = "login";
+
+    require_once("models/captchaHandler.php");
+    use Models\CaptchaHandler;
+    $this->_captchaHandler = new CaptchaHandler;
+    $pubkey = $this->_captchaHandler->getPubKey();
     ob_start();
 ?>
 
@@ -88,11 +93,13 @@
         $('[data-toggle="popover"]').popover()
     })
 
-    grecaptcha.ready(function() {
-        grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
-            document.getElementById('g-recaptcha-response').value = token;
+    <?php if($pubkey != null): ?>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('<?= $pubkey; ?>', {action: 'homepage'}).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+            });
         });
-    });
+    <?php endif; ?>
 </script>
 
 <?php

@@ -5,7 +5,7 @@
     require_once("models/userHandler.php");
     require_once("utils/Validator.php");
     require_once("utils/Session.php");
-    require_once("utils/Captcha.php");
+    require_once("models/captchaHandler.php");
     require_once("app/Routes.php");
     require_once("app/languages/languageManager.php");
     require_once("models/billingHandler.php");
@@ -16,7 +16,7 @@
     use app\Routes;
     use Utils\Session;
     use Utils\Validator;
-    use Utils\Captcha;
+    use Models\CaptchaHandler;
     use Models\UserHandler;
     use Models\BillingHandler;
     use Models\ReportHandler;
@@ -31,7 +31,7 @@
         private $_userHandler;
         private $_validator;
         private $_routes;
-        private $_captcha;
+        private $_captchaHandler;
         private $_lang;
         private $_billingHandler; 
         private $_platformHandler;
@@ -57,6 +57,10 @@
                 $this->changePassword();
             } elseif($label == "changeBilling"){
                 $this->changeBilling();
+            } elseif($label == "changeWatchState"){
+                $this->changeWatchState();
+            } elseif($label == "changeCaptchaKey"){
+                $this->changeCaptchaKey();
             }
         }
 
@@ -74,24 +78,30 @@
                 $critical = $this->_reportHandler->countReports(array('severity' => '9'), null, true);
                 $platforms = $this->_reportHandler->bugsByPlatforms();
                 $filterProgram = null;
+                $filterProgramInfo = null;
                 $filterPlatform = null;
+                $filterPlatformInfo = null;
                 $filterPlatform2 = null;
+                $filterPlatform2Info = null;
                 $token = $this->_session->getToken();
                 if(isset($_SESSION['filterProgram']) && !empty($_SESSION['filterProgram'])){
                     $filterProgram = htmlspecialchars($_SESSION['filterProgram'], ENT_QUOTES);
+                    $filterProgramInfo = $this->_programHandler->getPrograms(array('id' => $filterProgram))[0]->name();
                 }
                 if(isset($_SESSION['filterPlatform']) && !empty($_SESSION['filterPlatform'])){
                     $filterPlatform = htmlspecialchars($_SESSION['filterPlatform'], ENT_QUOTES);
+                    $filterPlatformInfo = $this->_platformHandler->getPlatforms(array('id' => $filterPlatform))[0]->name();
                 }
                 if(isset($_SESSION['filterPlatform2']) && !empty($_SESSION['filterPlatform2'])){
                     $filterPlatform2 = htmlspecialchars($_SESSION['filterPlatform2'], ENT_QUOTES);
+                    $filterPlatform2Info = $this->_platformHandler->getPlatforms(array('id' => $filterPlatform2))[0]->name();
                 }
                 $severity = $this->_reportHandler->bugsBySeverity($filterProgram, $filterPlatform);
                 $dates = $this->_reportHandler->bugsByMonth($filterPlatform2);
                 $platformsFilter = $this->_platformHandler->getPlatforms();
                 $programsFilter = $this->_programHandler->getPrograms();
                 $this->_view = new View($view, $template);
-                $this->_view->generate(array("titre" => $name, 'new' => $new, 'token' => $token, 'other' => $other, "gain" => $gain, "critical" => $critical, "platforms" => $platforms, "severity" => $severity, 'dates' => $dates, 'platformsFilter' => $platformsFilter, 'programsFilter' => $programsFilter));
+                $this->_view->generate(array("titre" => $name, 'new' => $new, 'token' => $token, 'other' => $other, "gain" => $gain, "critical" => $critical, "platforms" => $platforms, "severity" => $severity, 'dates' => $dates, 'platformsFilter' => $platformsFilter, 'programsFilter' => $programsFilter, 'informationFilterPlatforms' => $filterPlatformInfo, 'informationFilterPrograms' => $filterProgramInfo, 'informationFilterPlatform2' => $filterPlatform2Info));
             }
         }
 
@@ -903,15 +913,111 @@
             }
         }
 
+        private function changeWatchState(){
+            if(isset($_SESSION['watchState']) && !empty($_SESSION['watchState'])){
+                if(htmlspecialchars($_SESSION['watchState'], ENT_QUOTES) == 'me'){
+                    $_SESSION['watchState'] = 'all';
+                } else {
+                    $_SESSION['watchState'] = 'me';
+                }
+            }
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
+        }
+
+        private function changeCaptchaKey(){
+            $this->_session = new Session;
+            $last_token = $this->_session->getToken();
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            if($this->_session->isAuth()){
+                if($this->_session->isAdmin()){
+                    if($_POST){
+                        if($this->postDataValid($last_token)){
+                            $this->_userHandler = new UserHandler;
+                            $token = $this->_session->updateToken();
+
+                            $data = array(
+                                array('pubkey', $_POST['pubkey'], 'required', 'max:50'),
+                                array('privkey', $_POST['privkey'], 'required', 'max:50')
+                            );
+
+                            $this->_validator = new Validator();
+                            $response = $this->_validator->validator($data);
+
+                            if($response['success'] == 'false'){
+                                // register validity of input
+                                $_SESSION['inputResponsePubkey'] = $response['pubkey'];
+                                $_SESSION['inputResponsePrivkey'] = $response['privkey'];
+
+                                if($response['pubkey'] == 'invalid'){
+                                    $_SESSION['inputResponsePubkeyMessage'] = "<span class='text-danger'>";
+                                    foreach($response['message']['pubkey'] as $e){
+                                        $_SESSION['inputResponsePubkeyMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                    }
+                                    $_SESSION['inputResponsePubkeyMessage'] .= "</span>";
+                                }
+            
+                                if($response['privkey'] == 'invalid'){
+                                    $_SESSION['inputResponsePrivkeyMessage'] = "<span class='text-danger'>";
+                                    foreach($response['message']['privkey'] as $e){
+                                        $_SESSION['inputResponsePrivkeyMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                    }
+                                    $_SESSION['inputResponsePrivkeyMessage'] .= "</span>";
+                                }
+
+                                header('Location: ' . $this->_routes->url("settings"));
+                                exit;
+                            } else {
+                                $pubkey = htmlspecialchars($_POST['pubkey'], ENT_QUOTES);
+                                $privkey = htmlspecialchars($_POST['privkey'], ENT_QUOTES);
+                                $this->_captchaHandler = new CaptchaHandler;
+                                if($this->_captchaHandler->insertCaptcha($pubkey, $privkey)){
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "update-captcha");
+                                    $_SESSION['typeAlert'] = "success";
+                                    header('Location: ' . $this->_routes->url("settings"));
+                                    exit;
+                                } else {
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                                    $_SESSION['typeAlert'] = "error";
+                                    header('Location: ' . $this->_routes->url("settings"));
+                                    exit;
+                                }
+                            }
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("settings"));
+                            exit;
+                        }
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerDashboard', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("dashboard"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url('dashboard'));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
         private function postDataValid($token=null) {
             if($token != null){
                 $this->_session = new Session;
                 if(isset($_POST['token'])){
                     $postToken = htmlspecialchars($_POST['token'], ENT_QUOTES);
                     if($token == $postToken){
-                        $this->_captcha = new Captcha;
-                        $ReCaptchaValid = $this->_captcha->verifyCaptcha($_POST['g-recaptcha-response'], PRIVATE_KEY);
-                        if($ReCaptchaValid == true){
+                        $this->_captchaHandler = new CaptchaHandler;
+                        if($this->_captchaHandler->getPubKey() != null){
+                            $ReCaptchaValid = $this->_captchaHandler->verifyCaptcha($_POST['g-recaptcha-response']);
+                            if($ReCaptchaValid == true){
+                                return true;
+                            }
+                        } else {
                             return true;
                         }
                     }
@@ -923,9 +1029,13 @@
                     $postToken = htmlspecialchars($_POST['token'], ENT_QUOTES);
                     $sessionToken = $this->_session->getToken();
                     if($sessionToken == $postToken){
-                        $this->_captcha = new Captcha;
-                        $ReCaptchaValid = $this->_captcha->verifyCaptcha($_POST['g-recaptcha-response'], PRIVATE_KEY);
-                        if($ReCaptchaValid == true){
+                        $this->_captchaHandler = new CaptchaHandler;
+                        if($this->_captchaHandler->getPubKey() != null){
+                            $ReCaptchaValid = $this->_captchaHandler->verifyCaptcha($_POST['g-recaptcha-response']);
+                            if($ReCaptchaValid == true){
+                                return true;
+                            }
+                        } else {
                             return true;
                         }
                     }

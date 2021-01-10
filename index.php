@@ -1,5 +1,9 @@
 <?php
     session_start();
+
+    if(!isset($_SESSION['watchState']) || empty($_SESSION['watchState'])){
+        $_SESSION['watchState'] = 'all';
+    }
     
     require_once("app/Routes.php");
     include_once "app/init.php";

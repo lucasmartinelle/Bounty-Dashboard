@@ -14,6 +14,11 @@
 
     $asset = "../assets/";
     $idPage = "settings";
+
+    require_once("models/captchaHandler.php");
+    use Models\CaptchaHandler;
+    $this->_captchaHandler = new CaptchaHandler;
+    $pubkey = $this->_captchaHandler->getPubKey();
     ob_start();
 ?>
 
@@ -120,6 +125,48 @@
                     </form>
                 </div>
             </div>
+            <?php if($admin): ?>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-set-captcha"); ?></h6>
+                    </div>
+                    <div class="wrapper-form">
+                        <form method="post" action="<?= $routes->url('changeCaptchaKey'); ?>" class="mt-3">
+                            
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-4">
+                                    <input type="text" name="pubkey" class="form-control <?php if(isset($_SESSION['inputResponsePubkey']) && !empty($_SESSION['inputResponsePubkey'])){ echo htmlspecialchars($_SESSION['inputResponsePubkey'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValuePubkey']) && !empty($_SESSION['inputValuePubkey'])){ echo htmlspecialchars($_SESSION['inputValuePubkey'], ENT_QUOTES); $_SESSION['inputValuePubkey'] = ''; } ?>" id="pubkey" placeholder="<?= $lang->getTxt($idPage, "pubkey-placeholder"); ?>">
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponsePubkey']) && !empty($_SESSION['inputResponsePubkey']) && $_SESSION['inputResponsePubkey'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponsePubkeyMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponsePubkey'] = ''; $_SESSION['inputResponsePubkeyMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-1">
+                                    <input type="text" name="privkey" class="form-control <?php if(isset($_SESSION['inputResponsePrivKey']) && !empty($_SESSION['inputResponsePrivKey'])){ echo htmlspecialchars($_SESSION['inputResponsePrivKey'], ENT_QUOTES); } ?>" value="<?php if(isset($_SESSION['inputValuePrivKey']) && !empty($_SESSION['inputValuePrivKey'])){ echo htmlspecialchars($_SESSION['inputValuePrivKey'], ENT_QUOTES); $_SESSION['inputValuePrivKey'] = ''; } ?>" id="privkey" placeholder="<?= $lang->getTxt($idPage, "privkey-placeholder"); ?>">
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponsePrivKey']) && !empty($_SESSION['inputResponsePrivKey']) && $_SESSION['inputResponsePrivKey'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponsePrivKeyMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponsePrivKey'] = ''; $_SESSION['inputResponsePrivKeyMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <button class="btn btn-info w-100" type="submit"><?= $lang->getTxt($idPage, "submit"); ?></button>
+                                </div>
+                            </div>
+                            
+                            <!-- == Captcha and crsf token == -->
+                            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                            <input type="hidden" id="token" name="token" value="<?= $token ?>">
+                            <!-- End Captcha and crsf token -->
+                        </form>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
         <?php if($admin): ?>
             <div class="col-md-6">
@@ -231,12 +278,14 @@
         $('[data-toggle="popover"]').popover()
     })
 
-    grecaptcha.ready(function() {
-        grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
-            document.getElementById('g-recaptcha-response').value = token;
-            document.getElementById('g-recaptcha-response-1').value = token;
+    <?php if($pubkey != null): ?>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('<?= $pubkey ?>', {action: 'homepage'}).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+                document.getElementById('g-recaptcha-response-1').value = token;
+            });
         });
-    });
+    <?php endif; ?>
 </script>
 
 <?php

@@ -14,7 +14,13 @@
 
     $asset = "../assets/";
     $idPage = "reports";
+
+    require_once("models/captchaHandler.php");
+    use Models\CaptchaHandler;
+    $this->_captchaHandler = new CaptchaHandler;
+    $pubkey = $this->_captchaHandler->getPubKey();
     ob_start();
+?>
 ?>
     <!-- == Global alert == -->
     <?php if(isset($_SESSION['alert']) && isset($_SESSION['typeAlert']) && !empty($_SESSION['alert']) && !empty($_SESSION['typeAlert'])): 
@@ -35,6 +41,13 @@
                 <?= $lang->getTxt($idPage, "add-report"); ?>
             </a>
         </div>
+        <a href="<?= $routes->url('changeWatchState'); ?>" class="btn btn-primary mb-3">
+            <?php if(isset($_SESSION['watchState']) && !empty($_SESSION['watchState']) && $_SESSION['watchState'] == 'all'): ?>
+                <?= $lang->getTxt($idPage, "watchmy"); ?>
+            <?php elseif(isset($_SESSION['watchState']) && !empty($_SESSION['watchState']) && $_SESSION['watchState'] == 'me'): ?>
+                <?= $lang->getTxt($idPage, "watchall"); ?>
+            <?php endif; ?>
+        </a>
     </div>
 
     <div class="card shadow mb-4">
@@ -327,13 +340,15 @@ crossorigin="anonymous"></script>
             });
         <?php endif; ?>
 
-        grecaptcha.ready(function() {
-            grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
-                document.getElementById('g-recaptcha-response').value = token;
-                document.getElementById('g-recaptcha-response-2').value = token;
-                document.getElementById('g-recaptcha-response-3').value = token;
+        <?php if($pubkey != null): ?>
+            grecaptcha.ready(function() {
+                grecaptcha.execute('<?= $pubkey ?>', {action: 'homepage'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('g-recaptcha-response-2').value = token;
+                    document.getElementById('g-recaptcha-response-3').value = token;
+                });
             });
-        });
+        <?php endif; ?>
     });
 
     $('#changeStatus').on('shown.bs.modal', function (e) {

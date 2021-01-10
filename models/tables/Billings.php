@@ -79,7 +79,7 @@
         }
 
         private function setSIRET($SIRET){
-            if(is_string($SIRET) && strlen($SIRET) < 14){
+            if(is_string($SIRET) && strlen($SIRET) <= 14){
                 $this->_SIRET = $SIRET;
             }
         }
@@ -97,13 +97,13 @@
         }
 
         private function setBIC($BIC){
-            if(is_string($BIC) && strlen($BIC) < 11){
+            if(is_string($BIC) && strlen($BIC) <= 11){
                 $this->_BIC = $BIC;
             }
         }
 
         private function setIBAN($IBAN){
-            if(is_string($IBAN) && strlen($IBAN) < 14){
+            if(is_string($IBAN) && strlen($IBAN) <= 34){
                 $this->_IBAN = $IBAN;
             }
         }

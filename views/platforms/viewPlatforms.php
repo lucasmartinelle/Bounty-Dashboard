@@ -14,6 +14,11 @@
 
     $asset = "../assets/";
     $idPage = "platforms";
+
+    require_once("models/captchaHandler.php");
+    use Models\CaptchaHandler;
+    $this->_captchaHandler = new CaptchaHandler;
+    $pubkey = $this->_captchaHandler->getPubKey();
     ob_start();
 ?>
     <!-- == Global alert == -->
@@ -49,16 +54,18 @@
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-severity"); ?></h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="width: 100%;">
+                        <canvas id="bugBySeverity" width="100%" height="300"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-severity"); ?></h6>
+                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-earning-per-month"); ?></h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="width: 100%;">
+                        <canvas id="earningpermonth" width="100%" height="300"></canvas>
                     </div>
                 </div>
             </div>
@@ -143,18 +150,150 @@
 <?php 
     $content = ob_get_clean();
     ob_start();
+
+    if($_COOKIE['lang'] == 'FR'){
+        $jan = 'Janvier';
+        $fev = 'Février';
+        $mar = 'Mars';
+        $apr = 'Avril';
+        $may = 'Mai';
+        $jun = 'Juin';
+        $jul = 'Juillet';
+        $aug = 'Août';
+        $sep = 'Septembre';
+        $oct = 'Octobre';
+        $nov = 'Novembre';
+        $dec = 'Décembre';
+    } else {
+        $jan = 'January';
+        $fev = 'February';
+        $mar = 'March';
+        $apr = 'April';
+        $may = 'May';
+        $jun = 'June';
+        $jul = 'July';
+        $aug = 'August';
+        $sep = 'September';
+        $oct = 'October';
+        $nov = 'November';
+        $dec = 'December';
+    }
+
+    $values = '';
+    foreach($earningpermonth as $key=>$value){
+        $values .= "'" . $value . "',";
+    }
+    $values = substr($values, 0, -1);
+
+    $keysSeverity = '';
+    $valuesSeverity = '';
+    foreach($severity as $key=>$value){
+        $keysSeverity .= "'" . $key . "',";
+        $valuesSeverity .= "'" . $value . "',";
+    }
+    $keysSeverity = substr($keysSeverity, 0,-1);
+    $valuesSeverity = substr($valuesSeverity, 0, -1);
 ?>
 
+<script src="<?= $asset ?>dist/chart.js/Chart.min.js"></script>
 <script type="text/javascript">
     $(function () {
         $('[data-toggle="popover"]').popover()
     })
 
-    grecaptcha.ready(function() {
-        grecaptcha.execute('<?php echo SITE_KEY; ?>', {action: 'homepage'}).then(function(token) {
-            document.getElementById('g-recaptcha-response').value = token;
-            document.getElementById('g-recaptcha-response-2').value = token;
+    <?php if($pubkey != null): ?>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('<?= $pubkey ?>', {action: 'homepage'}).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+                document.getElementById('g-recaptcha-response-2').value = token;
+            });
         });
+    <?php endif; ?>
+
+    var ctx = document.getElementById('earningpermonth');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['<?= $jan ?>', '<?= $fev ?>', '<?= $mar ?>', '<?= $apr ?>', '<?= $may ?>', '<?= $jun ?>', '<?= $jul ?>', '<?= $aug ?>', '<?= $sep ?>', '<?= $oct ?>', '<?= $nov ?>', '<?= $dec ?>'],
+            datasets: [{
+                data: [<?= $values ?>],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(165, 105, 189 , 0.2)',
+                    'rgba(120, 40, 31, 0.2)',
+                    'rgba(40, 55, 71, 0.2)',
+                    'rgba(22, 160, 133 , 0.2)',
+                    'rgba(93, 173, 226, 0.2)',
+                    'rgba(108, 52, 131 , 0.2)',
+                    'rgba(220, 118, 51, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(165, 105, 189 , 1)',
+                    'rgba(120, 40, 31, 1)',
+                    'rgba(40, 55, 71, 1)',
+                    'rgba(22, 160, 133 , 1)',
+                    'rgba(93, 173, 226, 1)',
+                    'rgba(108, 52, 131 , 1)',
+                    'rgba(220, 118, 51, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            legend: {
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+    ctx.height = 300;
+
+    var ctxSeverity = document.getElementById("bugBySeverity");
+    var bugBySeverity = new Chart(ctxSeverity, {
+        type: 'doughnut',
+        data: {
+            labels: [<?= $keysSeverity ?>],
+            datasets: [{
+            data: [<?= $valuesSeverity ?>],
+            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#a4f542', '#ed3245', '#edbb45', '#a064fa' , '#45f1f7'],
+            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#95de3c', '#bd2232', '#d4a944', '#8f48fa', '#3dcfd4'],
+            hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+            backgroundColor: "rgb(255,255,255)",
+            bodyFontColor: "#858796",
+            borderColor: '#dddfeb',
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            caretPadding: 10,
+            },
+            legend: {
+                display: true,
+                position: 'bottom',
+            },
+            cutoutPercentage: 80,
+        },
     });
 </script>
 

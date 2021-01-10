@@ -8,14 +8,14 @@
     require_once("models/templateHandler.php");
     require_once("utils/Validator.php");
     require_once("utils/Session.php");
-    require_once("utils/Captcha.php");
+    require_once("models/captchaHandler.php");
     require_once("app/Routes.php");
     require_once("app/languages/languageManager.php");
 
     use app\Routes;
     use Utils\Session;
     use Utils\Validator;
-    use Utils\Captcha;
+    use Models\CaptchaHandler;
     use Models\PlatformHandler;
     use Models\ProgramHandler;
     use Models\ReportHandler;
@@ -28,7 +28,7 @@
         private $_session;
         private $_validator;
         private $_routes;
-        private $_captcha;
+        private $_captchaHandler;
         private $_lang;
         private $_platformHandler;
         private $_programHandler;
@@ -69,7 +69,11 @@
                     $this->_platformHandler = new platformHandler;
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
-                    $reports = $this->_reportHandler->getReports();
+                    if(isset($_SESSION['watchState']) && !empty($_SESSION['watchState']) && $_SESSION['watchState'] == 'me'){ 
+                        $reports = $this->_reportHandler->getReports(array('creator_id' => htmlspecialchars($_SESSION['id'], ENT_QUOTES)));
+                    } else {
+                        $reports = $this->_reportHandler->getReports();
+                    }
                     $programs = $this->_programHandler->getPrograms();
                     $platforms = $this->_platformHandler->getPlatforms();
                     $this->_view = new View($view, $template);
@@ -956,9 +960,13 @@
                 if(isset($_POST['token'])){
                     $postToken = htmlspecialchars($_POST['token'], ENT_QUOTES);
                     if($token == $postToken){
-                        $this->_captcha = new Captcha;
-                        $ReCaptchaValid = $this->_captcha->verifyCaptcha($_POST['g-recaptcha-response'], PRIVATE_KEY);
-                        if($ReCaptchaValid == true){
+                        $this->_captchaHandler = new CaptchaHandler;
+                        if($this->_captchaHandler->getPubKey() != null){
+                            $ReCaptchaValid = $this->_captchaHandler->verifyCaptcha($_POST['g-recaptcha-response']);
+                            if($ReCaptchaValid == true){
+                                return true;
+                            }
+                        } else {
                             return true;
                         }
                     }
@@ -970,9 +978,13 @@
                     $postToken = htmlspecialchars($_POST['token'], ENT_QUOTES);
                     $sessionToken = $this->_session->getToken();
                     if($sessionToken == $postToken){
-                        $this->_captcha = new Captcha;
-                        $ReCaptchaValid = $this->_captcha->verifyCaptcha($_POST['g-recaptcha-response'], PRIVATE_KEY);
-                        if($ReCaptchaValid == true){
+                        $this->_captchaHandler = new CaptchaHandler;
+                        if($this->_captchaHandler->getPubKey() != null){
+                            $ReCaptchaValid = $this->_captchaHandler->verifyCaptcha($_POST['g-recaptcha-response']);
+                            if($ReCaptchaValid == true){
+                                return true;
+                            }
+                        } else {
                             return true;
                         }
                     }

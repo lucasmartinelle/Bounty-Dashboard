@@ -5,7 +5,7 @@
     require_once("models/userHandler.php");
     require_once("utils/Session.php");
     require_once("utils/Validator.php");
-    require_once("utils/Captcha.php");
+    require_once("models/captchaHandler.php");
     require_once("app/Routes.php");
     require_once("utils/Sender.php");
     require_once("app/languages/languageManager.php");
@@ -13,7 +13,7 @@
     use app\Routes;
     use Utils\Session;
     use Utils\Validator;
-    use Utils\Captcha;
+    use Models\CaptchaHandler;
     use Utils\Sender;
     use Models\UserHandler;
     use view\View;
@@ -26,7 +26,7 @@
         private $_validator;
         private $_routes;
         private $_sender;
-        private $_captcha;
+        private $_captchaHandler;
         private $_lang;
         
         public function __construct($label, $name, $view, $template, $data){
@@ -574,9 +574,13 @@
                 $postToken = htmlspecialchars($_POST['token'], ENT_QUOTES);
                 $sessionToken = $this->_session->getToken();
                 if($sessionToken == $postToken){
-                    $this->_captcha = new Captcha;
-                    $ReCaptchaValid = $this->_captcha->verifyCaptcha($_POST['g-recaptcha-response'], PRIVATE_KEY);
-                    if($ReCaptchaValid == true){
+                    $this->_captchaHandler = new CaptchaHandler;
+                    if($this->_captchaHandler->getPubKey() != null){
+                        $ReCaptchaValid = $this->_captchaHandler->verifyCaptcha($_POST['g-recaptcha-response']);
+                        if($ReCaptchaValid == true){
+                            return true;
+                        }
+                    } else {
                         return true;
                     }
                 }

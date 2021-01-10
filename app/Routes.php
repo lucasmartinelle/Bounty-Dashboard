@@ -365,6 +365,33 @@
                 "invoices/viewInvoices",
                 "dashboard",
             );
+
+            $this->create(
+                "/dashboard/generateInvoice",
+                "generateInvoice",
+                "generate Invoice",
+                "controllerInvoices",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/changeWatchState",
+                "changeWatchState",
+                "Change Watch State",
+                "controllerDashboard",
+                null,
+                null
+            );
+
+            $this->create(
+                "/dashboard/changeCaptchaKey",
+                "changeCaptchaKey",
+                "Change Captcha Key",
+                "controllerDashboard",
+                null,
+                null
+            );
         }
 
         public function load($label){

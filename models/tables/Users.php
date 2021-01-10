@@ -12,6 +12,7 @@
         private $_lang;
         private $_active;
         private $_billing_active;
+        private $_invoicenb;
         private $_createdat;
         private $_updatedat;
         private $_bad_attempt;
@@ -89,6 +90,14 @@
             }
         }
 
+        private function setInvoicenb($invoicenb){
+            $invoicenb = (int) $invoicenb;
+
+            if($invoicenb >= 0){
+                $this->_invoicenb = $invoicenb;
+            }
+        }
+
         private function setCreatedat($createdat){
             $this->_createdat = $createdat;
         }
@@ -144,6 +153,10 @@
 
         public function activeBilling(){
             return $this->_billing_active;
+        }
+
+        public function invoicenb(){
+            return $this->_invoicenb;
         }
 
         public function createdat(){

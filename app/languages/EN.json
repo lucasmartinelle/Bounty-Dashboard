@@ -191,7 +191,7 @@
         "name-placeholder" : "Name",
         "description-placeholder" : "Description",
         "invalid-input" : "Invalid input",
-        "header-platforms" : "Platforms",
+        "header-platforms" : "Platform",
         "header-bug-by-severity" : "Bugs found by severity",
         "header-earning-per-month" : "Earning per month",
         "modal-nav-close" : "Close",
@@ -264,14 +264,15 @@
         "change-gain" : "Change the gain",
         "modal-nav-close" : "Close",
         "modal-nav-confirm" : "Confirm",
-        "watchmy" : "My programs",
-        "watchall" : "All programs"
+        "watchmy" : "My reports",
+        "watchall" : "All reports"
     },
     "createReport" : {
         "header" : "Create a report",
         "header-create-report" : "Basic informations",
         "header-use-template" : "Use a template",
         "header-steps-to-reproduce" : "Steps to reproduce",
+        "use-template" : "Use a template",
         "header-impact" : "Impact",
         "header-mitigation" : "Mitigation",
         "header-ressources" : "Ressources",
@@ -336,8 +337,8 @@
         "confirmation-delete-template" : "Are you sure you want to delete this template ?",
         "modal-nav-close" : "Close",
         "modal-nav-confirm" : "Confirm",
-        "watchmy" : "My programs",
-        "watchall" : "All programs"
+        "watchmy" : "My templates",
+        "watchall" : "All templates"
     },
     "createTemplate" : {
         "header" : "Create a template",
@@ -395,8 +396,6 @@
         "apply-filter" : "Apply a filter",
         "filter-platform-header" : "Platform",
         "filter-month-header" : "Month",
-        "mounth-1" : "01",
-        "february" : "02",
         "invalid-input" : "Invalid input",
         "modal-nav-close" : "Close",
         "modal-nav-confirm" : "Confirm",

@@ -36,7 +36,7 @@
     <div class="d-flex justify-content-between">
         <h1 class="h3 mb-1 text-gray-800 mb-3"><?= $lang->getTxt($idPage, "header"); ?></h1>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#useTemplate" style="height: max-content;">
-            Use a template
+            <?= $lang->getTxt($idPage, "use-template"); ?>
         </button>
     </div>
 

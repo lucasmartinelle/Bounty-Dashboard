@@ -21,6 +21,8 @@
     font-size: 12px;
 }
 
+.ui-helper-hidden-accessible { display: none; }
+
 .ui-autocomplete {
     position: absolute;
     top: 0;
@@ -195,11 +197,11 @@ form span i {
     display: block;
 }
 
-#createReport .cm {
+#createReport .cm, #editReport .cm, #createTemplate .cm, #editTemplate .cm {
     overflow: scroll;
 }
 
-#createReport .btndiv {
+#createReport .btndiv, #editReport .btndiv, #createTemplate .btndiv, #editTemplate .btndiv {
     width: 60%; 
     margin-top: 60px !important;
 }

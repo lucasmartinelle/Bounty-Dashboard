@@ -212,6 +212,14 @@
                 null
             );
 
+            $this->create(
+                "/dashboard/changeStatusProgram",
+                "changeStatusProgram",
+                "Change status of a program",
+                "controllerPrograms",
+                null,
+                null
+            );
             
             $this->create(
                 "/dashboard/scope",

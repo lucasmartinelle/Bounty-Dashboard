@@ -21,7 +21,6 @@
     $pubkey = $this->_captchaHandler->getPubKey();
     ob_start();
 ?>
-?>
     <!-- == Global alert == -->
     <?php if(isset($_SESSION['alert']) && isset($_SESSION['typeAlert']) && !empty($_SESSION['alert']) && !empty($_SESSION['typeAlert'])): 
         if(htmlspecialchars($_SESSION['typeAlert'], ENT_QUOTES) == 'error'): ?>
@@ -90,10 +89,10 @@
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $report->title() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $report->severity() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-warning">' . $report->endpoint() . '</span>'; ?></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-success" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeGain">' . $report->gain() . ' € <i class="fas fa-pen text-light ml-2"></i></span>'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-success" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeGain">' . $report->gain() . ' €'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $report->identifiant() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $report->date() . '</span>'; ?></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-danger" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeStatus">' . $report->status() . ' <i class="fas fa-pen text-light ml-2"></i></span>'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-danger" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeStatus">' . $report->status(); ?></td>
                                 <td class="text-center">
                                     <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-edit"></i>

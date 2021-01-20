@@ -85,7 +85,23 @@
         *           false if program couldn't be updated
         */
         public function updateProgram($set, $where){
+            $stmt = "UPDATE programs SET ";
+            foreach($set as $key => $value){
+                $stmt .="`". $key . "` = '".$value."', ";
+            }
+            $stmt = substr($stmt, 0, -2);
+            $stmt .= ' WHERE ';
+            foreach($where as $key => $value){
+                $stmt .= "`". $key . "` = '".$value."' AND ";
+            }
+            $stmt = substr($stmt, 0, -5);
 
+            try {
+                $this->statement($stmt);
+                return true;
+            } catch(Exception $e) {
+                return false;
+            }
         }
 
         /* delete program
@@ -132,6 +148,17 @@
 
                 while($row = $req->fetch(PDO::FETCH_ASSOC)){
                     $sev = (string) $row['severity'];
+                    if($sev == 0){
+                        $sev = 'None';
+                    } elseif($sev > 0 and $sev < 4){
+                        $sev = 'Low';
+                    } elseif($sev >= 4 and $sev < 7){
+                        $sev = 'Medium';
+                    } elseif($sev >= 7 and $sev < 9){
+                        $sev = 'High';
+                    } elseif($sev >= 9 and $sev <= 10){
+                        $sev = 'Critical';
+                    }
                     if(array_key_exists($sev, $severity)){
                         $severity[$sev] += 1;
                     } else {

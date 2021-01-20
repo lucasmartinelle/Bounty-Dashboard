@@ -206,6 +206,7 @@
         "date-placeholder" : "Start date",
         "tags-placeholder" : "Tags",
         "platform" : "Platforms",
+        "change-status" : "Change status",
         "status-open" : "Open",
         "status-close" : "Close",
         "invalid-input" : "Invalid input",
@@ -224,7 +225,7 @@
         "delete-program" : "Delete a program",
         "confirmation-delete-program" : "Are you sure you want to delete this program and all its reports ?",
         "modal-nav-close" : "Close",
-        "modal-nav-confirm" : "Create",
+        "modal-nav-confirm" : "Confirm",
         "watchmy" : "My programs",
         "watchall" : "All programs"
     },

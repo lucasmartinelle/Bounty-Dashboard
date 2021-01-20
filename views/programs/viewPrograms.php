@@ -110,7 +110,7 @@
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $numberofbugs[$count] . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $gain . ' €</span>'; ?></td>
                                 <td class="text-center"><span class="badge badge-pill badge-success"><?= $scopes; ?></span></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $program->status() . '</span>'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-info" data-toggle="modal" data-id="'.$program->id().'" data-target="#changeStatus">' . $program->status() . '</span>'; ?></td>
                                 <td class="text-center"><?= $fulltags; ?></td>
                                 <td class="text-center">
                                     <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -257,6 +257,47 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="changeStatus" tabindex="-1" role="dialog" aria-labelledby="#changeStatusLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeStatusLabel"><?= $lang->getTxt($idPage, "change-status"); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" class="eventForm" action="<?= $routes->url('changeStatusProgram'); ?>">
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <select class="form-control <?php if(isset($_SESSION['inputResponseStatus']) && !empty($_SESSION['inputResponseStatus'])){ echo htmlspecialchars($_SESSION['inputResponseStatus'], ENT_QUOTES); } ?>" id="status" name="status">
+                                    <option hidden >Status</option>
+                                    <option value="open"><?= $lang->getTxt($idPage, "status-open"); ?></option>
+                                    <option value="close"><?= $lang->getTxt($idPage, "status-close"); ?></option>
+                                </select>
+                                <!-- == If validation failed == -->
+                                <?php if(isset($_SESSION['inputResponseStatus']) && !empty($_SESSION['inputResponseStatus']) && $_SESSION['inputResponseStatus'] == 'invalid'): ?>
+                                    <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseStatusMessage'], ENT_QUOTES); ?>"></i></span>
+                                <?php endif; $_SESSION['inputResponseStatus'] = ''; $_SESSION['inputResponseStatusMessage'] = ''; ?> <!-- End of validation failed -->
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="idProgram" name="idProgram">
+                        <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                        <input type="hidden" id="token" name="token" value="<?= $token ?>">
+                        <!-- End Captcha and crsf token -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                        <button type="submit" class="btn btn-primary"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 <?php 
     $content = ob_get_clean();
     ob_start();
@@ -344,6 +385,7 @@ crossorigin="anonymous"></script>
         <?php endif; ?>
         var scope = $("#scopehide").val();
         var arr = scope.split('|');
+
         $.each( arr, function( index, value ) {
             $('#scopetags').append('<span class="badge badge-pill badge-success m-r-xs">'+value+'</span>');
         });
@@ -355,18 +397,28 @@ crossorigin="anonymous"></script>
         });
     });
 
+    function escapeHtml(text) {
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
     $('#scope').autocomplete({
         source: '<?= $routes->url("scope"); ?>',
-        minLength: 0,
-        blankItem: true
+        minLength: 0
     }).focus(function(){            
         $(this).data("uiAutocomplete").search($(this).val());
     });
 
     $('#tags').autocomplete({
         source: '<?= $routes->url("tags"); ?>',
-        minLength: 0,
-        blankItem: true
+        minLength: 0
     }).focus(function(){            
         $(this).data("uiAutocomplete").search($(this).val());
     });
@@ -376,7 +428,7 @@ crossorigin="anonymous"></script>
     $('#tags').autocomplete("option","appendTo",".eventForm");
 
     $('#addbutton').click(function(){
-        var tag = $('#scope').val();
+        var tag = escapeHtml($('#scope').val());
         if(tag.trim() != ""){
             $('#scopehide').val($('#scopehide').val()+tag+"|");
             $('#scopetags').append('<span class="badge badge-pill badge-success m-r-xs">'+tag+'</span>');
@@ -385,7 +437,7 @@ crossorigin="anonymous"></script>
     });
 
     $('#addbuttontags').click(function(){
-        var tag = $('#tags').val();
+        var tag = escapeHtml($('#tags').val());
         if(tag.trim() != ""){
             $('#tagshide').val($('#tagshide').val()+tag+"|");
             $('#tagstags').append('<span class="badge badge-pill badge-success m-r-xs">'+tag+'</span>');
@@ -397,6 +449,7 @@ crossorigin="anonymous"></script>
         grecaptcha.ready(function() {
             grecaptcha.execute('<?= $pubkey ?>', {action: 'homepage'}).then(function(token) {
                 document.getElementById('g-recaptcha-response').value = token;
+                document.getElementById('g-recaptcha-response-2').value = token;
             });
         });
     <?php endif; ?>
@@ -408,6 +461,13 @@ crossorigin="anonymous"></script>
         var url = button.data('url');
         var modal = $(this)
         modal.find('#deleteProgramLink').attr('href', url)
+    });
+
+    $('#changeStatus').on('shown.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
+        var idProgram = button.data('id');
+        var modal = $(this);
+        modal.find('#idProgram').val(idProgram);
     });
 </script>
 

@@ -110,29 +110,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card cm shadow mb-4">
-                        <?php if(isset($_SESSION['inputResponseImpact']) && !empty($_SESSION['inputResponseImpact']) && htmlspecialchars($_SESSION['inputResponseImpact'], ENT_QUOTES) == "invalid"): ?>
-                            <div class="card-header bg-danger py-3">
-                                <div class="d-flex justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-light"><?= $lang->getTxt($idPage, "header-impact"); ?></h6>
-                                    <!-- == If validation failed == -->
-                                    <?php if(isset($_SESSION['inputResponseImpact']) && !empty($_SESSION['inputResponseImpact']) && $_SESSION['inputResponseImpact'] == 'invalid'): ?>
-                                        <span><i class="fas fa-info-circle text-light me" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseImpactMessage'], ENT_QUOTES); ?>"></i></span>
-                                    <?php endif; $_SESSION['inputResponseImpact'] = ''; $_SESSION['inputResponseImpactMessage'] = ''; ?> <!-- End of validation failed -->
-                                </div>
-                            </div>
-                        <?php else: ?>
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-impact"); ?></h6>
-                            </div>
-                        <?php endif; ?>
-                        <div class="card-body">
-                            <div id="impact" class="w-100">
-                                <textarea style="display:none;" name="impact"><?php if(isset($_SESSION['inputValueImpact']) && !empty($_SESSION['inputValueImpact'])){ echo htmlspecialchars_decode($_SESSION['inputValueImpact'], ENT_QUOTES); $_SESSION['inputValueImpact'] = ''; } ?></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card cm shadow mb-4">
+                </div>
+                <div class="col-md-6">
+                    <div class="card cm shadow mb-4" style="height: 458.2px;">
                         <?php if(isset($_SESSION['inputResponseRessources']) && !empty($_SESSION['inputResponseRessources']) && htmlspecialchars($_SESSION['inputResponseRessources'], ENT_QUOTES) == "invalid"): ?>
                             <div class="card-header bg-danger py-3">
                                 <div class="d-flex justify-content-between">
@@ -155,7 +135,31 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-8">
+                    <div class="card cm shadow mb-4">
+                        <?php if(isset($_SESSION['inputResponseImpact']) && !empty($_SESSION['inputResponseImpact']) && htmlspecialchars($_SESSION['inputResponseImpact'], ENT_QUOTES) == "invalid"): ?>
+                            <div class="card-header bg-danger py-3">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-light"><?= $lang->getTxt($idPage, "header-impact"); ?></h6>
+                                    <!-- == If validation failed == -->
+                                    <?php if(isset($_SESSION['inputResponseImpact']) && !empty($_SESSION['inputResponseImpact']) && $_SESSION['inputResponseImpact'] == 'invalid'): ?>
+                                        <span><i class="fas fa-info-circle text-light me" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseImpactMessage'], ENT_QUOTES); ?>"></i></span>
+                                    <?php endif; $_SESSION['inputResponseImpact'] = ''; $_SESSION['inputResponseImpactMessage'] = ''; ?> <!-- End of validation failed -->
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-impact"); ?></h6>
+                            </div>
+                        <?php endif; ?>
+                        <div class="card-body">
+                            <div id="impact" class="w-100">
+                                <textarea style="display:none;" name="impact"><?php if(isset($_SESSION['inputValueImpact']) && !empty($_SESSION['inputValueImpact'])){ echo htmlspecialchars_decode($_SESSION['inputValueImpact'], ENT_QUOTES); $_SESSION['inputValueImpact'] = ''; } ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
                     <div class="card cm shadow mb-4">
                         <?php if(isset($_SESSION['inputResponseStepstoreproduce']) && !empty($_SESSION['inputResponseStepstoreproduce']) && htmlspecialchars($_SESSION['inputResponseStepstoreproduce'], ENT_QUOTES) == "invalid"): ?>
                             <div class="card-header bg-danger py-3">
@@ -178,6 +182,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-8">
                     <div class="card cm shadow mb-4">
                         <?php if(isset($_SESSION['inputResponseMitigation']) && !empty($_SESSION['inputResponseMitigation']) && htmlspecialchars($_SESSION['inputResponseMitigation'], ENT_QUOTES) == "invalid"): ?>
                             <div class="card-header bg-danger py-3">
@@ -200,6 +206,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-8 mb-4">
                     <div class="container m-auto btndiv">
                         <button class="btn btn-info w-100" type="submit" style="height: 50px;"><?= $lang->getTxt($idPage, "submit"); ?></button>
                     </div>
@@ -267,7 +275,7 @@
     ob_start();
 ?>
 
-<script src="<?= $asset ?>dist/editormd/editormd.min.js"></script>
+<script src="<?= $asset ?>dist/editormd/editormd.js"></script>
 <script src="<?= $asset ?>dist/editormd/languages/en.js"></script>
 <script src="<?= $asset ?>dist/datepicker.js"></script>
 <script type="text/javascript">
@@ -278,9 +286,10 @@
         $('[data-toggle="datepicker"]').datepicker();
         
         var stepstoreproduce = editormd("stepstoreproduce", {
-            height: '500px',
+            height      : '400px',
             path   : "<?= $asset ?>dist/editormd/lib/",
             toolbarAutoFixed : false,
+            htmlDecode : true,
             toolbarIcons : function() {
                 // Or return editormd.toolbarModes[name]; // full, simple, mini
                 // Using "||" set icons align right.
@@ -314,9 +323,10 @@
         });
         
         var impact = editormd("impact", {
-            height: '500px',
+            height      : '400px',
             path   : "<?= $asset ?>dist/editormd/lib/",
             toolbarAutoFixed : false,
+            htmlDecode : true,
             toolbarIcons : function() {
                 // Or return editormd.toolbarModes[name]; // full, simple, mini
                 // Using "||" set icons align right.
@@ -325,9 +335,10 @@
         });
 
         var mitigation = editormd("mitigation", {
-            height: '500px',
+            height      : '400px',
             path   : "<?= $asset ?>dist/editormd/lib/",
             toolbarAutoFixed : false,
+            htmlDecode : true,
             toolbarIcons : function() {
                 // Or return editormd.toolbarModes[name]; // full, simple, mini
                 // Using "||" set icons align right.
@@ -336,9 +347,10 @@
         });
 
         var ressources = editormd("ressources ", {
-            height: '500px',
+            height      : '340px',
             path   : "<?= $asset ?>dist/editormd/lib/",
             toolbarAutoFixed : false,
+            htmlDecode : true,
             toolbarIcons : function() {
                 // Or return editormd.toolbarModes[name]; // full, simple, mini
                 // Using "||" set icons align right.

@@ -83,7 +83,7 @@
                 $filterPlatformInfo = null;
                 $filterPlatform2 = null;
                 $filterPlatform2Info = null;
-                $token = $this->_session->getToken();
+                $token = $this->_session->updateToken();
                 if(isset($_SESSION['filterProgram']) && !empty($_SESSION['filterProgram'])){
                     $filterProgram = htmlspecialchars($_SESSION['filterProgram'], ENT_QUOTES);
                     $filterProgramInfo = $this->_programHandler->getPrograms(array('id' => $filterProgram))[0]->name();
@@ -207,7 +207,7 @@
                     $this->_userHandler = new UserHandler;
                     $admin = $this->_session->isAdmin();
                     $users = $this->_userHandler->getUsers();
-                    $token = $this->_session->getToken();
+                    $token = $this->_session->updateToken();
                     $this->_view = new View($view, $template);
                     $this->_view->generate(array("titre" => $name, "users" => $users, "token" => $token, "admin" => $admin));
                 } else {
@@ -448,7 +448,7 @@
                     $billingActivate = true;
                 }
             }
-            $token = $this->_session->getToken();
+            $token = $this->_session->updateToken();
             $this->_view = new View($view, $template);
             $this->_view->generate(array("titre" => $name, "token" => $token, "billing" => $billingActivate));
         }

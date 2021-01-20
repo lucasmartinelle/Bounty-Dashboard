@@ -38,6 +38,8 @@
                 $this->programs($name, $view, $template);
             } elseif($label == "deleteProgram"){
                 $this->deleteProgram();
+            } elseif($label == "changeStatusProgram"){
+                $this->changeStatusProgram();
             } elseif($label == "scope"){
                 $this->scope();
             } elseif($label == "tags"){
@@ -230,6 +232,71 @@
             }
         }
 
+        private function changeStatusProgram(){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            $last_token = $this->_session->getToken();
+            echo $last_token;
+            if($this->_session->isAuth()){
+                if($this->postDataValid($last_token)){
+                    $token = $this->_session->updateToken();
+
+                    $data = array(
+                        array("idProgram", $_POST['idProgram'], 'required', 'max:36'),
+                        array("status", $_POST['status'], 'required', "max:100", "equal|open|close")
+                    );
+
+                    $this->_validator = new Validator();
+                    $response = $this->_validator->validator($data);
+
+                    if($response['success'] == 'false'){
+                        $_SESSION['inputResponseStatus'] = $response['status'];
+
+                        if($response['idProgram'] == 'invalid'){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("programs"));
+                            exit;
+                        }
+
+                        if($response['status'] == 'invalid'){
+                            $_SESSION['inputResponseStatusMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['status'] as $e){
+                                $_SESSION['inputResponseStatusMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseStatusMessage'] .= "</span>";
+                        }
+
+                        header('Location: ' . $this->_routes->url("programs"));
+                        exit;
+                    } else {
+                        $id = htmlspecialchars($_POST['idProgram'], ENT_QUOTES);
+                        $status = htmlspecialchars($_POST['status'], ENT_QUOTES);  
+                        $this->_programHandler = new ProgramHandler;
+                        if($this->_programHandler->updateProgram(array("status" => $status), array("id" => $id))){
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "status-change");
+                            $_SESSION['typeAlert'] = "success";
+                            header('Location: ' . $this->_routes->url("programs"));
+                            exit;
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->url("programs"));
+                            exit;
+                        }
+                    }
+                } else {
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url("programs"));
+                    exit;
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
 
         private function scope(){
             $array = array();

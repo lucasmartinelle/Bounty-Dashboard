@@ -62,7 +62,7 @@
 
         protected function postRegistration(){
             $this->_routes = new Routes;
-            $this->_lang = new languageManager(LANGUAGE);
+            $this->_lang = new languageManager;
 
             if($this->postDataValid()){
                 $this->_session = new Session;

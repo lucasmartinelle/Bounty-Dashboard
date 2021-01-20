@@ -205,6 +205,17 @@
 
                 while($row = $req->fetch(PDO::FETCH_ASSOC)){
                     $sev = (string) $row['severity'];
+                    if($sev == 0){
+                        $sev = 'None';
+                    } elseif($sev > 0 and $sev < 4){
+                        $sev = 'Low';
+                    } elseif($sev >= 4 and $sev < 7){
+                        $sev = 'Medium';
+                    } elseif($sev >= 7 and $sev < 9){
+                        $sev = 'High';
+                    } elseif($sev >= 9 and $sev <= 10){
+                        $sev = 'Critical';
+                    }
                     if(array_key_exists($sev, $severity)){
                         $severity[$sev] += 1;
                     } else {
@@ -219,6 +230,37 @@
         }
 
         public function bugsByMonth($platform = null){
+            if($_COOKIE['lang'] == 'FR'){
+                $months = array(
+                    '01' => 'Janvier',
+                    '02' => 'Février',
+                    '03' => 'Mars',
+                    '04' => 'Avril',
+                    '05' => 'Mai',
+                    '06' => 'Juin',
+                    '07' => 'Juillet',
+                    '08' => 'Août',
+                    '09' => 'Septembre',
+                    '10' => 'Octobre',
+                    '11' => 'Novembre',
+                    '12' => 'Décembre',
+                );
+            } else {
+                $months = array(
+                    '01' => 'January',
+                    '02' => 'February',
+                    '03' => 'March',
+                    '04' => 'April',
+                    '05' => 'May',
+                    '06' => 'June',
+                    '07' => 'July',
+                    '08' => 'August',
+                    '09' => 'September',
+                    '10' => 'October',
+                    '11' => 'November',
+                    '12' => 'December'
+                );
+            }
             $dates = array();
             $stmt = "SELECT reports.date FROM reports";
             $join = '';
@@ -253,10 +295,10 @@
                     $date = $row['date'];
                     $explodeddate = explode("-", $date);
                     $month = $explodeddate[1];
-                    if(array_key_exists($month, $dates)){
-                        $dates[$month] += 1;
+                    if(array_key_exists($months[$month], $dates)){
+                        $dates[$months[$month]] += 1;
                     } else {
-                        $dates[$month] = 1;
+                        $dates[$months[$month]] = 1;
                     }
                 }
 

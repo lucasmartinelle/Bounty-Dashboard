@@ -206,6 +206,7 @@
         "date-placeholder": "Date de début",
         "tags-placeholder": "Tags",
         "platform": "Plateforme",
+        "change-status" :"Changer de statut",
         "status-open": "Ouvert",
         "status-close": "Fermer",
         "invalid-input": "Entrée non valide",
@@ -224,7 +225,7 @@
         "delete-program": "Supprimer un programme",
         "confirmation-delete-program": "Voulez-vous vraiment supprimer ce programme et tous ses rapports ?",
         "modal-nav-close": "Fermer",
-        "modal-nav-confirm": "Créer",
+        "modal-nav-confirm": "Confirmer",
         "watchmy": "Mes programmes",
         "watchall": "Tous les programmes"
     },

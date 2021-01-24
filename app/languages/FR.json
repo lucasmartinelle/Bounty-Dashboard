@@ -89,7 +89,8 @@
         "logout-message" : "Vous avez été déconnecté.",
         "password-changed" : "Votre mot de passe a été changé !",
         "email-confirmed" : "Votre adresse email a été confirmée. Vous pouvez maintenant vous connecter.",
-        "not-unique" : "Ce champ doit être unique."
+        "not-unique" : "Ce champ doit être unique.",
+        "email-taken" : "Cette email a déjà été pris."
     }, 
     "controllerDashboard" : {
         "global-error" : "Une erreur s'est produite lors du traitement de votre demande",
@@ -101,7 +102,8 @@
         "billing-enable" : "Vous avez activé la facturation",
         "billing-disable" : "Vous avez désactivé la facturation",
         "not-unique" : "Ce champ doit être unique.",
-        "update-captcha" : "Le Captcha a été mis à jour"
+        "update-captcha" : "Le Captcha a été mis à jour",
+        "email-taken" : "Cet email a déjà été pris."
     },
     "controllerReports" : {
         "global-error": "Une erreur s'est produite lors du traitement de votre demande.",
@@ -116,7 +118,10 @@
         "gain-change": "Vous avez modifié les gains du rapport.",
         "template-create": "Le template a été créée.",
         "template-delete": "Le template a été supprimée",
-        "template-edit": "Le template a été modifiée."
+        "template-edit": "Le template a été modifiée.",
+        "name-taken" : "Ce nom a déjà été pris.",
+        "title-taken" : "Ce titre a déjà été pris.",
+        "identifiant-taken" : "Cet identifiant à déjà été pris."
     },
     "dashboard" : {
         "content-header": "Tableau de bord",
@@ -189,15 +194,29 @@
     "platforms" : {
         "header" : "Plateformes",
         "name-placeholder" : "Nom",
-        "description-placeholder" : "Description",
-        "entrée non valable" : "Entrée non valable",
+        "client-placeholder" : "Client",
+        "BTW-placeholder" : "BTW",
+        "address-placeholder" : "Adresse",
+        "email-placeholder" : "Email",
+        "date-placeholder" : "Date",
         "header-platforms" : "Plateforme",
         "header-bug-by-severity" : "Bugs trouvés par sévérité",
         "header-earning-per-month" : "Gains par mois",
+        "header-list-platforms": "Liste des plateformes",
+        "name-table": "Nom",
+        "client-table": "Client",
+        "btw-table": "BTW",
+        "address-table": "Adresse",
+        "email-table": "Email",
+        "date-table": "Date",
         "modal-nav-close" : "Fermer",
-        "modal-nav-confirm" : "Créer",
+        "modal-nav-confirm" : "Confirmer",
         "add-platform" : "Ajouter une plateforme",
-        "delete-platform" : "Supprimer une platforme"
+        "delete-platform" : "Supprimer une platforme",
+        "invalid-input" : "Entrée non valable",
+        "filters" : "filtres",
+        "filter-year" : "Année",
+        "apply-filter" : "Appliquer un filtre"
     },
     "programs" : {
         "header": "Programmes",
@@ -218,6 +237,7 @@
         "scope-table": "nombre de cible",
         "status-table": "statut",
         "tags-table": "tags",
+        "platform-table" : "Plateforme",
         "action-table": "action",
         "action-view": "voir",
         "action-delete": "supprimer",
@@ -402,5 +422,27 @@
         "modal-nav-confirm": "Confirmer",
         "generate-invoice": "Générer manuellement",
         "generate-automatically-invoice": "Générer automatiquement"
+    },
+    "sender" : {
+        "title-email": "Confirmer l'email",
+        "validate-email": "Valider votre email",
+        "confirm-message-email": "Confirmez votre email pour terminer votre inscription",
+        "disable-button-email": "si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :",
+        "title-resetpassword": "Réinitialisez votre mot de passe",
+        "confirm-message-resetpassword": "Une demande a été faite pour modifier votre mot de passe. Cliquez sur le bouton ci-dessous pour continuer. Si vous n'avez pas effectué cette demande, vous pouvez ignorer ce message en le supprimant.",
+        "disable-button-resetpassword": "si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :"
+    },
+    "invoicesGeneration" : {
+        "title-invoice": "Facture",
+        "project": "PROJET",
+        "client": "CLIENT",
+        "address": "ADRESSE",
+        "title": "TITRE",
+        "price": "PRIX EXCL.",
+        "quantity": "QTÉ",
+        "subtotal": "SOUS-TOTAL EXCL.",
+        "VAT": "TVA",
+        "VAT-not-applicable": "TVA non applicable, art. 293 B de CGI",
+        "bank": "BANQUE"
     }
 }

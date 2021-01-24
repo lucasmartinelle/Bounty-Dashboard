@@ -69,131 +69,143 @@
                 $this->postDashboard();
             } else {
                 $this->_session = new Session;
-                $this->_reportHandler = new ReportHandler;
-                $this->_programHandler = new ProgramHandler;
-                $this->_platformHandler = new platformHandler;
-                $new = $this->_reportHandler->countReports(array('status' => 'new'));
-                $other = $this->_reportHandler->countReports(array('status' => 'resolved'), array('accepted', 'resolved'));
-                $gain = $this->_reportHandler->totalGain();
-                $critical = $this->_reportHandler->countReports(array('severity' => '9'), null, true);
-                $platforms = $this->_reportHandler->bugsByPlatforms();
-                $filterProgram = null;
-                $filterProgramInfo = null;
-                $filterPlatform = null;
-                $filterPlatformInfo = null;
-                $filterPlatform2 = null;
-                $filterPlatform2Info = null;
-                $token = $this->_session->updateToken();
-                if(isset($_SESSION['filterProgram']) && !empty($_SESSION['filterProgram'])){
-                    $filterProgram = htmlspecialchars($_SESSION['filterProgram'], ENT_QUOTES);
-                    $filterProgramInfo = $this->_programHandler->getPrograms(array('id' => $filterProgram))[0]->name();
+                $this->_routes = new Routes;
+                if($this->_session->isAuth()){
+                    $this->_reportHandler = new ReportHandler;
+                    $this->_programHandler = new ProgramHandler;
+                    $this->_platformHandler = new platformHandler;
+                    $new = $this->_reportHandler->countReports(array('status' => 'new'));
+                    $other = $this->_reportHandler->countReports(array('status' => 'resolved'), array('accepted', 'resolved'));
+                    $gain = $this->_reportHandler->totalGain();
+                    $critical = $this->_reportHandler->countReports(array('severity' => '9'), null, true);
+                    $platforms = $this->_reportHandler->bugsByPlatforms();
+                    $filterProgram = null;
+                    $filterProgramInfo = null;
+                    $filterPlatform = null;
+                    $filterPlatformInfo = null;
+                    $filterPlatform2 = null;
+                    $filterPlatform2Info = null;
+                    $token = $this->_session->updateToken();
+                    if(isset($_SESSION['filterProgram']) && !empty($_SESSION['filterProgram'])){
+                        $filterProgram = htmlspecialchars($_SESSION['filterProgram'], ENT_QUOTES);
+                        $filterProgramInfo = $this->_programHandler->getPrograms(array('id' => $filterProgram))[0]->name();
+                    }
+                    if(isset($_SESSION['filterPlatform']) && !empty($_SESSION['filterPlatform'])){
+                        $filterPlatform = htmlspecialchars($_SESSION['filterPlatform'], ENT_QUOTES);
+                        $filterPlatformInfo = $this->_platformHandler->getPlatforms(array('id' => $filterPlatform))[0]->name();
+                    }
+                    if(isset($_SESSION['filterPlatform2']) && !empty($_SESSION['filterPlatform2'])){
+                        $filterPlatform2 = htmlspecialchars($_SESSION['filterPlatform2'], ENT_QUOTES);
+                        $filterPlatform2Info = $this->_platformHandler->getPlatforms(array('id' => $filterPlatform2))[0]->name();
+                    }
+                    $severity = $this->_reportHandler->bugsBySeverity($filterProgram, $filterPlatform);
+                    $dates = $this->_reportHandler->bugsByMonth($filterPlatform2);
+                    $platformsFilter = $this->_platformHandler->getPlatforms();
+                    $programsFilter = $this->_programHandler->getPrograms();
+                    $this->_view = new View($view, $template);
+                    $this->_view->generate(array("titre" => $name, 'new' => $new, 'token' => $token, 'other' => $other, "gain" => $gain, "critical" => $critical, "platforms" => $platforms, "severity" => $severity, 'dates' => $dates, 'platformsFilter' => $platformsFilter, 'programsFilter' => $programsFilter, 'informationFilterPlatforms' => $filterPlatformInfo, 'informationFilterPrograms' => $filterProgramInfo, 'informationFilterPlatform2' => $filterPlatform2Info));
+                } else {
+                    header('Location: ' . $this->_routes->url('login'));
+                    exit;
                 }
-                if(isset($_SESSION['filterPlatform']) && !empty($_SESSION['filterPlatform'])){
-                    $filterPlatform = htmlspecialchars($_SESSION['filterPlatform'], ENT_QUOTES);
-                    $filterPlatformInfo = $this->_platformHandler->getPlatforms(array('id' => $filterPlatform))[0]->name();
-                }
-                if(isset($_SESSION['filterPlatform2']) && !empty($_SESSION['filterPlatform2'])){
-                    $filterPlatform2 = htmlspecialchars($_SESSION['filterPlatform2'], ENT_QUOTES);
-                    $filterPlatform2Info = $this->_platformHandler->getPlatforms(array('id' => $filterPlatform2))[0]->name();
-                }
-                $severity = $this->_reportHandler->bugsBySeverity($filterProgram, $filterPlatform);
-                $dates = $this->_reportHandler->bugsByMonth($filterPlatform2);
-                $platformsFilter = $this->_platformHandler->getPlatforms();
-                $programsFilter = $this->_programHandler->getPrograms();
-                $this->_view = new View($view, $template);
-                $this->_view->generate(array("titre" => $name, 'new' => $new, 'token' => $token, 'other' => $other, "gain" => $gain, "critical" => $critical, "platforms" => $platforms, "severity" => $severity, 'dates' => $dates, 'platformsFilter' => $platformsFilter, 'programsFilter' => $programsFilter, 'informationFilterPlatforms' => $filterPlatformInfo, 'informationFilterPrograms' => $filterProgramInfo, 'informationFilterPlatform2' => $filterPlatform2Info));
             }
         }
 
         private function postDashboard(){
             $this->_routes = new Routes;
             $this->_session = new Session;
-            if(!$_POST){
-                header('Location: ' . $this->_routes->url("dashboard"));
-                exit;
-            } else {
-                if($this->postDataValid()){
-                    $this->_programHandler = new ProgramHandler;
-                    $programs = $this->_programHandler->getPrograms();
-                    $this->_platformHandler = new platformHandler;
-                    $platforms = $this->_platformHandler->getPlatforms();
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){
+                if(!$_POST){
+                    header('Location: ' . $this->_routes->url("dashboard"));
+                    exit;
+                } else {
+                    if($this->postDataValid($last_token)){
+                        $this->_programHandler = new ProgramHandler;
+                        $programs = $this->_programHandler->getPrograms();
+                        $this->_platformHandler = new platformHandler;
+                        $platforms = $this->_platformHandler->getPlatforms();
 
-                    $listPrograms = "";
-                    foreach($programs as $program){
-                        $listPrograms .= $program->id() . "|";
-                    }
-                    $listPrograms = substr($listPrograms, 0, -1);
+                        $listPrograms = "";
+                        foreach($programs as $program){
+                            $listPrograms .= $program->id() . "|";
+                        }
+                        $listPrograms = substr($listPrograms, 0, -1);
 
-                    $listPlatforms = "";
-                    foreach($platforms as $platform){
-                        $listPlatforms .= $platform->id() . "|";
-                    }
-                    $listPlatforms = substr($listPlatforms, 0, -1);
+                        $listPlatforms = "";
+                        foreach($platforms as $platform){
+                            $listPlatforms .= $platform->id() . "|";
+                        }
+                        $listPlatforms = substr($listPlatforms, 0, -1);
 
-                    $data = array(
-                        array("program", $_POST['program'], 'equal|'.$listPrograms),
-                        array("platform", $_POST['platform'], 'equal|'.$listPlatforms),
-                        array("platform2", $_POST['platform2'], 'equal|'.$listPlatforms)
-                    );
+                        $data = array(
+                            array("program", $_POST['program'], 'equal|'.$listPrograms),
+                            array("platform", $_POST['platform'], 'equal|'.$listPlatforms),
+                            array("platform2", $_POST['platform2'], 'equal|'.$listPlatforms)
+                        );
 
-                    $token = $this->_session->updateToken();
+                        $token = $this->_session->updateToken();
 
-                    $this->_validator = new Validator();
-                    $response = $this->_validator->validator($data);
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
 
-                    if($response['success'] == 'false'){
-                        $_SESSION['inputResponseProgram'] = $response['program'];
-                        $_SESSION['inputResponsePlatform'] = $response['platform'];
-                        $_SESSION['inputResponsePlatform2'] = $response['platform2'];
+                        if($response['success'] == 'false'){
+                            $_SESSION['inputResponseProgram'] = $response['program'];
+                            $_SESSION['inputResponsePlatform'] = $response['platform'];
+                            $_SESSION['inputResponsePlatform2'] = $response['platform2'];
 
-                        if($response['program'] == 'invalid'){
-                            $_SESSION['inputResponseProgramMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['program'] as $e){
-                                $_SESSION['inputResponseProgramMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            if($response['program'] == 'invalid'){
+                                $_SESSION['inputResponseProgramMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['program'] as $e){
+                                    $_SESSION['inputResponseProgramMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseProgramMessage'] .= "</span>";
                             }
-                            $_SESSION['inputResponseProgramMessage'] .= "</span>";
-                        }
 
-                        if($response['platform'] == 'invalid'){
-                            $_SESSION['inputResponsePlatformMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['platform'] as $e){
-                                $_SESSION['inputResponsePlatformMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            if($response['platform'] == 'invalid'){
+                                $_SESSION['inputResponsePlatformMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['platform'] as $e){
+                                    $_SESSION['inputResponsePlatformMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponsePlatformMessage'] .= "</span>";
                             }
-                            $_SESSION['inputResponsePlatformMessage'] .= "</span>";
-                        }
 
-                        if($response['platform2'] == 'invalid'){
-                            $_SESSION['inputResponsePlatformMessage2'] = "<span class='text-danger'>";
-                            foreach($response['message']['platform2'] as $e){
-                                $_SESSION['inputResponsePlatformMessage2'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            if($response['platform2'] == 'invalid'){
+                                $_SESSION['inputResponsePlatformMessage2'] = "<span class='text-danger'>";
+                                foreach($response['message']['platform2'] as $e){
+                                    $_SESSION['inputResponsePlatformMessage2'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponsePlatformMessage2'] .= "</span>";
                             }
-                            $_SESSION['inputResponsePlatformMessage2'] .= "</span>";
-                        }
 
-                        header('Location: ' . $this->_routes->url("dashboard"));
-                        exit;
-                    } else {
-                        $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
-                        if(empty($program) || !isset($program)){
-                            $program = null;
-                        }
-                        $platform = htmlspecialchars($_POST['platform'], ENT_QUOTES);
-                        if(empty($platform) || !isset($platform)){
-                            $platform = null;
-                        }
-                        $platform2 = htmlspecialchars($_POST['platform2'], ENT_QUOTES);
-                        if(empty($platform2) || !isset($platform2)){
-                            $platform2 = null;
-                        }
+                            header('Location: ' . $this->_routes->url("dashboard"));
+                            exit;
+                        } else {
+                            $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
+                            if(empty($program) || !isset($program)){
+                                $program = null;
+                            }
+                            $platform = htmlspecialchars($_POST['platform'], ENT_QUOTES);
+                            if(empty($platform) || !isset($platform)){
+                                $platform = null;
+                            }
+                            $platform2 = htmlspecialchars($_POST['platform2'], ENT_QUOTES);
+                            if(empty($platform2) || !isset($platform2)){
+                                $platform2 = null;
+                            }
 
-                        $_SESSION['filterProgram'] = $program;
-                        $_SESSION['filterPlatform'] = $platform;
-                        $_SESSION['filterPlatform2'] = $platform2;
+                            $_SESSION['filterProgram'] = $program;
+                            $_SESSION['filterPlatform'] = $platform;
+                            $_SESSION['filterPlatform2'] = $platform2;
 
-                        header('Location: ' . $this->_routes->url("dashboard"));
-                        exit;
+                            header('Location: ' . $this->_routes->url("dashboard"));
+                            exit;
+                        }
                     }
                 }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
             }
         }
 
@@ -326,6 +338,10 @@
                                     $_SESSION['inputResponseEmailMessage'] .= "</span>";
                                 }
 
+                                if($response['unique']['email'] == 'false'){
+                                    $_SESSION['inputResponseEmailMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerDashboard', "email-taken") . " </span>";
+                                }
+
                                 if($response['password'] == 'invalid'){
                                     $_SESSION['inputResponsePasswordMessage'] = "<span class='text-danger'>";
                                     foreach($response['message']['password'] as $e){
@@ -440,17 +456,23 @@
         
         private function profile($name, $view, $template){
             $this->_session = new Session;
+            $this->_routes = new Routes;
             $this->_userHandler = new UserHandler;
-            $users = $this->_userHandler->getUsers(array('id' => htmlspecialchars($_SESSION['id'], ENT_QUOTES)));
-            $billingActivate = false;
-            foreach($users as $user){
-                if($user->activebilling() == 'Y'){
-                    $billingActivate = true;
+            if($this->_session->isAuth()){
+                $users = $this->_userHandler->getUsers(array('id' => htmlspecialchars($_SESSION['id'], ENT_QUOTES)));
+                $billingActivate = false;
+                foreach($users as $user){
+                    if($user->activebilling() == 'Y'){
+                        $billingActivate = true;
+                    }
                 }
+                $token = $this->_session->updateToken();
+                $this->_view = new View($view, $template);
+                $this->_view->generate(array("titre" => $name, "token" => $token, "billing" => $billingActivate));
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
             }
-            $token = $this->_session->updateToken();
-            $this->_view = new View($view, $template);
-            $this->_view->generate(array("titre" => $name, "token" => $token, "billing" => $billingActivate));
         }
 
         private function changeUsername() {

@@ -48,18 +48,19 @@
                     <div class="sidebar-brand-text mx-3">BugBounty</div>
                 </a>
 
-                <!-- Divider -->
-                <hr class="sidebar-divider my-0">
-
-                <!-- Nav Item - Dashboard -->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span><?= $lang->getTxt('navbar', 'navitem-dashboard'); ?></span>
-                    </a>
-                </li>
-
                 <?php if($session->isAuth(false)): ?>
+                
+                    <!-- Divider -->
+                    <hr class="sidebar-divider my-0">
+
+                    <!-- Nav Item - Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= $routes->url('dashboard'); ?>">
+                            <i class="fas fa-fw fa-tachometer-alt"></i>
+                            <span><?= $lang->getTxt('navbar', 'navitem-dashboard'); ?></span>
+                        </a>
+                    </li>
+
                     <!-- Nav Item - Platforms -->
                     <li class="nav-item">
                         <a class="nav-link" href="<?= $routes->url('platforms'); ?>">
@@ -164,10 +165,6 @@
                                         <a class="dropdown-item" href="<?= $routes->url('registration'); ?>">
                                             <i class="fas fa-sign-in-alt fa-fw mr-2 text-gray-400"></i>
                                             <?= $lang->getTxt('navbar', 'navitem-signup'); ?>
-                                        </a>
-                                        <a class="dropdown-item" href="<?= $routes->url('settings'); ?>">
-                                            <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                            <?= $lang->getTxt('navbar', 'navitem-settings'); ?>
                                         </a>
                                     </div>
                                 <?php endif; ?>

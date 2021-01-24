@@ -72,6 +72,11 @@ CREATE TABLE `platforms` (
   `id` varchar(36) NOT NULL,
   `creator_id` varchar(36) NOT NULL,
   `name` varchar(200) NOT NULL,
+  `client` text DEFAULT NULL,
+  `BTW` text DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `date` text DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   UNIQUE KEY (`id`),
   UNIQUE KEY (`name`)

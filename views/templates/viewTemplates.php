@@ -76,12 +76,17 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        <?php foreach($templates as $template): ?>
+                        <?php foreach($templates as $template): 
+                            $endpoint = (empty($template->endpoint()) or $template->endpoint() == NULL) ? '-' : $template->endpoint();
+                            $severity = (empty($template->severity()) or $template->severity() == NULL) ? '-' : $template->severity();
+                            $endpoint = (empty($template->endpoint()) or $template->endpoint() == NULL) ? '-' : $template->endpoint();
+                            $description = (empty($template->description()) or $template->description() == NULL) ? '-' : $template->description();
+                            ?>
                             <tr>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $template->title() . '</span>'; ?></td>
-                                <td class="text-center"><?= $template->description(); ?></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-warning">' . $template->endpoint() . '</span>'; ?></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $template->severity() . '</span>'; ?></td>
+                                <td class="text-center"><?= $description; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-warning">' . $endpoint . '</span>'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $severity . '</span>'; ?></td>
                                 <td class="text-center">
                                     <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-edit"></i>

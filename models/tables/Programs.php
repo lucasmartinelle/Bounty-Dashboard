@@ -111,7 +111,7 @@
         }
 
         public function platformid(){
-            return $this->_program_id;
+            return $this->_platform_id;
         }
 
         public function createdat(){

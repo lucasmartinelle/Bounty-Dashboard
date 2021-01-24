@@ -2,17 +2,21 @@
     namespace Utils;
 
     require 'PHPMailer/PHPMailerAutoload.php';
+    require_once("app/languages/languageManager.php");
     use PHPMailer;
+    use app\languages\languageManager;
 
     class Sender {
         private $_username;
         private $_email;
+        private $_lang;
         private $_url;
 
         public function __construct($username, $email, $url){
             $this->setUsername($username);
             $this->setEmail($email);
             $this->setUrl($url);
+            $this->_lang = new languageManager;
         }
 
         private function setUsername($username){
@@ -64,7 +68,7 @@
             $mail->addAddress($this->email());
     
             $mail->IsHTML(true);
-            $mail->Subject = 'Registration';
+            $mail->Subject = $this->_lang->getTxt('sender', "title-email");
 
             $BodyFinal = '
                 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -72,7 +76,7 @@
                         <head>
                             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
                             <meta name="viewport" content="width=device-width, initial-scale=1" />
-                            <title>Confirm Email</title>
+                            <title>' . $this->_lang->getTxt('sender', "title-email") . '</title>
                             <style type="text/css">
                                 table { 
                                     border-collapse: collapse !important;
@@ -372,7 +376,7 @@
                                         <table cellspacing="0" cellpadding="0" width="600" class="w320">
                                             <tr>
                                                 <td class="header-lg">
-                                                    Validate Your email
+                                                ' . $this->_lang->getTxt('sender', "validate-email") . '
                                                 </td>
                                             </tr>
                                             <tr>
@@ -386,7 +390,7 @@
                                                                             <table cellspacing="0" cellpadding="0" width="100%">
                                                                                 <tr>
                                                                                     <td class="user-msg">
-                                                                                        Please, '.$this->username().' Confirm your email to finish your registration
+                                                                                        Please, '.$this->username() . $this->_lang->getTxt('sender', "confirm-message-email") . '
                                                                                     </td>
                                                                                 </tr>
                                                                             </table>
@@ -397,10 +401,10 @@
                                                                             <div><!--[if mso]>
                                                                                 <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="'.$this->url().'" style="height:45px;v-text-anchor:middle;width:155px;" arcsize="15%" strokecolor="#ffffff" fillcolor="#ff6f6f">
                                                                                     <w:anchorlock/>
-                                                                                    <center style="color:#ffffff;font-family:Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;">Confirm Email</center>
+                                                                                    <center style="color:#ffffff;font-family:Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;">' . $this->_lang->getTxt('sender', "title-email") . '</center>
                                                                                 </v:roundrect>
                                                                                 <![endif]-->
-                                                                                <a href="'.$this->url().'" style="background-color:#ff6f6f;border-radius:5px;color:#ffffff;display:inline-block;font-family:\'Cabin\', Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;line-height:45px;text-align:center;text-decoration:none;width:155px;-webkit-text-size-adjust:none;mso-hide:all;">Confirm Email</a>
+                                                                                <a href="'.$this->url().'" style="background-color:#ff6f6f;border-radius:5px;color:#ffffff;display:inline-block;font-family:\'Cabin\', Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;line-height:45px;text-align:center;text-decoration:none;width:155px;-webkit-text-size-adjust:none;mso-hide:all;">' . $this->_lang->getTxt('sender', "title-email") . '</a>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -420,7 +424,7 @@
                                         <table cellspacing="0" cellpadding="0" width="600" class="w320">
                                             <tr>
                                                 <td style="padding: 25px 0 25px">
-                                                    if the button don\'t work, copy and past this link in your browser : <a href="" class="link">'.$this->url().'</a> <br /><br />
+                                                ' . $this->_lang->getTxt('sender', "disable-button-email") . ' <a href="" class="link">'.$this->url().'</a> <br /><br />
                                                     <strong><a class="important">Lucas Martinelle</a></strong><br />
                                                 </td>
                                             </tr>
@@ -461,7 +465,7 @@
             $mail->addAddress($this->email());
     
             $mail->IsHTML(true);
-            $mail->Subject = 'Reset Password';
+            $mail->Subject = $this->_lang->getTxt('sender', "title-resetpassword");
     
             $BodyFinal = '
                 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -469,7 +473,7 @@
                         <head>
                             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
                             <meta name="viewport" content="width=device-width, initial-scale=1" />
-                            <title>Confirm Email</title>
+                            <title>' . $this->_lang->getTxt('sender', "title-resetpassword") . '</title>
                             <style type="text/css">
                                 table { 
                                     border-collapse: collapse !important;
@@ -769,7 +773,7 @@
                                         <table cellspacing="0" cellpadding="0" width="600" class="w320">
                                             <tr>
                                                 <td class="header-lg">
-                                                    Reset your password
+                                                ' . $this->_lang->getTxt('sender', "title-resetpassword") . '
                                                 </td>
                                             </tr>
                                             <tr>
@@ -783,7 +787,7 @@
                                                                             <table cellspacing="0" cellpadding="0" width="100%">
                                                                                 <tr>
                                                                                     <td class="user-msg">
-                                                                                        A request was made to change your password. Click on the button below to proceed. If you have not made this request, you can ignore this message by deleting it.
+                                                                                    ' . $this->_lang->getTxt('sender', "confirm-message-resetpassword") . '
                                                                                     </td>
                                                                                 </tr>
                                                                             </table>
@@ -794,10 +798,10 @@
                                                                             <div><!--[if mso]>
                                                                                 <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="'.$this->url().'" style="height:45px;v-text-anchor:middle;width:155px;" arcsize="15%" strokecolor="#ffffff" fillcolor="#ff6f6f">
                                                                                     <w:anchorlock/>
-                                                                                    <center style="color:#ffffff;font-family:Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;">Confirm Email</center>
+                                                                                    <center style="color:#ffffff;font-family:Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;">' . $this->_lang->getTxt('sender', "title-resetpassword") . '</center>
                                                                                 </v:roundrect>
                                                                                 <![endif]-->
-                                                                                <a href="'.$this->url().'" style="background-color:#ff6f6f;border-radius:5px;color:#ffffff;display:inline-block;font-family:\'Cabin\', Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;line-height:45px;text-align:center;text-decoration:none;width:155px;-webkit-text-size-adjust:none;mso-hide:all;">Confirm Email</a>
+                                                                                <a href="'.$this->url().'" style="background-color:#ff6f6f;border-radius:5px;color:#ffffff;display:inline-block;font-family:\'Cabin\', Helvetica, Arial, sans-serif;font-size:14px;font-weight:regular;line-height:45px;text-align:center;text-decoration:none;width:155px;-webkit-text-size-adjust:none;mso-hide:all;">' . $this->_lang->getTxt('sender', "title-resetpassword") . '</a>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -817,7 +821,7 @@
                                         <table cellspacing="0" cellpadding="0" width="600" class="w320">
                                             <tr>
                                                 <td style="padding: 25px 0 25px">
-                                                    if the button don\'t work, copy and past this link in your browser : <a href="" class="link">'.$this->url().'</a> <br /><br />
+                                                ' . $this->_lang->getTxt('sender', "disable-button-resetpassword") . '<a href="" class="link">'.$this->url().'</a> <br /><br />
                                                     <strong><a class="important">Lucas Martinelle</a></strong><br />
                                                 </td>
                                             </tr>

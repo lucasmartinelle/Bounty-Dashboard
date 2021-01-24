@@ -195,6 +195,15 @@
             );
 
             $this->create(
+                "/dashboard/filterEarningPerMonth",
+                "filterEarningPerMonth",
+                "Filter",
+                "controllerPlatforms",
+                null,
+                null
+            );
+
+            $this->create(
                 "/dashboard/programs",
                 "programs",
                 "Programs",

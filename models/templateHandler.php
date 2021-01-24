@@ -32,9 +32,15 @@
         *  return : true if template created successfuly
         *           false if template couldn't be created
         */
-        public function newTemplate($values){
-            $stmt = 'INSERT INTO templates (`id`, `creator_id`, `title`, `severity`, `endpoint`, `description`, `stepsToReproduce`, `impact`, `mitigation`, `resources`) VALUES (';
+        public function newTemplate($columns, $values){
+            $stmt = 'INSERT INTO templates (';
             
+            foreach($columns as $column){
+                $stmt.="`".$column."`, ";
+            }
+
+            $stmt = substr($stmt, 0, -2) . ') VALUES (';
+
             foreach($values as $val){
                 $stmt.="'".$val . "', ";
             }

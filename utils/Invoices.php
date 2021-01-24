@@ -1,13 +1,18 @@
 <?php
     namespace Utils;
+    
+    require_once("app/languages/languageManager.php");
+    use app\languages\languageManager;
 
     class Invoices {
         private $_data;
         private $_reports;
+        private $_lang;
 
         public function __construct($data, $reports){
             $this->_data = $data;
             $this->_reports = $reports;
+            $this->_lang = new languageManager;
         }
 
         public function createInvoice(){
@@ -168,22 +173,22 @@
                     <div id='logo'>
                         <h2>".ucwords($this->_data['prenom'])." ".ucwords($this->_data['nom'])."</h2>
                     </div>
-                    <h1>INVOICE 2020".date_parse($this->_data['month'])['month'].$this->_data['number']."</h1>
+                    <h1>" . $this->_lang->getTxt('invoicesGeneration', "title-invoice") . " 2020".date_parse($this->_data['month'])['month'].$this->_data['number']."</h1>
                     <div id='company' class='clearfix'>
                         <div>".ucfirst(strtolower($this->_data['prenom']))." ".ucwords($this->_data['nom'])."</div>
                         <div>".$this->_data['address']."</div>
                         <div>".$this->_data['phone']."</div>
                         <div><a href='".$this->_data['email']."'>".$this->_data['email']."</a></div>
                         <div><span>SIRET :</span> ".$this->_data['SIRET']."</div>
-                        <div><span>VAT :</span> ".$this->_data['VAT']."</div>
+                        <div><span>" . $this->_lang->getTxt('invoicesGeneration', "VAT") . " :</span> ".$this->_data['VAT']."</div>
                     </div>
                     <div id='project'>
-                        <div><span>PROJECT</span>INTIGRITI - BUGBOUNTY</div>
-                        <div><span>CLIENT</span>INTIGRITI NV</div>
-                        <div><span>BTW</span>BE 0660.623.646</div>
-                        <div><span>ADDRESS</span>Provinciale Steenweg 39, 2627 Schelle, BE</div>
-                        <div><span>EMAIL</span> <a href='mailto:support@intigriti.com'>support@intigriti.com</a></div>
-                        <div><span>DATE</span> ".$this->_data['month'].", 2020</div>
+                        <div><span>" . $this->_lang->getTxt('invoicesGeneration', "project") . "</span>".$this->_data['PROJECTPLATFORM']."</div>
+                        <div><span>" . $this->_lang->getTxt('invoicesGeneration', "client") . "</span>".$this->_data['CLIENTPLATFORM']."</div>
+                        <div><span>BTW</span>".$this->_data['BTWPLATFORM']."</div>
+                        <div><span>" . $this->_lang->getTxt('invoicesGeneration', "address") . "</span>".$this->_data['ADDRESSPLATFORM']."</div>
+                        <div><span>EMAIL</span> <a href='mailto:".$this->_data['EMAILPLATFORM']."'>".$this->_data['EMAILPLATFORM']."</a></div>
+                        <div><span>DATE</span>".$this->_data['DATEPLATFORM']."</div>
                     </div>
                 </header>
                 <main>
@@ -191,20 +196,20 @@
                         <thead>
                         <tr>
                             <th class='service'>DATE</th>
-                            <th class='desc'>TITLE</th>
-                            <th>PRICE EXCL.</th>
-                            <th>QTY</th>
+                            <th class='desc'>" . $this->_lang->getTxt('invoicesGeneration', "title") . "</th>
+                            <th>" . $this->_lang->getTxt('invoicesGeneration', "price") . "</th>
+                            <th>" . $this->_lang->getTxt('invoicesGeneration', "quantity") . "</th>
                             <th>TOTAL EXCL.</th>
                         </tr>
                         </thead>
                         <tbody>
                             ".$body."
                             <tr>
-                                <td colspan='4'>SUBTOTAL EXCL.</td>
+                                <td colspan='4'>" . $this->_lang->getTxt('invoicesGeneration', "subtotal") . "</td>
                                 <td class='total'>".$total."€</td>
                             </tr>
                             <tr>
-                                <td colspan='4'>VAT 0%</td>
+                                <td colspan='4'>" . $this->_lang->getTxt('invoicesGeneration', "VAT") . " 0%</td>
                                 <td class='total'>".$total."€</td>
                             </tr>
                             <tr>
@@ -215,7 +220,7 @@
                     </table>
                     <div id='notices'>
                         <div>NOTICE:</div>
-                        <div class='notice'>VAT not applicable, art. 293 B of CGI</div>
+                        <div class='notice'>" . $this->_lang->getTxt('invoicesGeneration', "VAT-not-applicable") . "</div>
                     </div>
                     <br />
                     <br />
@@ -225,7 +230,7 @@
                         <thead>
                             <tr>
                                 <th class='service'></th>
-                                <th class='desc'>BANK</th>
+                                <th class='desc'>" . $this->_lang->getTxt('invoicesGeneration', "bank") . "</th>
                                 <th>IBAN</th>
                                 <th>BIC</th>
                             </tr>

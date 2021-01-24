@@ -52,6 +52,12 @@
             return $req->fetch(PDO::FETCH_ASSOC)['sum(gain)'];
         }
 
+        public function getPlatform($id){
+            $stmt = "SELECT P.name FROM programs JOIN platforms AS P ON P.id = programs.platform_id WHERE P.id='".$id."'";
+            $req = $this->statement($stmt);
+            return $req->fetch(PDO::FETCH_ASSOC)['name'];
+        }
+
         /* create new program
         *
         *  ex : $value = array('id' => '...', 'title' => '...')

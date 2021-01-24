@@ -79,6 +79,7 @@
                             <th><?= $lang->getTxt($idPage, "scope-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "tags-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "platform-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "action-table"); ?></th>
                         </tr>
                     </thead>
@@ -90,6 +91,7 @@
                             <th><?= $lang->getTxt($idPage, "scope-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "status-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "tags-table"); ?></th>
+                            <th><?= $lang->getTxt($idPage, "platform-table"); ?></th>
                             <th><?= $lang->getTxt($idPage, "action-table"); ?></th>
                         </tr>
                     </tfoot>
@@ -106,22 +108,23 @@
                             if(empty($gain) && !isset($gain)) $gain = 0;
                         ?>
                         <tr>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $program->name() . '</span>'; ?></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $numberofbugs[$count] . '</span>'; ?></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $gain . ' €</span>'; ?></td>
-                                <td class="text-center"><span class="badge badge-pill badge-success"><?= $scopes; ?></span></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-info" data-toggle="modal" data-id="'.$program->id().'" data-target="#changeStatus">' . $program->status() . '</span>'; ?></td>
-                                <td class="text-center"><?= $fulltags; ?></td>
-                                <td class="text-center">
-                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data data-toggle="modal" data-url="<?= $routes->urlReplace("deleteProgram", array($program->id())); ?>" data-target="#confirmDelete" id="deleteProgram"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
-                                    </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $program->name() . '</span>'; ?></td>
+                            <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $numberofbugs[$count] . '</span>'; ?></td>
+                            <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $gain . ' €</span>'; ?></td>
+                            <td class="text-center"><span class="badge badge-pill badge-success"><?= $scopes; ?></span></td>
+                            <td class="text-center"><?= '<span class="badge badge-pill badge-info" data-toggle="modal" data-id="'.$program->id().'" data-target="#changeStatus">' . $program->status() . '</span>'; ?></td>
+                            <td class="text-center"><?= $fulltags; ?></td>
+                            <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $platformsById[$count] . '</span>'; ?></td>
+                            <td class="text-center">
+                                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" style="color: #3a3b45 !important;" data data-toggle="modal" data-url="<?= $routes->urlReplace("deleteProgram", array($program->id())); ?>" data-target="#confirmDelete" id="deleteProgram"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
+                                </div>
+                                </div>
+                            </td>
+                        </tr>
                         <?php $count++; endforeach; ?>
                     </tbody>
                 </table>

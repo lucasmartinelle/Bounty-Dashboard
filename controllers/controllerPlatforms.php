@@ -35,6 +35,8 @@
                 $this->platforms($name, $view, $template);
             } elseif($label == "deletePlatform"){
                 $this->deletePlatform();
+            } elseif($label == "filterEarningPerMonth"){
+                $this->filterEarningPerMonth();
             }
         }
 
@@ -50,10 +52,11 @@
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
                     $platforms = $this->_platformHandler->getPlatforms();
-                    $earningpermonth = $this->_reportHandler->earningpermonth();
+                    $year = (isset($_SESSION['filterYear']) && !empty($_SESSION['filterYear'])) ? htmlspecialchars($_SESSION['filterYear'], ENT_QUOTES) : null;
+                    $earningpermonth = $this->_reportHandler->earningpermonth($year);
                     $severity = $this->_reportHandler->bugsBySeverity();
                     $this->_view = new View($view, $template);
-                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms, "earningpermonth" => $earningpermonth, "severity" => $severity));
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms, "earningpermonth" => $earningpermonth, "severity" => $severity, "informationFilterYear" => $year));
                 } else {
                     header('Location: ' . $this->_routes->url('login'));
                     exit;
@@ -73,7 +76,9 @@
                     $token = $this->_session->updateToken();
 
                     $data = array(
-                        array('name', $_POST['name'], 'required', 'max:200')
+                        array('name', $_POST['name'], 'required', 'max:200', "unique|platforms|name"),
+                        array('email', $_POST['email'], 'email'),
+                        array('date', $_POST['date'], 'date')
                     );
 
                     $this->_validator = new Validator();
@@ -90,14 +95,61 @@
                             $_SESSION['inputResponseNameMessage'] .= "</span>";
                         }
 
+                        if($response['email'] == 'invalid'){
+                            $_SESSION['inputResponseEmail'] = $response['email'];
+                            $_SESSION['inputResponseEmailMessage'] = "<span class='text-danger'>";
+                            foreach($response['message']['email'] as $e){
+                                $_SESSION['inputResponseEmailMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                            }
+                            $_SESSION['inputResponseEmailMessage'] .= "</span>";
+                        }
+
+                        if($response['date'] == 'invalid'){
+                            $_SESSION['inputResponseDate'] = $response['date'];
+
+                            if($response['date'] == 'invalid'){
+                                $_SESSION['inputResponseDateMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['date'] as $e){
+                                    $_SESSION['inputResponseDateMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseDateMessage'] .= "</span>";
+                            }
+                        }
+
+                        if($response['unique']['name'] == 'false'){
+                            $_SESSION['inputResponseNameMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerReports', "name-taken") . " </span>";
+                        }
+
                         header('Location: ' . $this->_routes->url("platforms"));
                         exit;
                     } else {
                         $id = $this->GUIDv4();
                         $creator_id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
                         $name = htmlspecialchars($_POST['name'], ENT_QUOTES);
+                        $columns = array("id", "creator_id", "name");
+                        $values = array($id, $creator_id, $name);
+                        if(isset($_POST['client']) && !empty($_POST['client'])){
+                            array_push($columns, 'client');
+                            array_push($values, htmlspecialchars($_POST['client'], ENT_QUOTES));
+                        }
+                        if(isset($_POST['BTW']) && !empty($_POST['BTW'])){
+                            array_push($columns, 'BTW');
+                            array_push($values, htmlspecialchars($_POST['BTW'], ENT_QUOTES));
+                        }
+                        if(isset($_POST['address']) && !empty($_POST['address'])){
+                            array_push($columns, 'address');
+                            array_push($values, htmlspecialchars($_POST['address'], ENT_QUOTES));
+                        }
+                        if(isset($_POST['email']) && !empty($_POST['email'])){
+                            array_push($columns, 'email');
+                            array_push($values, htmlspecialchars($_POST['email'], ENT_QUOTES));
+                        }
+                        if(isset($_POST['date']) && !empty($_POST['date'])){
+                            array_push($columns, 'date');
+                            array_push($values, htmlspecialchars($_POST['date'], ENT_QUOTES));
+                        }
                         $this->_platformHandler = new platformHandler;
-                        if($this->_platformHandler->newPlatform(array($id, $creator_id, $name))){
+                        if($this->_platformHandler->newPlatform($columns, $values)){
                             $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "platform-create");
                             $_SESSION['typeAlert'] = "success";
                             header('Location: ' . $this->_routes->url("platforms"));
@@ -191,6 +243,63 @@
             } else {
                 header('Location: ' . $this->_routes->url('login'));
                 exit;
+            }
+        }
+
+        private function filterEarningPerMonth(){
+            $this->_routes = new Routes;
+            $this->_session = new Session;
+            $this->_lang = new languageManager;
+            if(!$_POST){
+                header('Location: ' . $this->_routes->url("platforms"));
+                exit;
+            } else {
+                $last_token = $this->_session->getToken();
+                if($this->_session->isAuth()){
+                    if($this->postDataValid($last_token)){
+                        $values = '';
+                        for($i=2020; $i <= (int) date('Y'); $i++){
+                            $values.=$i.'|';
+                        }
+                        $values = substr($values, 0, -1);
+                        $data = array(
+                            array("year", $_POST['year'], 'required', 'equal|all|'.$values)
+                        );
+
+                        $token = $this->_session->updateToken();
+
+                        $this->_validator = new Validator();
+                        $response = $this->_validator->validator($data);
+
+                        if($response['success'] == 'false'){
+                            $_SESSION['inputResponseYear'] = $response['year'];
+
+                            if($response['year'] == 'invalid'){
+                                $_SESSION['inputResponseYearMessage'] = "<span class='text-danger'>";
+                                foreach($response['message']['year'] as $e){
+                                    $_SESSION['inputResponseYearMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                }
+                                $_SESSION['inputResponseYearMessage'] .= "</span>";
+                            }
+
+                            header('Location: ' . $this->_routes->url("platforms"));
+                            exit;
+                        } else {
+                            $year = htmlspecialchars($_POST['year'], ENT_QUOTES);
+                            $_SESSION['filterYear'] = $year;
+                            header('Location: ' . $this->_routes->url("platforms"));
+                            exit;
+                        }
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->url("platforms"));
+                        exit;
+                    }
+                } else {
+                    header('Location: ' . $this->_routes->url("login"));
+                    exit;
+                }
             }
         }
 

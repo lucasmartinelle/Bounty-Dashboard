@@ -61,9 +61,11 @@
             $severity = $this->_programHandler->bugsBySeverity();
             $numberofbugs = array();
             $gain = array();
+            $platformsById = array();
             foreach($programs as $program){
                 array_push($numberofbugs, $this->_programHandler->countBugs($program->id()));
                 array_push($gain, $this->_programHandler->getGains($program->id()));
+                array_push($platformsById, $this->_programHandler->getPlatform($program->platformid()));
             }
             if($_POST){
                 $this->postPrograms($platforms);
@@ -72,7 +74,7 @@
                     $admin = $this->_session->isAdmin();
                     $token = $this->_session->getToken();
                     $this->_view = new View($view, $template);
-                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms, "programs" => $programs, "numberofbugs" => $numberofbugs, "gainsbyprograms" => $gain, "severity" => $severity));
+                    $this->_view->generate(array("titre" => $name, "token" => $token, "admin" => $admin, "platforms" => $platforms, "programs" => $programs, "numberofbugs" => $numberofbugs, "gainsbyprograms" => $gain, "platformsById" => $platformsById, "severity" => $severity));
                 } else {
                     header('Location: ' . $this->_routes->url('login'));
                     exit;
@@ -125,6 +127,10 @@
                                 $_SESSION['inputResponseNameMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
                             }
                             $_SESSION['inputResponseNameMessage'] .= "</span>";
+                        }
+
+                        if($response['unique']['name'] == 'false'){
+                            $_SESSION['inputResponseNameMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerReports', "name-taken") . " </span>";
                         }
 
                         if($response['scope'] == 'invalid'){

@@ -34,8 +34,15 @@
         *  return : true if platform created successfuly
         *           false if platform couldn't be created
         */
-        public function newPlatform($values){
-            $stmt = 'INSERT INTO platforms (`id`, `creator_id`, `name`) VALUES (';
+        public function newPlatform($columns, $values){
+            $stmt = 'INSERT INTO platforms (';
+            
+            foreach($columns as $column){
+                $stmt.="`".$column."`, ";
+            }
+
+            $stmt = substr($stmt, 0, -2) . ') VALUES (';
+
             foreach($values as $val){
                 $stmt.="'".$val . "', ";
             }

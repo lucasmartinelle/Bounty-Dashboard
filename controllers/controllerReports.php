@@ -467,12 +467,20 @@
                             $_SESSION['inputResponseTitleMessage'] .= "</span>";
                         }
 
+                        if($response['unique']['title'] == 'false'){
+                            $_SESSION['inputResponseTitleMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerReports', "title-taken") . " </span>";
+                        }
+
                         if($response['identifiant'] == 'invalid'){
                             $_SESSION['inputResponseIdentifiantMessage'] = "<span class='text-danger'>";
                             foreach($response['message']['identifiant'] as $e){
                                 $_SESSION['inputResponseIdentifiantMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
                             }
                             $_SESSION['inputResponseIdentifiantMessage'] .= "</span>";
+                        }
+
+                        if($response['unique']['identifiant'] == 'false'){
+                            $_SESSION['inputResponseIdentifiantMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerReports', "identifiant-taken") . " </span>";
                         }
 
                         if($response['date'] == 'invalid'){
@@ -635,15 +643,15 @@
 
             if($response['success'] == 'true'){
                 $id = $this->GUIDv4();
-                $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
-                $date = htmlspecialchars($_POST['date'], ENT_QUOTES);
-                $severity = htmlspecialchars($_POST['severity'], ENT_QUOTES);
-                $endpoint = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
-                $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
-                $impact = htmlspecialchars($_POST['impact'], ENT_QUOTES);
-                $ressources = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
-                $stepstoreproduce = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
-                $mitigation = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+                $title = $_POST['title'];
+                $date = $_POST['date'];
+                $severity = $_POST['severity'];
+                $endpoint = $_POST['endpoint'];
+                $program = $_POST['program'];
+                $impact = $_POST['impact'];
+                $ressources = $_POST['ressources'];
+                $stepstoreproduce = $_POST['stepstoreproduce'];
+                $mitigation = $_POST['mitigation'];
 
                 $markdown = '# '.$title.'
 
@@ -776,12 +784,20 @@
                             $_SESSION['inputResponseTitleMessage'] .= "</span>";
                         }
 
+                        if($response['unique']['title'] == 'false'){
+                            $_SESSION['inputResponseTitleMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerReports', "title-taken") . " </span>";
+                        }
+
                         if($response['identifiant'] == 'invalid'){
                             $_SESSION['inputResponseIdentifiantMessage'] = "<span class='text-danger'>";
                             foreach($response['message']['identifiant'] as $e){
                                 $_SESSION['inputResponseIdentifiantMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
                             }
                             $_SESSION['inputResponseIdentifiantMessage'] .= "</span>";
+                        }
+
+                        if($response['unique']['identifiant'] == 'false'){
+                            $_SESSION['inputResponseIdentifiantMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerReports', "identifiant-taken") . " </span>";
                         }
 
                         if($response['date'] == 'invalid'){

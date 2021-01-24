@@ -109,7 +109,6 @@
 
     <div class="container text-center" style="margin-top: 60px !important;">
         <button id="generateInvoice" type="button" class="btn btn-info" style="width: 40%; height: 50px;"><?= $lang->getTxt($idPage, "generate-invoice"); ?></button>
-        <button id="generateInvoice" type="button" class="btn btn-secondary" style="width: 40%; height: 50px;" disabled><?= $lang->getTxt($idPage, "generate-automatically-invoice"); ?></button>
     </div>
 
     <div class="modal fade" id="filters" tabindex="-1" role="dialog" aria-labelledby="#filtersLabel" aria-hidden="true">

@@ -6,8 +6,11 @@
         private $_id;
         private $_creator_id;
         private $_name;
-        private $_description;
-        private $_logo;
+        private $_client;
+        private $_BTW;
+        private $_address;
+        private $_email;
+        private $_date;
         private $_created_at;
 
         // Constructeur de la classe
@@ -46,15 +49,33 @@
             }
         }
 
-        private function setDescription($description){
-            if(is_string($description) && (strlen($description) > 0)){
-                $this->_description = $description;
+        private function setClient($client){
+            if(is_string($client) or $client == NULL){
+                $this->_client = $client;
             }
         }
 
-        private function setLogo($logo){
-            if(is_string($logo) && (strlen($logo) > 0 && strlen($logo) < 40)){
-                $this->_logo = $logo;
+        private function setBTW($BTW){
+            if(is_string($BTW) or $BTW == NULL){
+                $this->_BTW = $BTW;
+            }
+        }
+
+        private function setAddress($address){
+            if(is_string($address) or $address == NULL){
+                $this->_address = $address;
+            }
+        }
+
+        private function setEmail($email){
+            if(is_string($email) && (strlen($email) > 0 && strlen($email) <= 255) or $email == NULL){
+                $this->_email = $email;
+            }
+        }
+
+        private function setDate($date){
+            if(is_string($date) or $date == NULL){
+                $this->_date = $date;
             }
         }
 
@@ -75,12 +96,24 @@
             return $this->_name;
         }
 
-        public function description(){
-            return $this->_description;
+        public function client(){
+            return $this->_client;
         }
 
-        public function logo(){
-            return $this->_logo;
+        public function BTW(){
+            return $this->_BTW;
+        }
+
+        public function address(){
+            return $this->_address;
+        }
+
+        public function email(){
+            return $this->_email;
+        }
+
+        public function date(){
+            return $this->_date;
         }
 
         public function createdat(){

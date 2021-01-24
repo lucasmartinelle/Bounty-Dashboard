@@ -106,6 +106,10 @@
                         $_SESSION['inputResponseEmailMessage'] .= "</span>";
                     }
 
+                    if($response['unique']['email'] == 'false'){
+                        $_SESSION['inputResponseEmailMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerAuth', "email-taken") . " </span>";
+                    }
+
                     if($response['password'] == 'invalid'){
                         $_SESSION['inputResponsePasswordMessage'] = "<span class='text-danger'>";
                         foreach($response['message']['password'] as $e){

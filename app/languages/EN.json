@@ -89,7 +89,8 @@
         "logout-message" : "You have been disconnected.",
         "password-changed" : "Your password has been changed !",
         "email-confirmed" : "Your email address was confirmed. You can now log in !",
-        "not-unique" : "This field must be unique."
+        "not-unique" : "This field must be unique.",
+        "email-taken" : "This email has already been taken."
     },
     "controllerDashboard" : {
         "global-error" : "An error has occurred while processing your request.",
@@ -101,7 +102,8 @@
         "billing-enable" : "You have activated billing",
         "billing-disable" : "You have disabled billing",
         "not-unique" : "This field must be unique.",
-        "update-captcha" : "Captcha has been updated"
+        "update-captcha" : "Captcha has been updated.",
+        "email-taken" : "This email has already been taken."
     },
     "controllerReports" : {
         "global-error" : "An error has occurred while processing your request.",
@@ -116,7 +118,10 @@
         "gain-change" : "You have modified the gains of the report.",
         "template-create" : "You have created a new template.",
         "template-delete" : "You have deleted a template.",
-        "template-edit" : "You have edited a template."
+        "template-edit" : "You have edited a template.",
+        "name-taken" : "This name has already been taken.",
+        "title-taken" : "This title has already been taken.",
+        "identifiant-taken" : "This identifiant has already been taken."
     },
     "dashboard" : {
         "content-header" : "Dashboard",
@@ -189,15 +194,29 @@
     "platforms" : {
         "header" : "Platforms",
         "name-placeholder" : "Name",
-        "description-placeholder" : "Description",
+        "client-placeholder" : "Client",
+        "BTW-placeholder" : "BTW",
+        "address-placeholder" : "Address",
+        "email-placeholder" : "Email",
+        "date-placeholder" : "Date",
         "invalid-input" : "Invalid input",
         "header-platforms" : "Platform",
         "header-bug-by-severity" : "Bugs found by severity",
         "header-earning-per-month" : "Earning per month",
+        "header-list-platforms" : "List platforms",
+        "name-table" : "Name",
+        "client-table" : "Client",
+        "btw-table" : "BTW",
+        "address-table" : "Address",
+        "email-table" : "Email",
+        "date-table" : "Date",
         "modal-nav-close" : "Close",
         "modal-nav-confirm" : "Confirm",
         "add-platform" : "Add a platform",
-        "delete-platform" : "Delete a platform"
+        "delete-platform" : "Delete a platform",
+        "filters" : "filters",
+        "filter-year" : "Year",
+        "apply-filter" :"Apply a filter"
     },
     "programs" : {
         "header" : "Programs",
@@ -218,6 +237,7 @@
         "scope-table" : "scopes number",
         "status-table" : "status",
         "tags-table" : "tags",
+        "platform-table" : "Platform",
         "action-table" : "action",
         "action-view" : "view",
         "action-delete" : "delete",
@@ -402,5 +422,27 @@
         "modal-nav-confirm" : "Confirm",
         "generate-invoice" : "Manually Generate",
         "generate-automatically-invoice": "Automatically generate"
+    },
+    "sender" : {
+        "title-email" : "Confirm Email",
+        "validate-email" : "Validate your email",
+        "confirm-message-email" : "Confirm your email to finish your registration",
+        "disable-button-email" : "if the button don't work, copy and past this link in your browser :",
+        "title-resetpassword" : "Reset your password",
+        "confirm-message-resetpassword" : "A request was made to change your password. Click on the button below to proceed. If you have not made this request, you can ignore this message by deleting it.",
+        "disable-button-resetpassword" : "if the button don't work, copy and past this link in your browser :"
+    },
+    "invoicesGeneration" : {
+        "title-invoice" : "Invoice",
+        "project" : "PROJECT",
+        "client" : "CLIENT",
+        "address" : "ADDRESS",
+        "title" : "TITLE",
+        "price" : "PRICE EXCL.",
+        "quantity" : "QTY",
+        "subtotal" : "SUBTOTAL EXCL.",
+        "VAT" : "VAT",
+        "VAT-not-applicable" : "VAT not applicable, art. 293 B of CGI",
+        "bank" : "BANK"
     }
 }

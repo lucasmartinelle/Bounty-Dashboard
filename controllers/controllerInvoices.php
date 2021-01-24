@@ -161,6 +161,7 @@
         private function generateInvoice(){
             $this->_billingHandler = new BillingHandler;
             $this->_userHandler = new UserHandler;
+            $this->_platformHandler = new platformHandler;
             $month = htmlspecialchars($_POST['month'], ENT_QUOTES);
             $platform = htmlspecialchars($_POST['platform'], ENT_QUOTES);
             if($month != 'none' && $platform != 'none'){
@@ -168,6 +169,7 @@
                 $users = $this->_userHandler->getUsers(array("id" => htmlspecialchars($_SESSION['id'], ENT_QUOTES)));
                 $dateObj   = DateTime::createFromFormat('!m', $month);
                 $monthName = $dateObj->format('F');
+                $platformInfo = $this->_platformHandler->getPlatforms(array("name" => $platform));
                 $data = array(
                     "prenom" => $billings[0]->firstname(), 
                     "nom" => $billings[0]->name(), 
@@ -180,7 +182,13 @@
                     "VAT" => $billings[0]->VAT(),
                     "BANK" => $billings[0]->bank(),
                     "IBAN" => $billings[0]->IBAN(),
-                    "BIC" => $billings[0]->BIC()
+                    "BIC" => $billings[0]->BIC(),
+                    "PROJECTPLATFORM" => $platformInfo[0]->name(),
+                    "CLIENTPLATFORM" => $platformInfo[0]->client(),
+                    "BTWPLATFORM" => $platformInfo[0]->BTW(),
+                    "ADDRESSPLATFORM" => $platformInfo[0]->address(),
+                    "EMAILPLATFORM" => $platformInfo[0]->email(),
+                    "DATEPLATFORM" => $platformInfo[0]->date()
                 );
 
                 if(isset($_POST['reports']) && !empty($_POST['reports'])){                

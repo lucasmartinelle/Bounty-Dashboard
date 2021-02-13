@@ -98,6 +98,14 @@ CREATE TABLE `billings` (
   UNIQUE KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `notes` (
+  `id` varchar(36) NOT NULL,
+  `program_id` varchar(36) NOT NULL,
+  `titre` varchar(255) NOT NULL,
+  `text` text NOT NULL,
+  UNIQUE KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `captcha` (
   `pubkey` varchar(50) NOT NULL,
   `privkey` varchar(50) NOT NULL

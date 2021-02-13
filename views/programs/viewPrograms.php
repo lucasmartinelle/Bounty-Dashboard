@@ -120,7 +120,8 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" style="color: #3a3b45 !important;" data data-toggle="modal" data-url="<?= $routes->urlReplace("deleteProgram", array($program->id())); ?>" data-target="#confirmDelete" id="deleteProgram"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
+                                    <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-url="<?= $routes->urlReplace("deleteProgram", array($program->id())); ?>" data-target="#confirmDelete" id="deleteProgram"><?= $lang->getTxt($idPage, "action-delete"); ?></a>
+                                    <a class="dropdown-item" style="color: #3a3b45 !important;" href="<?= $routes->urlReplace("programNote", array($program->id())); ?>"><?= $lang->getTxt($idPage, "action-notes"); ?></a>
                                 </div>
                                 </div>
                             </td>

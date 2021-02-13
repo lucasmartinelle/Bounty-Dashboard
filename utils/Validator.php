@@ -14,7 +14,7 @@
         private $_validatorHandler;
 
         public function validator($data){
-            $this->_lang = new languageManager(LANGUAGE);
+            $this->_lang = new languageManager;
             if(empty($data)){
                 return false;
             } else {

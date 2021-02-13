@@ -121,7 +121,8 @@
         "template-edit": "Le template a été modifiée.",
         "name-taken" : "Ce nom a déjà été pris.",
         "title-taken" : "Ce titre a déjà été pris.",
-        "identifiant-taken" : "Cet identifiant à déjà été pris."
+        "identifiant-taken" : "Cet identifiant à déjà été pris.",
+        "add-note" : "Vous avez ajouté une nouvelle note"
     },
     "dashboard" : {
         "content-header": "Tableau de bord",
@@ -239,8 +240,8 @@
         "tags-table": "tags",
         "platform-table" : "Plateforme",
         "action-table": "action",
-        "action-view": "voir",
         "action-delete": "supprimer",
+        "action-notes" : "notes",
         "add-program": "Ajouter un programme",
         "delete-program": "Supprimer un programme",
         "confirmation-delete-program": "Voulez-vous vraiment supprimer ce programme et tous ses rapports ?",
@@ -248,6 +249,16 @@
         "modal-nav-confirm": "Confirmer",
         "watchmy": "Mes programmes",
         "watchall": "Tous les programmes"
+    },
+    "notes" : {
+        "header" : "Notes",
+        "add-notes" : "ajouter une note",
+        "program-name" : "programme",
+        "title-placeholder" : "Titre",
+        "message-placeholder" : "Message",
+        "invalid-input": "Entrée non valide",
+        "modal-nav-close" : "Fermer",
+        "modal-nav-confirm" : "Confirmer"
     },
     "reports" : {
         "header" : "Reports",

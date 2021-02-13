@@ -229,6 +229,15 @@
                 null,
                 null
             );
+
+            $this->create(
+                "/dashboard/programs/notes/{string}",
+                "programNote",
+                "Notes of program",
+                "controllerPrograms",
+                "programs/viewNotes",
+                "dashboard"
+            );
             
             $this->create(
                 "/dashboard/scope",

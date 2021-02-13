@@ -13,11 +13,6 @@
     define('DB_PASSWORD', '29ani6ibuKzyayWvCrLBQuTXp674R5hy'); // password MYSQL
     define('DB_DATABASE', 'bugbounty'); // Databse MYSQL
 
-    // private and site key of grecaptcha v3
-    // https://developers.google.com/recaptcha/docs/v3
-    define('PRIVATE_KEY', '');
-    define('SITE_KEY', '');
-
     // Email variables (default configuration for gmail account).
     // https://www.siteground.com/kb/google_free_smtp_server/
     // To send emails from your gmail address, you need to disable dual authentication and enable the "Less secure application access" option.

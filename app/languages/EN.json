@@ -122,7 +122,8 @@
         "name-taken" : "This name has already been taken.",
         "title-taken" : "This title has already been taken.",
         "identifiant-taken" : "This identifiant has already been taken.",
-        "add-note" : "You have added a new note"
+        "add-note" : "You have added a new note",
+        "note-delete" : "You have deleted a note"
     },
     "dashboard" : {
         "content-header" : "Dashboard",
@@ -257,6 +258,8 @@
         "title-placeholder" : "Title",
         "message-placeholder" : "Message",
         "invalid-input" : "Invalid input",
+        "confirmation-delete-note" : "Are you sure you want to delete this note ?",
+        "delete-note" : "Delete a note",
         "modal-nav-close" : "Close",
         "modal-nav-confirm" : "Confirm"
     },

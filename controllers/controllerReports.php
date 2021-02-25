@@ -379,6 +379,7 @@
             $this->_routes = new Routes;
             $this->_programHandler = new ProgramHandler;
             $this->_reportHandler = new ReportHandler;
+            $this->_lang = new languageManager;
             $id = htmlspecialchars($data[2], ENT_QUOTES);
             $exist = false;
             $reports = $this->_reportHandler->getReports(array("id" => $id));
@@ -435,7 +436,7 @@
                         array("title", $_POST['title'], 'required', "max:200", "unique|reports|title:".$report->title()),
                         array("identifiant", $_POST['identifiant'], 'required', 'max:200', "unique|reports|identifiant:".$report->identifiant()),
                         array("date", $_POST['date'], 'required', 'date'),
-                        array("severity", $_POST['severity'], 'required', 'float'),
+                        array("severity", $_POST['severity'], 'required', 'float|0.0|10.0'),
                         array("endpoint", $_POST['endpoint'], 'required', 'text'),
                         array("program", $_POST['program'], 'required', 'equal|'.$listPrograms),
                         array("impact", $_POST['impact'], 'required'),

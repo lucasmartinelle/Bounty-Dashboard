@@ -238,6 +238,15 @@
                 "programs/viewNotes",
                 "dashboard"
             );
+
+            $this->create(
+                "/dashboard/programs/deleteNote/{string}",
+                "deleteNote",
+                "Delete a note",
+                "controllerPrograms",
+                null,
+                null
+            );
             
             $this->create(
                 "/dashboard/scope",

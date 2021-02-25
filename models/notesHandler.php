@@ -90,9 +90,9 @@
         */
         public function deleteNotes($id){
             $stmt = "DELETE FROM notes WHERE `id`='".$id."'";
-
             try {
                 $this->statement($stmt);
+                return true;
             } catch(Exception $e) {
                 return false;
             }

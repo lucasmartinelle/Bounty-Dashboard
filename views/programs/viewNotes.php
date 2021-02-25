@@ -52,11 +52,14 @@
             <?php foreach($notes as $note): ?>
                 <div class="card">
                     <div class="card-header" id="heading<?= $note->id();?>">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse<?= $note->id();?>" aria-expanded="false" aria-controls="collapse<?= $note->id();?>">
-                                <?= $note->titre(); ?>
-                            </button>
-                        </h5>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse<?= $note->id();?>" aria-expanded="false" aria-controls="collapse<?= $note->id();?>">
+                                    <?= $note->titre(); ?>
+                                </button>
+                            </h5>
+                            <i class="fas fa-trash text-danger" data-toggle="modal" data-url="<?= $routes->urlReplace("deleteNote", array($note->id())); ?>" data-target="#confirmDelete" id="deleteNote"></i>
+                        </div>
                     </div>
                     <div id="collapse<?= $note->id();?>" class="collapse" aria-labelledby="heading<?= $note->id();?>" data-parent="#accordion">
                         <div class="card-body">
@@ -110,6 +113,26 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel"><?= $lang->getTxt($idPage, "delete-note"); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p><?= $lang->getTxt($idPage, "confirmation-delete-note"); ?></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= $lang->getTxt($idPage, "modal-nav-close"); ?></button>
+                    <a class="btn btn-primary" href="" id="deleteNoteLink"><?= $lang->getTxt($idPage, "modal-nav-confirm"); ?></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <?php 
     $content = ob_get_clean();
     ob_start();
@@ -125,6 +148,13 @@
         });
     <?php endif; ?>
     $('[data-toggle="popover"]').popover();
+
+    $('#confirmDelete').on('shown.bs.modal', function (e) {
+        var button = $(e.relatedTarget);
+        var url = button.data('url');
+        var modal = $(this)
+        modal.find('#deleteNoteLink').attr('href', url)
+    });
 </script>
 
 <?php

@@ -122,7 +122,8 @@
         "name-taken" : "Ce nom a déjà été pris.",
         "title-taken" : "Ce titre a déjà été pris.",
         "identifiant-taken" : "Cet identifiant à déjà été pris.",
-        "add-note" : "Vous avez ajouté une nouvelle note"
+        "add-note" : "Vous avez ajouté une nouvelle note",
+        "note-delete" : "Vous avez supprimé une note"
     },
     "dashboard" : {
         "content-header": "Tableau de bord",
@@ -257,6 +258,8 @@
         "title-placeholder" : "Titre",
         "message-placeholder" : "Message",
         "invalid-input": "Entrée non valide",
+        "confirmation-delete-note" : "Voulez-vous vraiment supprimer cette note ?",
+        "delete-note" : "Supprimer une note",
         "modal-nav-close" : "Fermer",
         "modal-nav-confirm" : "Confirmer"
     },

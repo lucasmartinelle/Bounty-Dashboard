@@ -40,11 +40,13 @@
             if($label == "programs"){
                 $this->programs($name, $view, $template);
             } elseif($label == "deleteProgram"){
-                $this->deleteProgram();
+                $this->deleteProgram($data);
             } elseif($label == "changeStatusProgram"){
                 $this->changeStatusProgram();
             } elseif($label == "programNote"){
                 $this->notes($name, $view, $template, $data);
+            } elseif($label == "deleteNote"){
+                $this->deleteNotes($data);
             } elseif($label == "scope"){
                 $this->scope();
             } elseif($label == "tags"){
@@ -409,6 +411,34 @@
                 }
             } else {
                 header('Location: ' . $this->_routes->url("login"));
+                exit;
+            }
+        }
+
+        private function deleteNotes($data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            if($this->_session->isAuth()){
+                $this->_notesHandler = new NotesHandler;
+                $id = htmlspecialchars($data[3], ENT_QUOTES);
+                echo $id;
+                $notes = $this->_notesHandler->getNotes(array("id" => $id));
+                foreach($notes as $note){
+                    if($this->_notesHandler->deleteNotes($id)){
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "note-delete");
+                        $_SESSION['typeAlert'] = "success";
+                        header('Location: ' . $this->_routes->url('programs'));
+                        exit;
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->urlReplace('programNote', array($id)));
+                        exit;
+                    }
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
                 exit;
             }
         }

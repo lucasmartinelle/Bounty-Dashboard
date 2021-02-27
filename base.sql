@@ -8,11 +8,12 @@ CREATE TABLE `users` (
   `lang` varchar(2) DEFAULT 'EN',
   `active` char(1) DEFAULT 'N',
   `active_billing` char(1) DEFAULT 'N',
+  `invoice_nb` smallint(7) unsigned DEFAULT 0,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp(),
   `bad_attempt` smallint(1) unsigned DEFAULT 0,
   `last_failed` datetime DEFAULT NULL,
-  UNIQUE KEY (`id`),
+  UNIQUE KEY `id` (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -21,37 +22,36 @@ CREATE TABLE `templates` (
   `id` varchar(36) NOT NULL,
   `creator_id` varchar(36) NOT NULL,
   `title` varchar(200) NOT NULL,
-  `description` text NOT NULL,
-  `severity` float(8,5) NOT NULL,
-  `endpoint` text NOT NULL,
-  `stepsToReproduce` longtext NOT NULL,
-  `impact` longtext NOT NULL,
-  `mitigation` longtext NOT NULL,
-  `resources` longtext NOT NULL,
+  `description` text DEFAULT NULL,
+  `severity` float(8,5) DEFAULT NULL,
+  `endpoint` text DEFAULT NULL,
+  `stepsToReproduce` longtext DEFAULT NULL,
+  `impact` longtext DEFAULT NULL,
+  `mitigation` longtext DEFAULT NULL,
+  `resources` longtext DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  UNIQUE KEY (`id`),
-  UNIQUE KEY (`title`),
+  UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `reports` (
   `id` varchar(36) NOT NULL,
+  `creator_id` varchar(36) NOT NULL,
   `title` varchar(200) NOT NULL,
   `severity` float(8,5) NOT NULL,
   `date` datetime NOT NULL,
-  `endpoint` text NOT NULL, 
+  `endpoint` text NOT NULL,
   `identifiant` varchar(200) NOT NULL,
   `status` varchar(100) DEFAULT 'new',
   `gain` smallint(4) DEFAULT 0,
-  `template_id` varchar(36) NOT NULL,
+  `template_id` varchar(36) DEFAULT NULL,
   `program_id` varchar(36) NOT NULL,
   `stepsToReproduce` longtext NOT NULL,
   `impact` longtext NOT NULL,
   `mitigation` longtext NOT NULL,
   `resources` longtext NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  UNIQUE KEY (`id`),
-  UNIQUE KEY (`title`),
-  UNIQUE KEY (`identifiant`)
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `identifiant` (`identifiant`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `programs` (
@@ -64,8 +64,8 @@ CREATE TABLE `programs` (
   `tags` text NOT NULL,
   `platform_id` varchar(36) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  UNIQUE KEY (`id`),
-  UNIQUE KEY (`name`)
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `platforms` (
@@ -78,8 +78,8 @@ CREATE TABLE `platforms` (
   `email` varchar(255) DEFAULT NULL,
   `date` text DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  UNIQUE KEY (`id`),
-  UNIQUE KEY (`name`)
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `billings` (
@@ -95,7 +95,7 @@ CREATE TABLE `billings` (
   `BANK` text NOT NULL,
   `BIC` varchar(11) NOT NULL,
   `IBAN` varchar(34) NOT NULL,
-  UNIQUE KEY (`id`)
+  UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `notes` (
@@ -103,10 +103,11 @@ CREATE TABLE `notes` (
   `program_id` varchar(36) NOT NULL,
   `titre` varchar(255) NOT NULL,
   `text` text NOT NULL,
-  UNIQUE KEY (`id`)
+  UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `captcha` (
   `pubkey` varchar(50) NOT NULL,
   `privkey` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

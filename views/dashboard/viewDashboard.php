@@ -101,16 +101,6 @@
             <div class="col-md-6">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-platform"); ?></h6>
-                    </div>
-                    <div class="card-body" style="width: 100%;">
-                        <canvas id="bugByPlatform" width="100%" height="300px;"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
                         <div class="d-flex justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-severity"); ?></h6>
                             <h6 class="m-0"><span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#filtersSeverity"><?= $lang->getTxt($idPage, "filters"); ?> <i class="fas fa-sort-down ml-2"></i></span></h6>
@@ -135,6 +125,16 @@
                                 echo 'all'; 
                             } ?>
                         </span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><?= $lang->getTxt($idPage, "header-bug-by-platform"); ?></h6>
+                    </div>
+                    <div class="card-body" style="width: 100%;">
+                        <canvas id="bugByPlatform" width="100%" height="300px;"></canvas>
                     </div>
                 </div>
             </div>

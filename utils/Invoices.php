@@ -22,8 +22,8 @@
                 $total += $report[2];
                 $body .= "
                 <tr>
-                    <td class='service'>".htmlspecialchars($report[1],ENT_QUOTES)."</td>
-                    <td class='desc'>".htmlspecialchars($report[0],ENT_QUOTES)."</td>
+                    <td class='service'>".explode(" ", htmlspecialchars($report[1],ENT_QUOTES))[0]."</td>
+                    <td class='desc'>".htmlspecialchars($report[0],ENT_QUOTES)." <span style='color: #ffab64'>#".htmlspecialchars($report[3], ENT_QUOTES)."</span></td>
                     <td class='unit'>".htmlspecialchars($report[2],ENT_QUOTES)."€</td>
                     <td class='qty'>1</td>
                     <td class='total'>".htmlspecialchars($report[2],ENT_QUOTES)."€</td>
@@ -133,7 +133,7 @@
                 }
 
                 table td {
-                    padding: 20px;
+                    padding: 5px;
                     text-align: right;
                 }
 
@@ -146,6 +146,7 @@
                 table td.qty,
                 table td.total {
                     font-size: 1.2em;
+                    padding-right: 10px;
                 }
 
                 table td.grand {
@@ -173,7 +174,7 @@
                     <div id='logo'>
                         <h2>".ucwords($this->_data['prenom'])." ".ucwords($this->_data['nom'])."</h2>
                     </div>
-                    <h1>" . $this->_lang->getTxt('invoicesGeneration', "title-invoice") . " 2020".date_parse($this->_data['month'])['month'].$this->_data['number']."</h1>
+                    <h1>" . $this->_lang->getTxt('invoicesGeneration', "title-invoice") . " 2021".sprintf("%02d", date_parse($this->_data['month'])['month']).sprintf("%02d", $this->_data['number'])."</h1>
                     <div id='company' class='clearfix'>
                         <div>".ucfirst(strtolower($this->_data['prenom']))." ".ucwords($this->_data['nom'])."</div>
                         <div>".$this->_data['address']."</div>

@@ -42,7 +42,11 @@
             $stmt = substr($stmt, 0, -2) . ') VALUES (';
 
             foreach($values as $val){
-                $stmt.="'".$val . "', ";
+                if($val != ''){
+                    $stmt.="'".$val . "', ";
+                } else {
+                    $stmt.="NULL, ";
+                }
             }
             $stmt = substr($stmt, 0, -2) . ')';
 
@@ -66,12 +70,20 @@
         public function updatetemplate($set, $where){
             $stmt = "UPDATE templates SET ";
             foreach($set as $key => $value){
-                $stmt .="`". $key . "` = '".$value."', ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value."', ";
+                } else {
+                    $stmt .="`". $key . "` = NULL, ";
+                }
             }
             $stmt = substr($stmt, 0, -2);
             $stmt .= ' WHERE ';
             foreach($where as $key => $value){
-                $stmt .= "`". $key . "` = '".$value."' AND ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value."' AND ";
+                } else {
+                    $stmt .="`". $key . "` = NULL AND ";
+                }
             }
             $stmt = substr($stmt, 0, -5);
 
@@ -96,7 +108,11 @@
         public function deleteTemplate($where){
             $stmt = "DELETE FROM templates WHERE ";
             foreach($where as $key => $value){
-                $stmt .= "`". $key . "` = '".$value."' AND ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value."' AND ";
+                } else {
+                    $stmt .="`". $key . "` = NULL AND ";
+                }
             }
             $stmt = substr($stmt, 0, -5);
 

@@ -40,12 +40,6 @@
         <span class="badge badge-pill badge-info" style="font-size: 15px;"><?= $lang->getTxt($idPage, "title-placeholder"); ?>
             <span class="badge badge-pill badge-light ml-2"><?= $template->title(); ?></span>
         </span>
-        <span class="badge badge-pill badge-info" style="font-size: 15px;"><?= $lang->getTxt($idPage, "severity-placeholder"); ?>
-            <span class="badge badge-pill badge-light ml-2"><?= $template->severity(); ?></span>
-        </span>
-        <span class="badge badge-pill badge-info" style="font-size: 15px;"><?= $lang->getTxt($idPage, "endpoint-placeholder"); ?>
-            <span class="badge badge-pill badge-light ml-2"><?= $template->endpoint(); ?></span>
-        </span>
         <span class="badge badge-pill badge-info" style="font-size: 15px;"><?= $lang->getTxt($idPage, "description-placeholder"); ?>
             <span class="badge badge-pill badge-light ml-2"><?= $template->description(); ?></span>
         </span>

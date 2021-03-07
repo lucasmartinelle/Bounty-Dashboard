@@ -47,6 +47,8 @@
                 $this->notes($name, $view, $template, $data);
             } elseif($label == "deleteNote"){
                 $this->deleteNotes($data);
+            } elseif($label == "changeNote"){
+                $this->changeNote($data);
             } elseif($label == "scope"){
                 $this->scope();
             } elseif($label == "tags"){
@@ -113,7 +115,6 @@
                         array("scope", $_POST['scope'], 'required'),
                         array("date", $_POST['date'], 'required', 'date'),
                         array("status", $_POST['status'], 'required', 'equal|open|close'),
-                        array("tags", $_POST['tags'], 'required'),
                         array("platform", $_POST['platform'], 'required', 'equal|'.$listPlatforms)
                     );
 
@@ -125,7 +126,6 @@
                         $_SESSION['inputResponseScope'] = $response['scope'];
                         $_SESSION['inputResponseDate'] = $response['date'];
                         $_SESSION['inputResponseStatus'] = $response['status'];
-                        $_SESSION['inputResponseTags'] = $response['tags'];
                         $_SESSION['inputResponsePlatform'] = $response['platform'];
 
                         if($response['name'] == 'invalid'){
@@ -164,14 +164,6 @@
                             $_SESSION['inputResponseStatusMessage'] .= "</span>";
                         }
 
-                        if($response['tags'] == 'invalid'){
-                            $_SESSION['inputResponseTagsMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['tags'] as $e){
-                                $_SESSION['inputResponseTagsMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseTagsMessage'] .= "</span>";
-                        }
-
                         if($response['platform'] == 'invalid'){
                             $_SESSION['inputResponsePlatformMessage'] = "<span class='text-danger'>";
                             foreach($response['message']['platform'] as $e){
@@ -191,7 +183,7 @@
                         $date = strtotime($date);
                         $date = date('Y-m-d H:i:s', $date);
                         $status = htmlspecialchars($_POST['status'], ENT_QUOTES);
-                        $tags = htmlspecialchars($_POST['tags'], ENT_QUOTES);
+                        $tags = (isset($_POST['tags']) && !empty(htmlspecialchars_decode($_POST['tags'], ENT_QUOTES))) ? htmlspecialchars($_POST['tags'], ENT_QUOTES) : NULL;
                         $platform_id = htmlspecialchars($_POST['platform'], ENT_QUOTES);
                         $this->_programHandler = new ProgramHandler;
                         if($this->_programHandler->newProgram(array($id, $creator_id, $name, $scope, $date, $status, $tags, $platform_id))){
@@ -436,6 +428,85 @@
                         header('Location: ' . $this->_routes->urlReplace('programNote', array($id)));
                         exit;
                     }
+                }
+            } else {
+                header('Location: ' . $this->_routes->url('login'));
+                exit;
+            }
+        }
+
+        private function changeNote($data){
+            $this->_session = new Session;
+            $this->_routes = new Routes;
+            $this->_lang = new languageManager;
+            $this->_notesHandler = new NotesHandler;
+            $id = htmlspecialchars($data[3], ENT_QUOTES);
+            $last_token = $this->_session->getToken();
+            if($this->_session->isAuth()){  
+                $exist = false;
+                $notes = $this->_notesHandler->getNotes(array("id" => $id));
+                foreach($notes as $note){
+                    $exist = true;
+                    if($_POST){
+                        if($this->postDataValid($last_token)){
+                            $token = $this->_session->updateToken();
+                            $_SESSION['inputValueTitle2'] = htmlspecialchars($_POST['title'], ENT_QUOTES);
+                            $_SESSION['inputValueMessage2'] = htmlspecialchars($_POST['message'], ENT_QUOTES);
+
+                            $data = array(
+                                array("title", $_POST['title'], "max:255")
+                            );
+
+                            $this->_validator = new Validator();
+                            $response = $this->_validator->validator($data);
+
+                            if($response['success'] == 'false'){
+                                $_SESSION['inputResponseTitle2'] = $response['title'];
+
+                                if($response['title'] == 'invalid'){
+                                    $_SESSION['inputResponseTitleMessage2'] = "<span class='text-danger'>";
+                                    foreach($response['message']['title'] as $e){
+                                        $_SESSION['inputResponseTitleMessage2'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
+                                    }
+                                    $_SESSION['inputResponseTitleMessage2'] .= "</span>";
+                                }
+
+                                header('Location: ' . $this->_routes->urlReplace("programNote", array($note->programid())));
+                                exit;
+                            } else {
+                                $title = (isset($_POST['title']) && !empty($_POST['title'])) ? htmlspecialchars($_POST['title'], ENT_QUOTES) : null;
+                                $message = (isset($_POST['message']) && !empty($_POST['message'])) ? htmlspecialchars($_POST['message'], ENT_QUOTES) : null;
+                                
+                                if($this->_notesHandler->updateNote(array("titre" => $title, "text" => $message), array("id" => $id))){
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "note-change");
+                                    $_SESSION['typeAlert'] = "success";
+                                    header('Location: ' . $this->_routes->urlReplace("programNote", array($note->programid())));
+                                    exit;
+                                } else {
+                                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                                    $_SESSION['typeAlert'] = "error";
+                                    header('Location: ' . $this->_routes->urlReplace("programNote", array($note->programid())));
+                                    exit;
+                                }
+                            }
+                        } else {
+                            $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                            $_SESSION['typeAlert'] = "error";
+                            header('Location: ' . $this->_routes->urlReplace("programNote", array($note->programid())));
+                            exit;
+                        }
+                    } else {
+                        $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                        $_SESSION['typeAlert'] = "error";
+                        header('Location: ' . $this->_routes->urlReplace("programNote", array($note->programid())));
+                        exit;
+                    }
+                }
+                if(!$exist){
+                    $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "global-error");
+                    $_SESSION['typeAlert'] = "error";
+                    header('Location: ' . $this->_routes->url("programs"));
+                    exit;
                 }
             } else {
                 header('Location: ' . $this->_routes->url('login'));

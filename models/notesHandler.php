@@ -61,7 +61,9 @@
         public function updateNote($set, $where){
             $stmt = "UPDATE notes SET ";
             foreach($set as $key => $value){
-                $stmt .="`". $key . "` = '".$value."', ";
+                if($value != null){
+                    $stmt .="`". $key . "` = '".$value."', ";
+                }
             }
             $stmt = substr($stmt, 0, -2);
             $stmt .= ' WHERE ';

@@ -96,7 +96,7 @@
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $report->status() . '</span>'; ?></td>
                                 <td>
                                     <div class="form-check text-center">
-                                        <input class="form-check-input position-static" type="checkbox" data-title='<?= $report->title(); ?>' data-date='<?= $report->date(); ?>' data-gain='<?= $report->gain(); ?>'>
+                                        <input class="form-check-input position-static" type="checkbox" data-title='<?= $report->title(); ?>' data-date='<?= $report->date(); ?>' data-gain='<?= $report->gain(); ?>' data-identifiant='<?= $report->identifiant(); ?>'>
                                     </div>
                                 </td>
                             </tr>
@@ -226,7 +226,7 @@ crossorigin="anonymous"></script>
     });
 
     $('input[type="checkbox"]').change(function() {
-        var info = [$(this).data('title'), $(this).data('date'), $(this).data('gain')]
+        var info = [$(this).data('title'), $(this).data('date'), $(this).data('gain'), $(this).data('identifiant')]
         if(this.checked) {
             reportsSelected.push(info);
         } else {

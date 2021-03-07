@@ -56,24 +56,6 @@
                             </div>
                             <div class="form-row justify-content-center">
                                 <div class="col-md-10 mb-3 mt-2">
-                                    <input type="text" name="severity" id="severity" class="form-control <?php if(isset($_SESSION['inputResponseSeverity']) && !empty($_SESSION['inputResponseSeverity'])){ echo htmlspecialchars($_SESSION['inputResponseSeverity'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "severity-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueSeverity']) && !empty($_SESSION['inputValueSeverity'])){ echo htmlspecialchars($_SESSION['inputValueSeverity'], ENT_QUOTES); $_SESSION['inputValueSeverity'] = ''; } else { echo $template->severity(); } ?>">
-                                    <!-- == If validation failed == -->
-                                    <?php if(isset($_SESSION['inputResponseSeverity']) && !empty($_SESSION['inputResponseSeverity']) && $_SESSION['inputResponseSeverity'] == 'invalid'): ?>
-                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseSeverityMessage'], ENT_QUOTES); ?>"></i></span>
-                                    <?php endif; $_SESSION['inputResponseSeverity'] = ''; $_SESSION['inputResponseSeverityMessage'] = ''; ?> <!-- End of validation failed -->
-                                </div>
-                            </div>
-                            <div class="form-row justify-content-center">
-                                <div class="col-md-10 mb-3 mt-2">
-                                    <input type="text" name="endpoint" id="endpoint" class="form-control <?php if(isset($_SESSION['inputResponseEndpoint']) && !empty($_SESSION['inputResponseEndpoint'])){ echo htmlspecialchars($_SESSION['inputResponseEndpoint'], ENT_QUOTES); } ?>" placeholder="<?= $lang->getTxt($idPage, "endpoint-placeholder"); ?>" value="<?php if(isset($_SESSION['inputValueEndpoint']) && !empty($_SESSION['inputValueEndpoint'])){ echo htmlspecialchars($_SESSION['inputValueEndpoint'], ENT_QUOTES); $_SESSION['inputValueEndpoint'] = ''; } else { echo $template->endpoint(); } ?>">
-                                    <!-- == If validation failed == -->
-                                    <?php if(isset($_SESSION['inputResponseEndpoint']) && !empty($_SESSION['inputResponseEndpoint']) && $_SESSION['inputResponseEndpoint'] == 'invalid'): ?>
-                                        <span><i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'><?= $lang->getTxt($idPage, "invalid-input"); ?></span>" data-content="<?= htmlspecialchars($_SESSION['inputResponseEndpointMessage'], ENT_QUOTES); ?>"></i></span>
-                                    <?php endif; $_SESSION['inputResponseEndpoint'] = ''; $_SESSION['inputResponseEndpointMessage'] = ''; ?> <!-- End of validation failed -->
-                                </div>
-                            </div>
-                            <div class="form-row justify-content-center">
-                                <div class="col-md-10 mb-3 mt-2">
                                     <textarea class="form-control <?php if(isset($_SESSION['inputResponseDescription']) && !empty($_SESSION['inputResponseDescription'])){ echo htmlspecialchars($_SESSION['inputResponseDescription'], ENT_QUOTES); } ?>" name="description" id="description" placeholder="<?= $lang->getTxt($idPage, "description-placeholder"); ?>" rows="5"><?php if(isset($_SESSION['inputValueDescription']) && !empty($_SESSION['inputValueDescription'])){ echo htmlspecialchars($_SESSION['inputValueDescription'], ENT_QUOTES); $_SESSION['inputValueDescription'] = ''; } else { echo $template->description(); } ?></textarea>
                                     <!-- == If validation failed == -->
                                     <?php if(isset($_SESSION['inputResponseDescription']) && !empty($_SESSION['inputResponseDescription']) && $_SESSION['inputResponseDescription'] == 'invalid'): ?>

@@ -188,7 +188,7 @@
                     "BTWPLATFORM" => $platformInfo[0]->BTW(),
                     "ADDRESSPLATFORM" => $platformInfo[0]->address(),
                     "EMAILPLATFORM" => $platformInfo[0]->email(),
-                    "DATEPLATFORM" => $platformInfo[0]->date()
+                    "DATEPLATFORM" => date('d/m/Y')
                 );
 
                 if(isset($_POST['reports']) && !empty($_POST['reports'])){                

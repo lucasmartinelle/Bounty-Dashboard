@@ -78,11 +78,16 @@
             }
             
             foreach($values as $val){
-                $stmt.="'".$val . "', ";
+                if($val != ''){
+                    $stmt.="'".$val . "', ";
+                } else {
+                    $stmt.="NULL, ";
+                }
             }
             $stmt = substr($stmt, 0, -2) . ')';
 
             try {
+                echo $stmt;
                 $this->statement($stmt);
                 return true;
             } catch(Exception $e) {
@@ -102,12 +107,20 @@
         public function updateReport($set, $where){
             $stmt = "UPDATE reports SET ";
             foreach($set as $key => $value){
-                $stmt .="`". $key . "` = '".$value."', ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value."', ";
+                } else {
+                    $stmt .="`". $key . "` = NULL, ";
+                }
             }
             $stmt = substr($stmt, 0, -2);
             $stmt .= ' WHERE ';
             foreach($where as $key => $value){
-                $stmt .= "`". $key . "` = '".$value."' AND ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value." AND ";
+                } else {
+                    $stmt .="`". $key . "` = NULL AND ";
+                }
             }
             $stmt = substr($stmt, 0, -5);
 
@@ -132,7 +145,11 @@
         public function deleteReport($where){
             $stmt = "DELETE FROM reports WHERE ";
             foreach($where as $key => $value){
-                $stmt .= "`". $key . "` = '".$value."' AND ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value."' AND ";
+                } else {
+                    $stmt .="`". $key . "` = NULL AND ";
+                }
             }
             $stmt = substr($stmt, 0, -5);
 
@@ -293,12 +310,14 @@
 
                 while($row = $req->fetch(PDO::FETCH_ASSOC)){
                     $date = $row['date'];
-                    $explodeddate = explode("-", $date);
-                    $month = $explodeddate[1];
-                    if(array_key_exists($months[$month], $dates)){
-                        $dates[$months[$month]] += 1;
-                    } else {
-                        $dates[$months[$month]] = 1;
+                    if($date != NULL){
+                        $explodeddate = explode("-", $date);
+                        $month = $explodeddate[1];
+                        if(array_key_exists($months[$month], $dates)){
+                            $dates[$months[$month]] += 1;
+                        } else {
+                            $dates[$months[$month]] = 1;
+                        }
                     }
                 }
 

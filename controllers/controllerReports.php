@@ -434,15 +434,11 @@
 
                     $data = array(
                         array("title", $_POST['title'], 'required', "max:200", "unique|reports|title:".$report->title()),
-                        array("identifiant", $_POST['identifiant'], 'required', 'max:200', "unique|reports|identifiant:".$report->identifiant()),
-                        array("date", $_POST['date'], 'required', 'date'),
-                        array("severity", $_POST['severity'], 'required', 'float|0.0|10.0'),
-                        array("endpoint", $_POST['endpoint'], 'required', 'text'),
-                        array("program", $_POST['program'], 'required', 'equal|'.$listPrograms),
-                        array("impact", $_POST['impact'], 'required'),
-                        array("ressources", $_POST['ressources'], 'required'),
-                        array("stepstoreproduce", $_POST['stepstoreproduce'], 'required'),
-                        array("mitigation", $_POST['mitigation'], 'required'),
+                        array("identifiant", $_POST['identifiant'], 'max:200', "unique|reports|identifiant:".$report->identifiant()),
+                        array("date", $_POST['date'], 'date'),
+                        array("severity", $_POST['severity'], 'float|0.0|10.0'),
+                        array("endpoint", $_POST['endpoint'], 'text'),
+                        array("program", $_POST['program'], 'required', 'equal|'.$listPrograms)
                     );
 
                     $this->_validator = new Validator();
@@ -455,10 +451,6 @@
                         $_SESSION['inputResponseSeverity'] = $response['severity'];
                         $_SESSION['inputResponseEndpoint'] = $response['endpoint'];
                         $_SESSION['inputResponseProgram'] = $response['program'];
-                        $_SESSION['inputResponseImpact'] = $response['impact'];
-                        $_SESSION['inputResponseRessources'] = $response['ressources'];
-                        $_SESSION['inputResponseStepstoreproduce'] = $response['stepstoreproduce'];
-                        $_SESSION['inputResponseMitigation'] = $response['mitigation'];
 
                         if($response['title'] == 'invalid'){
                             $_SESSION['inputResponseTitleMessage'] = "<span class='text-danger'>";
@@ -516,53 +508,19 @@
                             $_SESSION['inputResponseProgramMessage'] .= "</span>";
                         }
 
-                        if($response['impact'] == 'invalid'){
-                            $_SESSION['inputResponseImpactMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['impact'] as $e){
-                                $_SESSION['inputResponseImpactMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseImpactMessage'] .= "</span>";
-                        }
-
-                        if($response['ressources'] == 'invalid'){
-                            $_SESSION['inputResponseRessourcesMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['ressources'] as $e){
-                                $_SESSION['inputResponseRessourcesMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseRessourcesMessage'] .= "</span>";
-                        }
-
-                        if($response['stepstoreproduce'] == 'invalid'){
-                            $_SESSION['inputResponseStepstoreproduceMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['stepstoreproduce'] as $e){
-                                $_SESSION['inputResponseStepstoreproduceMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseStepstoreproduceMessage'] .= "</span>";
-                        }
-
-                        if($response['mitigation'] == 'invalid'){
-                            $_SESSION['inputResponseMitigationMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['mitigation'] as $e){
-                                $_SESSION['inputResponseMitigationMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseMitigationMessage'] .= "</span>";
-                        }
-
                         header('Location: ' . $this->_routes->url("editReport"));
                         exit;
                     } else {
                         $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
-                        $identifiant = htmlspecialchars($_POST['identifiant'], ENT_QUOTES);
-                        $date = htmlspecialchars($_POST['date'], ENT_QUOTES);
-                        $date = strtotime($date);
-                        $date = date('Y-m-d H:i:s', $date);
-                        $severity = htmlspecialchars($_POST['severity'], ENT_QUOTES);
-                        $endpoint = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
+                        $identifiant = (!isset($_POST['identifiant']) && empty(htmlspecialchars($_POST['identifiant'], ENT_QUOTES))) ? NULL : htmlspecialchars($_POST['identifiant'], ENT_QUOTES);
+                        $date = (!isset($_POST['date']) && empty(htmlspecialchars($_POST['date'], ENT_QUOTES))) ? NULL : date('Y-m-d H:i:s', strtotime(htmlspecialchars($_POST['date'], ENT_QUOTES)));
+                        $severity = (!isset($_POST['severity']) && empty(htmlspecialchars($_POST['severity'], ENT_QUOTES))) ? NULL : htmlspecialchars($_POST['severity'], ENT_QUOTES);
+                        $endpoint = (!isset($_POST['endpoint']) && empty(htmlspecialchars($_POST['endpoint'], ENT_QUOTES))) ? NULL : htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
                         $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
-                        $impact = htmlspecialchars($_POST['impact'], ENT_QUOTES);
-                        $ressources = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
-                        $stepstoreproduce = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
-                        $mitigation = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+                        $impact = (!isset($_POST['impact']) && empty(htmlspecialchars($_POST['impact'], ENT_QUOTES))) ? NULL : htmlspecialchars($_POST['impact'], ENT_QUOTES);
+                        $ressources = (!isset($_POST['ressources']) && empty(htmlspecialchars($_POST['ressources'], ENT_QUOTES))) ? NULL : htmlspecialchars($_POST['ressources'], ENT_QUOTES);
+                        $stepstoreproduce = (!isset($_POST['stepstoreproduce']) && empty(htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES))) ? NULL : htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
+                        $mitigation = (!isset($_POST['mitigation']) && empty(htmlspecialchars($_POST['mitigation'], ENT_QUOTES))) ? NULL : htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
                         $this->_reportHandler = new ReportHandler;
                         if($this->_reportHandler->updateReport(array("title" => $title, "severity" => $severity, "endpoint" => $endpoint, "identifiant" => $identifiant, "date" => $date, "program_id" => $program, "stepstoreproduce" => $stepstoreproduce, "impact" => $impact, "mitigation" => $mitigation, "resources" => $ressources), array("id" => $id))){
                             $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "report-edit");
@@ -751,15 +709,11 @@
 
                     $data = array(
                         array("title", $_POST['title'], 'required', "max:200", "unique|reports|title"),
-                        array("identifiant", $_POST['identifiant'], 'required', 'max:200', "unique|reports|identifiant"),
-                        array("date", $_POST['date'], 'required', 'date'),
-                        array("severity", $_POST['severity'], 'required', 'float|0.0|10.0'),
-                        array("endpoint", $_POST['endpoint'], 'required', 'text'),
-                        array("program", $_POST['program'], 'required', 'equal|'.$listPrograms),
-                        array("impact", $_POST['impact'], 'required'),
-                        array("ressources", $_POST['ressources'], 'required'),
-                        array("stepstoreproduce", $_POST['stepstoreproduce'], 'required'),
-                        array("mitigation", $_POST['mitigation'], 'required'),
+                        array("identifiant", $_POST['identifiant'],'max:200', "unique|reports|identifiant"),
+                        array("date", $_POST['date'], 'date'),
+                        array("severity", $_POST['severity'], 'float|0.0|10.0'),
+                        array("endpoint", $_POST['endpoint'], 'text'),
+                        array("program", $_POST['program'], 'required', 'equal|'.$listPrograms)
                     );
 
                     $this->_validator = new Validator();
@@ -772,10 +726,6 @@
                         $_SESSION['inputResponseSeverity'] = $response['severity'];
                         $_SESSION['inputResponseEndpoint'] = $response['endpoint'];
                         $_SESSION['inputResponseProgram'] = $response['program'];
-                        $_SESSION['inputResponseImpact'] = $response['impact'];
-                        $_SESSION['inputResponseRessources'] = $response['ressources'];
-                        $_SESSION['inputResponseStepstoreproduce'] = $response['stepstoreproduce'];
-                        $_SESSION['inputResponseMitigation'] = $response['mitigation'];
 
                         if($response['title'] == 'invalid'){
                             $_SESSION['inputResponseTitleMessage'] = "<span class='text-danger'>";
@@ -833,55 +783,23 @@
                             $_SESSION['inputResponseProgramMessage'] .= "</span>";
                         }
 
-                        if($response['impact'] == 'invalid'){
-                            $_SESSION['inputResponseImpactMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['impact'] as $e){
-                                $_SESSION['inputResponseImpactMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseImpactMessage'] .= "</span>";
-                        }
-
-                        if($response['ressources'] == 'invalid'){
-                            $_SESSION['inputResponseRessourcesMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['ressources'] as $e){
-                                $_SESSION['inputResponseRessourcesMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseRessourcesMessage'] .= "</span>";
-                        }
-
-                        if($response['stepstoreproduce'] == 'invalid'){
-                            $_SESSION['inputResponseStepstoreproduceMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['stepstoreproduce'] as $e){
-                                $_SESSION['inputResponseStepstoreproduceMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseStepstoreproduceMessage'] .= "</span>";
-                        }
-
-                        if($response['mitigation'] == 'invalid'){
-                            $_SESSION['inputResponseMitigationMessage'] = "<span class='text-danger'>";
-                            foreach($response['message']['mitigation'] as $e){
-                                $_SESSION['inputResponseMitigationMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
-                            }
-                            $_SESSION['inputResponseMitigationMessage'] .= "</span>";
-                        }
-
                         header('Location: ' . $this->_routes->url("createReport"));
                         exit;
                     } else {
                         $id = $this->GUIDv4();
                         $creator_id = htmlspecialchars($_SESSION['id'], ENT_QUOTES);
                         $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
-                        $identifiant = htmlspecialchars($_POST['identifiant'], ENT_QUOTES);
-                        $date = htmlspecialchars($_POST['date'], ENT_QUOTES);
-                        $date = strtotime($date);
-                        $date = date('Y-m-d H:i:s', $date);
-                        $severity = htmlspecialchars($_POST['severity'], ENT_QUOTES);
-                        $endpoint = htmlspecialchars($_POST['endpoint'], ENT_QUOTES);
+                        $identifiant = (isset($_POST['identifiant']) && !empty(htmlspecialchars($_POST['identifiant'], ENT_QUOTES))) ? htmlspecialchars($_POST['identifiant'], ENT_QUOTES) : NULL;
+                        $date = (isset($_POST['date']) && !empty(htmlspecialchars($_POST['date'], ENT_QUOTES))) ? htmlspecialchars($_POST['date'], ENT_QUOTES) : NULL;
+                        $date = (isset($date) && $date !== NULL) ? strtotime($date) : NULL;
+                        $date = (!isset($date) && $date !== NULL) ? date('Y-m-d H:i:s', $date) : NULL;
+                        $severity = (isset($_POST['severity']) && !empty(htmlspecialchars($_POST['severity'], ENT_QUOTES))) ? htmlspecialchars($_POST['severity'], ENT_QUOTES) : NULL;
+                        $endpoint = (isset($_POST['endpoint']) && !empty(htmlspecialchars($_POST['endpoint'], ENT_QUOTES))) ? htmlspecialchars($_POST['endpoint'], ENT_QUOTES) : NULL;
                         $program = htmlspecialchars($_POST['program'], ENT_QUOTES);
-                        $impact = htmlspecialchars($_POST['impact'], ENT_QUOTES);
-                        $ressources = htmlspecialchars($_POST['ressources'], ENT_QUOTES);
-                        $stepstoreproduce = htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES);
-                        $mitigation = htmlspecialchars($_POST['mitigation'], ENT_QUOTES);
+                        $impact = (isset($_POST['impact']) && !empty(htmlspecialchars($_POST['impact'], ENT_QUOTES))) ? htmlspecialchars($_POST['impact'], ENT_QUOTES) : NULL;
+                        $ressources = (isset($_POST['ressources']) && !empty(htmlspecialchars($_POST['ressources'], ENT_QUOTES))) ? htmlspecialchars($_POST['ressources'], ENT_QUOTES) : NULL;
+                        $stepstoreproduce = (isset($_POST['stepstoreproduce']) && !empty(htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES))) ? htmlspecialchars($_POST['stepstoreproduce'], ENT_QUOTES) : NULL;
+                        $mitigation = (isset($_POST['mitigation']) && !empty(htmlspecialchars($_POST['mitigation'], ENT_QUOTES))) ? htmlspecialchars($_POST['mitigation'], ENT_QUOTES) : NULL;
                         $this->_reportHandler = new ReportHandler;
                         if($this->_reportHandler->newReport(array($id,$creator_id,$title,$severity, $date, $endpoint, $identifiant,$program,$stepstoreproduce,$impact,$mitigation,$ressources))){
                             $_SESSION['alert'] = $this->_lang->getTxt('controllerReports', "report-create");

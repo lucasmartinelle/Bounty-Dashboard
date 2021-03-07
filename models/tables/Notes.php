@@ -34,7 +34,7 @@
 
         private function setProgramId($id){
             if(is_string($id) && strlen($id) == 36){
-                $this->_creator_id = $id;
+                $this->_program_id = $id;
             }
         }
 

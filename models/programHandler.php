@@ -69,7 +69,11 @@
         public function newProgram($values){
             $stmt = 'INSERT INTO programs (`id`, `creator_id`, `name`, `scope`, `date`, `status`, `tags`, `platform_id`) VALUES (';
             foreach($values as $val){
-                $stmt.="'".$val . "', ";
+                if($val != ''){
+                    $stmt.="'".$val . "', ";
+                } else {
+                    $stmt .="NULL, ";
+                }
             }
             $stmt = substr($stmt, 0, -2) . ')';
 
@@ -93,12 +97,20 @@
         public function updateProgram($set, $where){
             $stmt = "UPDATE programs SET ";
             foreach($set as $key => $value){
-                $stmt .="`". $key . "` = '".$value."', ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value."', ";
+                } else {
+                    $stmt .="`". $key . "` = NULL, ";
+                }
             }
             $stmt = substr($stmt, 0, -2);
             $stmt .= ' WHERE ';
             foreach($where as $key => $value){
-                $stmt .= "`". $key . "` = '".$value."' AND ";
+                if($value != ''){
+                    $stmt .="`". $key . "` = '".$value."' AND ";
+                } else {
+                    $stmt .="`". $key . "` = NULL AND ";
+                }
             }
             $stmt = substr($stmt, 0, -5);
 

@@ -17,7 +17,7 @@ The objective of this project is to facilitate the management of your reports as
 * Settings
   * Add/remove user (Administrator/hunter)
   * Site language (FR/EN)
-  * Enable/disable reCaptcha
+  * update reCaptcha keys
 
 ## Feature to come
 
@@ -65,6 +65,14 @@ mysql -u root bugbounty < base.sql
 ```bash
 systemctl restart apache2
 ```
+
+**Using SMTP :** 
+
+You will need to configure SMTP to be able to access the email confirmation feature when registering or resetting a password.
+
+To do this, if you are using google SMTP, you will need to to modify the lines 26, 27 and 28 by your credentials in `/var/www/html/Bounty-Dashboard/app/init.php`. To allow PHP to connect and send email, you must also enable the "Less secure application access" option and disable the "dual authentification" in your [google account](https://myaccount.google.com/). We recommend that you use an email address that is only used to send emails.
+
+Otherwise, in the same files, you will find some configuration elements to use your SMTP.
 
 ## Screenshots
 

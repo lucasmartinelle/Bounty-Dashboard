@@ -117,7 +117,7 @@
             $stmt .= ' WHERE ';
             foreach($where as $key => $value){
                 if($value != ''){
-                    $stmt .="`". $key . "` = '".$value." AND ";
+                    $stmt .="`". $key . "` = '".$value."' AND ";
                 } else {
                     $stmt .="`". $key . "` = NULL AND ";
                 }

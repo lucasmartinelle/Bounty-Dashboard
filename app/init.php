@@ -4,7 +4,7 @@
     define('URL', $protocole . $_SERVER['HTTP_HOST']);
     define('DEFAULT_PAGE', 'dashboard'); // label of default page
     define('TITLE', 'BugBounty'); // Global title
-    define('WEBSITE_PATH', '/var/www/html/'); // website path. Need a "/" at the end of the path.
+    define('WEBSITE_PATH', '/var/www/html/Bounty-Dashboard/'); // website path. Need a "/" at the end of the path.
     define('LANGUAGE', 'EN');
 
     // make sure to enable PDO drivers and download php-mysql extensions

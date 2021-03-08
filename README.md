@@ -1,3 +1,4 @@
+
 ## Bounty Dashboard
 ![banner](https://zupimages.net/up/21/09/e6iu.png)
 The objective of this project is to facilitate the management of your reports as well as collaborative work by providing a web-based solution.
@@ -10,6 +11,7 @@ The objective of this project is to facilitate the management of your reports as
 * Add/Remove Programs
   * System for adding notes to a program
 * Report management system
+  * Markdown support   
 * Template management system
    * Templates are applicable to a report
 * Invoice creation system
@@ -68,19 +70,16 @@ systemctl restart apache2
 
 **Using SMTP :** 
 
-You will need to configure SMTP to be able to access the email confirmation feature when registering or resetting a password.
-
-To do this, if you are using google SMTP, you will need to to modify the lines 26, 27 and 28 by your credentials in `/var/www/html/Bounty-Dashboard/app/init.php`. To allow PHP to connect and send email, you must also enable the "Less secure application access" option and disable the "dual authentification" in your [google account](https://myaccount.google.com/). We recommend that you use an email address that is only used to send emails.
-
-Otherwise, in the same files, you will find some configuration elements to use your SMTP.
+For some features such as account creation confirmation or password reset it is necessary to edit the SMTP configuration in the `./app/init.php` file.
 
 ## Screenshots
 
 **Dashboard :**
-![Dashboard](https://zupimages.net/up/21/09/zqhh.png)
+
+![Dashboard](https://zupimages.net/up/21/10/pvnt.png)
 
 **Platforms :**
-![Platforms]()
+![Platforms](https://zupimages.net/up/21/09/zqhh.png)
 
 **Programs :**
 ![Programs ](https://zupimages.net/up/21/09/k4ke.png)
@@ -92,8 +91,7 @@ Otherwise, in the same files, you will find some configuration elements to use y
 ![Reports](https://zupimages.net/up/21/09/vavk.png)
 
 **Invoices :**
-![Invoices ]()
+![Invoices ](https://zupimages.net/up/21/09/76b4.png)
 
 **Settings :**
 ![Settings ](https://zupimages.net/up/21/09/lgfw.png)
-

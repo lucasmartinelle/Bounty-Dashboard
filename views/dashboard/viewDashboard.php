@@ -7,7 +7,7 @@
     use app\languages\languageManager;
     
     $routes = new Routes;
-    $lang = new languageManager(LANGUAGE);
+    $lang = new languageManager;
 
     $asset = "assets/";
     $idPage = "dashboard";
@@ -67,7 +67,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 <?= $lang->getTxt($idPage, 'card-total-earning'); ?></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $gain ?>€</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $gain ?> <?php if($lang->getLang() == "FR"){ echo '€'; } else { echo '$'; } ?></div>
                         </div>
                         <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>

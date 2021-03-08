@@ -84,12 +84,12 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        <?php foreach($reports as $report): ?>
+                        <?php foreach($reports as $report): $money = ($lang->getLang() == "FR") ? '€' : '$'; ?>
                             <tr>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $report->title() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $report->severity() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-warning">' . $report->endpoint() . '</span>'; ?></td>
-                                <td class="text-center"><?= '<span class="badge badge-pill badge-success" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeGain">' . $report->gain() . ' €'; ?></td>
+                                <td class="text-center"><?= '<span class="badge badge-pill badge-success" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeGain">' . $report->gain() . ' ' . $money; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $report->identifiant() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-info">' . $report->date() . '</span>'; ?></td>
                                 <td class="text-center"><?= '<span class="badge badge-pill badge-danger" data-toggle="modal" data-id="'.$report->id().'" data-target="#changeStatus">' . $report->status(); ?></td>

@@ -13,5 +13,9 @@
         public function getTxt($id, $txt){
             return $this->json->$id->$txt;
         }
+
+        public function getLang(){
+            return $this->lang;
+        }
     }
 ?>

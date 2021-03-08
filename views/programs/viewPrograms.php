@@ -106,11 +106,12 @@
                             }
                             $gain = $gainsbyprograms[$count];
                             if(empty($gain) && !isset($gain)) $gain = 0;
+                            $money = ($lang->getLang() == "FR") ? '€' : '$';
                         ?>
                         <tr>
                             <td class="text-center"><?= '<span class="badge badge-pill badge-danger">' . $program->name() . '</span>'; ?></td>
                             <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $numberofbugs[$count] . '</span>'; ?></td>
-                            <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $gain . ' €</span>'; ?></td>
+                            <td class="text-center"><?= '<span class="badge badge-pill badge-success">' . $gain . ' ' . $money . '</span>'; ?></td>
                             <td class="text-center"><span class="badge badge-pill badge-success"><?= $scopes; ?></span></td>
                             <td class="text-center"><?= '<span class="badge badge-pill badge-info" data-toggle="modal" data-id="'.$program->id().'" data-target="#changeStatus">' . $program->status() . '</span>'; ?></td>
                             <td class="text-center"><?= $fulltags; ?></td>

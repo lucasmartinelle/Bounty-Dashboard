@@ -72,6 +72,10 @@ systemctl restart apache2
 
 For some features such as account creation confirmation or password reset it is necessary to edit the SMTP configuration in the `./app/init.php` file.
 
+**Default Language**:
+
+By default, the language used is English. You can change it to French by filling line 8 with `define('LANGUAGE', 'FR');`. The available languages are French (`FR`) and English (`EN`).
+
 ## Screenshots
 
 **Dashboard :**

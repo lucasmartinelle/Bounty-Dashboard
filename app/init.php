@@ -1,5 +1,5 @@
 <?php
-    define('ACTIVE_DEBUG', true); // false to disable debug, true to enable it
+    define('ACTIVE_DEBUG', false); // false to disable debug, true to enable it
     $protocole = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     define('URL', $protocole . $_SERVER['HTTP_HOST']);
     define('DEFAULT_PAGE', 'dashboard'); // label of default page

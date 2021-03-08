@@ -83,6 +83,8 @@ For some features such as account creation confirmation or password reset it is 
 
 **Programs :**
 ![Programs ](https://zupimages.net/up/21/09/k4ke.png)
+**Notes :**
+![Notes ](https://zupimages.net/up/21/10/b60z.png)
 
 **Templates :**
 ![Templates ](https://zupimages.net/up/21/09/0buw.png)

@@ -74,7 +74,7 @@
                 $token = $this->_session->updateToken();
 
                 $data = array(
-                    array('username', $_POST['username'], 'required', 'max:200'),
+                    array('username', $_POST['username'], 'required', 'max:200', 'unique|users|username'),
                     array('email', $_POST['email'], 'required', 'min:3', 'max:255', 'email', 'unique|users|email'),
                     array('password', $_POST['password'], 'cpassword:'.$_POST['cpassword'], 'required', 'min:6', 'max:32', 'requiredSpecialCharacter', 'requiredNumber', 'requiredLetter')
                 );
@@ -96,6 +96,10 @@
                             $_SESSION['inputResponseUsernameMessage'] .= "<i class='fas fa-circle' style='font-size: 8px;'></i> " . $e . "<br>";
                         }
                         $_SESSION['inputResponseUsernameMessage'] .= "</span>";
+                    }
+
+                    if($response['unique']['username'] == 'false'){
+                        $_SESSION['inputResponseUsernameMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerAuth', "username-taken") . " </span>";
                     }
 
                     if($_SESSION['inputResponseEmail'] == 'invalid'){

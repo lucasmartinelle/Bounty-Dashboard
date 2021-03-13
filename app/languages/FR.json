@@ -90,7 +90,8 @@
         "password-changed" : "Votre mot de passe a été changé !",
         "email-confirmed" : "Votre adresse email a été confirmée. Vous pouvez maintenant vous connecter.",
         "not-unique" : "Ce champ doit être unique.",
-        "email-taken" : "Cette email a déjà été pris."
+        "email-taken" : "Cette email a déjà été pris.",
+        "username-taken" : "Ce nom d'utilisateur a déjà été pris."
     }, 
     "controllerDashboard" : {
         "global-error" : "Une erreur s'est produite lors du traitement de votre demande",
@@ -123,7 +124,8 @@
         "title-taken" : "Ce titre a déjà été pris.",
         "identifiant-taken" : "Cet identifiant à déjà été pris.",
         "add-note" : "Vous avez ajouté une nouvelle note",
-        "note-delete" : "Vous avez supprimé une note"
+        "note-delete" : "Vous avez supprimé une note",
+        "note-change" : "Vous avez modifié une note"
     },
     "dashboard" : {
         "content-header": "Tableau de bord",
@@ -260,6 +262,7 @@
         "invalid-input": "Entrée non valide",
         "confirmation-delete-note" : "Voulez-vous vraiment supprimer cette note ?",
         "delete-note" : "Supprimer une note",
+        "update-note" : "Modifier une note",
         "modal-nav-close" : "Fermer",
         "modal-nav-confirm" : "Confirmer"
     },
@@ -456,7 +459,7 @@
         "quantity": "QTÉ",
         "subtotal": "SOUS-TOTAL EXCL.",
         "VAT": "TVA",
-        "VAT-not-applicable": "TVA non applicable, art. 293 B de CGI",
+        "VAT-not-applicable": "Cette facture est soumise au mécanisme de la taxe de retour de l'UE",
         "bank": "BANQUE"
     }
 }

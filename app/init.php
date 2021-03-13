@@ -8,7 +8,7 @@
     define('LANGUAGE', 'EN');
 
     // make sure to enable PDO drivers and download php-mysql extensions
-    define('DB_HOST', '127.0.0.1'); // host MYSQL
+    define('DB_HOST', 'dbbountydash'); // host MYSQL
     define('DB_USERNAME', 'bugbounty'); // username MYSQL
     define('DB_PASSWORD', '29ani6ibuKzyayWvCrLBQuTXp674R5hy'); // password MYSQL
     define('DB_DATABASE', 'bugbounty'); // Databse MYSQL

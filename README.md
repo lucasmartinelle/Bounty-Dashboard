@@ -1,4 +1,5 @@
 
+
 ## Bounty Dashboard
 ![banner](https://zupimages.net/up/21/09/e6iu.png)
 The objective of this project is to facilitate the management of your reports as well as collaborative work by providing a web-based solution.
@@ -23,58 +24,30 @@ The objective of this project is to facilitate the management of your reports as
 
 ## Feature to come
 
-* Docker based installation
-* Auto-Install script
+* Complete rewrite with Symfony
 
 ## Installation
 
-**Installation of prerequisites :**
-
 ```bash
-apt-get update && apt-get upgrade -y
-apt-get install apache2 php php-mysql mariadb-server
-cd /var/www/html/
 git clone https://github.com/lucasmartinelle/Bounty-Dashboard
-chown -R www-data:www-data /var/www/html/
 ```
 
-**Create the database :**
+Change your language (`default :EN`) and SMTP information in the file `./app/init.php`.
 
-```bash
-mysql -u root
-CREATE DATABASE bugbounty;
-GRANT ALL ON bugbounty.* TO 'bugbounty'@'localhost' IDENTIFIED BY '29ani6ibuKzyayWvCrLBQuTXp674R5hy';
-FLUSH PRIVILEGES;
-quit
+Build the container & start :
+```
+docker-compose build
+docker-compose up -d
 ```
 
-It is recommended to change the password, this change should also be reflected in the file  `/var/www/html/Bounty-Dashboard/app/init.php`
+**No SMTP  ?** 
 
-**Import the SQL File :**
+If you do not have an SMTP server, after installation, go to the container and connect to the MySQL database.
 
-```bash
-mysql -u root bugbounty < base.sql
 ```
-**Apache2 configuration :**
-
- * Uncomment `extension=pdo_mysql` on `/etc/php/{version}/apache2/php.ini`
- * Change `AllowOverride None` to `AllowOverride All` line 172 on `/etc/apache2/apache2.conf`
- * On `/etc/apache2/sites-enabled/000-default.conf` change `DocumentRoot /var/www/html/` by `DocumentRoot /var/www/html/Bounty-Dashboard` on line 12
- * Enabling Apache's `mod_rewrite` module : `a2enmod rewrite`
-
-**Restart apache2 :** 
-
-```bash
-systemctl restart apache2
+mysql -u root -h dbbountydash -p bugbounty
+UPDATE users SET active = 'Y' WHERE username = 'your_username'
 ```
-
-**Using SMTP :** 
-
-For some features such as account creation confirmation or password reset it is necessary to edit the SMTP configuration in the `./app/init.php` file.
-
-**Default Language**:
-
-By default, the language used is English. You can change it to French by filling line 8 with `define('LANGUAGE', 'FR');`. The available languages are French (`FR`) and English (`EN`).
 
 ## Screenshots
 

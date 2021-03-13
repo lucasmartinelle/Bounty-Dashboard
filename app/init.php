@@ -25,5 +25,4 @@
     define('EMAIL_DEBUG', false); // false or 1/2/3/4 (The bigger the number, the more detailed the debug will be, false disable it)
     define('EMAIL', 'something@gmail.com'); // EMAIL SENDER
     define('EMAIL_PASSWORD', 'password'); // PASSWORD EMAIL SENDER
-    define('EMAIL_FROM', 'sender'); // NAME OF SENDER
 ?>

@@ -64,7 +64,7 @@
             $mail->Username = EMAIL;
             $mail->Password = EMAIL_PASSWORD;
     
-            $mail->SetFrom(EMAIL, EMAIL_FROM);
+            $mail->SetFrom('sender@'.$_SERVER['HTTP_HOST']);
             $mail->addAddress($this->email());
     
             $mail->IsHTML(true);

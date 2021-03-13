@@ -64,7 +64,7 @@
             $mail->Username = EMAIL;
             $mail->Password = EMAIL_PASSWORD;
     
-            $mail->SetFrom('sender@'.$_SERVER['HTTP_HOST']);
+            $mail->SetFrom('sender@BountyDashboard');
             $mail->addAddress($this->email());
     
             $mail->IsHTML(true);

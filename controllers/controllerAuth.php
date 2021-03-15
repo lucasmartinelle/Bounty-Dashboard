@@ -111,7 +111,8 @@
                     }
 
                     if($response['unique']['email'] == 'false'){
-                        $_SESSION['inputResponseEmailMessage'] = "<span class='text-danger'><i class='fas fa-circle' style='font-size: 8px;'></i> " . $this->_lang->getTxt('controllerAuth', "email-taken") . " </span>";
+                        header('Location: ' . $this->_routes->url("sentRegistration"));
+                        exit;
                     }
 
                     if($response['password'] == 'invalid'){

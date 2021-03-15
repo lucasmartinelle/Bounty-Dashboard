@@ -247,6 +247,15 @@
                 null,
                 null
             );
+
+            $this->create(
+                "/dashboard/programs/changeNote/{string}",
+                "changeNote",
+                "Update a note",
+                "controllerPrograms",
+                null,
+                null
+            );
             
             $this->create(
                 "/dashboard/scope",

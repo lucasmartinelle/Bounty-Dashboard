@@ -90,7 +90,6 @@
         "password-changed" : "Your password has been changed !",
         "email-confirmed" : "Your email address was confirmed. You can now log in !",
         "not-unique" : "This field must be unique.",
-        "email-taken" : "This email has already been taken.",
         "username-taken" : "This username has already been taken."
     },
     "controllerDashboard" : {

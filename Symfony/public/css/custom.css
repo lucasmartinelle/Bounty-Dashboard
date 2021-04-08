@@ -1,207 +1,212 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap');
-
-
-body {
-    background-color: #222222;
-    margin: 0;
-    min-height: 100vh;
-    height: 100vh;
+.bd-callout {
+	padding: 1.25rem;
+	margin-top: 1.25rem;
+	margin-bottom: 1.25rem;
+	border-top: 6px solid #5bc0de;
 }
 
-* {
-    cursor: url("https://zupimages.net/up/20/30/j15x.png"), auto !important;
-    transition: all 0.4s ease-out;
+.bd-callout-warning {
+	border-left-color: #f0ad4e;
 }
 
-.was-validated .custom-control-input:valid ~ .custom-control-label, .custom-control-input.is-valid ~ .custom-control-label {
-    color: #858796 !important;
+.bd-callout-info {
+	border-left-color: #5bc0de;
 }
 
-.was-validated .custom-control-input:valid ~ .custom-control-label::before, .custom-control-input.is-valid ~ .custom-control-label::before {
-    background-color: #fff !important;
-    border: #ccb7b7 solid 1px !important;
+.bd-callout-danger {
+	border-left-color: #d9534f;
 }
 
-.grecaptcha-badge {
-    z-index: 5000;
+.ui-menu .ui-menu-item a {
+    font-size: 12px;
 }
 
-#top {
-    width: 100%;
-    padding-top: 80px;
-    padding-bottom: 80px;
-    min-height: 90vh;
-    background-color: #222222;
+.ui-helper-hidden-accessible { display: none; }
+
+.ui-autocomplete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1510 !important;
+    float: left;
+    display: none;
+    min-width: 160px;
+    width: 160px;
+    padding: 4px 4;
+    margin: 2px 0 0 0;
+    list-style: none;
+    background-color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.4);
+    border-style: solid;
+    border-width: 1px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    *border-right-width: 2px;
+    *border-bottom-width: 2px;
 }
 
-#top .container-fluid {
+.ui-autocomplete:hover {
+	color: #6e707e;
+	background-color: #fff;
+	border-color: #bac8f3;
+	outline: 0;
+}
+
+.ui-menu-item > a.ui-corner-all {
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.ui-menu .ui-menu-item div {
+    padding-left: 10px;
+}
+
+.ui-menu {
+    padding: 0 !important;
+}
+
+.ui-state-hover, .ui-state-active {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #0088cc;
+    border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    background-image: none;
+}
+
+form span i {
+	position: absolute !important;
+	top: 10px !important;
+	right: 11px !important;
+}
+
+.addformrow span i {
+    right: 55px !important;
+}
+
+.selectformrow span i {
+    right: 35px !important;
+}
+
+.popover-body ul {
+    padding-left: 12px;
+    margin-bottom: 0;
+}
+
+/*
+* AUTH
+*/
+
+#registration .card, #login .card, #forgot .card, #emailSent .card, #validationForgot .card {
+    background: transparent;
+    width: 400px;
+    border-radius: 25px;
+    border-color: transparent;
+}
+
+@media screen and (max-width: 420px){
+    #registration .card, #login .card, #forgot .card, #emailSent .card, #validationForgot .card {
+        width: 80%;
+    }
+}
+
+#registration input, #login input, #forgot input, #validationForgot input {
+    background: transparent;
+    height: 40px;
+    border-radius: 0;
+    border-color: #000000;
+    box-shadow: unset;
+    color: #000000;
+}
+
+#login .form-check input {
+    height: auto;
+}
+
+#emailSent .card-body {
+    padding: 20px;
+    height: max-content;
+    background: #ffffff;
+    border-radius: 25px;
+}
+
+/*
+* DASHBOARD
+*/
+
+#settings .card-listuser {
+    padding: 20px;
+}
+
+#settings .wrapper-form, #profile .wrapper-form {
+    width: 400px;
+    margin:auto;
+}
+
+@media screen and (max-width: 1050px){
+    #settings .wrapper-form, #profile .wrapper-form {
+        width: 80%;
+    }
+}
+
+#settings .userManagement {
+    margin-top: 100px !important;
+    width: 85%;
+}
+
+#platforms .input-group-btn {
+    top: unset;
+    right: unset;
+}
+
+#platforms .btn-file {
     position: relative;
-    height: 100%;
-    width: 100%;
-    padding-top: 9rem;
-    text-align: center;
+    overflow: hidden;
+    border: 1px solid #d1d3e2 !important;
+    background-color: #fff !important;
+    top: unset;
+    right: unset;
 }
 
-#top h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 80px;
-    font-weight: 900;
+#platforms #filename {
+    padding-left: 70px;
 }
 
-#top h3 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 50px;
+#platforms .btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
 }
 
-#top img {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
+#createReport .cm, #editReport .cm, #createTemplate .cm, #editTemplate .cm {
+    overflow: scroll;
 }
 
-#top .codefloating {
-    position: absolute; 
-    left: 0; 
-    top: 0; 
-    z-index: 0; 
-    transition: all 2s linear;
-}
-
-#top .codefloating.move {
-    top: 9999px;
-}
-
-#top .boxes ul {
-    display:block;
-    width:100%;
-    height:inherit;
-}
-
-#top .boxes ul{
-    list-style-type:none;
-}
-
-#top .boxes li:nth-child(1){
-    position:absolute;
-    left:10%;
-    height:30px;
-    width:30px;
-    background:rgba(255,255,255,.2);
-    animation:animate 15s linear 1s infinite;
-}
-
-#top .boxes li:nth-child(2) {
-    position:absolute;
-    left:25%;
-    height:45px;
-    width:45px;
-    background:rgba(255,255,255,.2);
-    animation:animate 9s linear 1s infinite;
-}
-
-#top .boxes li:nth-child(3) {
-    position:absolute;
-    left:40%;
-    height:70px;
-    width:70px;
-    background:rgba(255,255,255,.2);
-    animation:animate 8s linear 1s infinite;
-}
-
-#top .boxes li:nth-child(4) {
-    position:absolute;
-    left:55%;
-    height:20px;
-    width:20px;
-    background:rgba(255,255,255,.2);
-    animation:animate 17s linear 1s infinite;
-}
-
-#top .boxes li:nth-child(5) {
-    position:absolute;
-    left:70%;
-    height:15px;
-    width:15px;
-    background:rgba(255,255,255,.2);
-    animation:animate 13s linear 1s infinite;
-}
-
-#top .boxes li:nth-child(6) {
-    position:absolute;
-    left:85%;
-    height:50px;
-    width:50px;
-    background:rgba(255,255,255,.2);
-    animation:animate 12s linear 1s infinite;
-}
-
-#top .boxes li:nth-child(7) {
-    position:absolute;
-    left:90%;
-    height:60px;
-    width:60px;
-    background:rgba(255,255,255,.2);
-    animation:animate 14s linear 1s infinite;
-}
-  
-@keyframes animate {
-    from {
-        transform: translateY(+1500%) rotate(180deg)
-    }
-    to {
-        transform: translateY(-150%) rotate(360deg)
-    }
-}
-
-@media screen and (max-width: 768px){
-    #top h1 {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 50px;
-    }
-    
-    #top h3 {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 30px;
-    }
-}
-
-#about {
-    margin-top: -2px;
-    width: 100%;
-    padding-top: 80px;
-    padding-bottom: 80px;
-    min-height: 80vh;
-    background-color: #252525;
-}
-
-#about .right {
-    padding-left: 80px;
-    text-align: left;
-    max-width: 500px;
-    font-size: 20px;
-    text-justify: auto;
-}
-
-#about h1 {
-    font-family: 'Anton', sans-serif;
-}
-
-@media screen and (max-width: 750px){
-    #about img {
-        width: 100px;
-    }
-
-    #about .right {
-        font-size: 14px;
-    }
-}
-
-@media screen and (max-width: 550px){
-    #about {
-        background-size: 300px auto;
-    }
-
-    #about .right {
-        padding-left: 20px;
-        font-size: 14px;
-    }
+#createReport .btndiv, #editReport .btndiv, #createTemplate .btndiv, #editTemplate .btndiv {
+    width: 60%; 
+    margin-top: 60px !important;
 }

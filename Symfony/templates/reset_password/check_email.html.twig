@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Password Reset Email Sent'|trans }}{% endblock %}
+
+{% block idpage %}emailSent{% endblock %}
+
+{% block body %}
+    <div class="card m-auto">
+        <div class="text-header">
+            <h1 class="text-center mt-3 text-dark">{{ 'Check your inbox'|trans }}</h1>
+        </div>
+        <div class="card-body text-center sh-dark mt-4">
+            <img src="https://img.icons8.com/nolan/200/send-mass-email.png"/>
+            <p>{{ 'An email has been sent to your email address to allow you to change your password. Please, check your inbox.'|trans }}</p>
+        </div>
+    </div>
+    <div class="form-row justify-content-center">
+        <div class="col-md-10 mb-3 mt-3">
+            <p class="text-dark text-center">{{ 'Back to'|trans }} <a href="{{ path('login') }}">{{ 'Sign in'|trans }}</a></button>
+        </div>
+    </div>
+{% endblock %}

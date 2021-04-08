@@ -1,0 +1,378 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Settings'|trans }}{% endblock %}
+
+{% block idpage %}settings{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="card card-listuser shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">{{ 'Users'|trans }}</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Username'|trans }}</th>
+                                <th>{{ 'Email'|trans }}</th>
+                                <th>{{ 'Roles'|trans }}</th>
+                                <th>{{ 'Active'|trans }}</th>
+                                <th>{{ 'Action'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>{{ 'Username'|trans }}</th>
+                                <th>{{ 'Email'|trans }}</th>
+                                <th>{{ 'Roles'|trans }}</th>
+                                <th>{{ 'Active'|trans }}</th>
+                                <th>{{ 'Action'|trans }}</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td><span class="badge badge-pill badge-warning">{{ user.username }}</span></td>
+                                    <td><span class="badge badge-pill badge-warning">{{ user.email }}</span></td>
+                                    <td>
+                                        {% for role in user.roles %}
+                                            {% if "ROLE_ADMIN" == role %}
+                                                <span class="badge badge-pill badge-danger">admin</span> 
+                                            {% else %}
+                                                <span class="badge badge-pill badge-secondary">hunter</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ user.isActive }}</td>
+                                    <td class="text-center">
+                                        {% set admin = false %}
+                                        {% for role in user.roles %}
+                                            {% if role == "ROLE_ADMIN" %}
+                                                {% set admin = true %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% if admin %}
+                                            <i class="fas fa-trash"></i>
+                                        {% else %}
+                                            <a href="{{ path('delete-user', {'id': user.id}) }}" class="text-danger"><i class="fas fa-trash"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {%endif%}
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Change language'|trans }}</h6>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ path('change_locale', {'locale': 'en'}) }}" class="mr-2"><img src="https://img.icons8.com/cute-clipart/64/000000/great-britain.png"/></a>
+                            <a href="{{ path('change_locale', {'locale': 'fr'}) }}" class="ml-2"><img src="https://img.icons8.com/color/64/000000/france.png"/></a>
+                        </div>
+                    </div>
+                </div>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Captcha keys'|trans }}</h6>
+                        </div>
+                        <div class="wrapper-form">
+                            {{ form_start(addCaptchaForm, {'method': 'POST'}) }}
+                                
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-4">
+                                        <!-- If private key valid -->
+                                        {% if addCaptchaForm.public_key.vars.valid %}
+                                            {{ form_widget(addCaptchaForm.public_key, {
+                                                'attr': {
+                                                    'class': 'form-control', 
+                                                    'placeholder' : 'Public key'|trans}
+                                                }) }}
+                                        <!-- If private key invalid-->
+                                        {% else %}
+                                            {{ form_widget(addCaptchaForm.public_key, {
+                                                'attr': {
+                                                    'class': 'form-control invalid', 
+                                                    'placeholder' : 'Public key'|trans}
+                                                }) }}
+                                            {% if not addCaptchaForm.public_key.vars.valid %}
+                                                <span>
+                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(addCaptchaForm.public_key) }}"></i>
+                                                </span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-1">
+                                        <!-- If private key valid -->
+                                        {% if addCaptchaForm.private_key.vars.valid %}
+                                            {{ form_widget(addCaptchaForm.private_key, {
+                                                'attr': {
+                                                    'class': 'form-control', 
+                                                    'placeholder' : 'Private key'|trans}
+                                                }) }}
+                                        <!-- If private key invalid-->
+                                        {% else %}
+                                            {{ form_widget(addCaptchaForm.private_key, {
+                                                'attr': {
+                                                    'class': 'form-control invalid', 
+                                                    'placeholder' : 'Private key'|trans}
+                                                }) }}
+                                            {% if not addCaptchaForm.private_key.vars.valid %}
+                                                <span>
+                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(addCaptchaForm.private_key) }}"></i>
+                                                </span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-2">
+                                        <button class="btn btn-info w-100" type="submit">{{ 'Update captcha'|trans }}</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- == Captcha and crsf token == -->
+                                <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                                <!-- End Captcha and crsf token -->
+                            {{ form_end(addCaptchaForm) }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="col-md-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Add a user'|trans }}</h6>
+                        </div>
+                        <div class="wrapper-form">
+                            {{ form_start(addUserForm, {'method': 'POST'}) }}
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-4">
+                                        <!-- If username valid -->
+                                        {% if addUserForm.username.vars.valid %}
+                                            {{ form_widget(addUserForm.username, {
+                                                'attr': {
+                                                    'class': 'form-control', 
+                                                    'placeholder' : 'Username'|trans}
+                                                }) }}
+                                        <!-- If username invalid-->
+                                        {% else %}
+                                            {{ form_widget(addUserForm.username, {
+                                                'attr': {
+                                                    'class': 'form-control invalid', 
+                                                    'placeholder' : 'Username'|trans}
+                                                }) }}
+                                            {% if not addUserForm.username.vars.valid %}
+                                                <span>
+                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(addUserForm.username) }}"></i>
+                                                </span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-2">
+                                        <!-- If email valid -->
+                                        {% if addUserForm.email.vars.valid %}
+                                            {{ form_widget(addUserForm.email, {
+                                                'attr': {
+                                                    'class': 'form-control',
+                                                    'placeholder' : 'Email'|trans}
+                                                }) }}
+                                        <!-- If email invalid-->
+                                        {% else %}
+                                            {{ form_widget(addUserForm.email, {
+                                                'attr': {
+                                                    'class': 'form-control invalid',
+                                                    'placeholder' : 'Email'|trans}
+                                                }) }}
+                                            {% if not addUserForm.email.vars.valid %}
+                                                <span>
+                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(addUserForm.email) }}"></i>
+                                                </span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-2">
+                                        <!-- If password and repeat password valid -->
+                                        {% if addUserForm.password.first.vars.valid and addUserForm.password.second.vars.valid %}
+                                            {{ form_widget(addUserForm.password.first, {
+                                                'attr': {
+                                                    'class': 'form-control',
+                                                    'placeholder' : 'Password'|trans}
+                                                }) }}
+                                        <!-- If password and repeat password invalid -->
+                                        {% else %}
+                                            {{ form_widget(addUserForm.password.first, {
+                                                'attr': {
+                                                    'class': 'form-control invalid',
+                                                    'placeholder' : 'Password'|trans}
+                                                }) }}
+                                            {% if not addUserForm.password.first.vars.valid %}
+                                                <span>
+                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(addUserForm.password.first) }}"></i>
+                                                </span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-2">
+                                        <!-- If password and repeat password valid -->
+                                        {% if addUserForm.password.first.vars.valid and addUserForm.password.second.vars.valid %}
+                                            {{ form_widget(addUserForm.password.second, {
+                                                'attr': {
+                                                    'class': 'form-control',
+                                                    'placeholder' : 'Repeat Password'|trans}
+                                                }) }}
+                                        <!-- If password and repeat password invalid -->
+                                        {% else %}
+                                            {{ form_widget(addUserForm.password.second, {
+                                                'attr': {
+                                                    'class': 'form-control invalid',
+                                                    'placeholder' : 'Repeat Password'|trans}
+                                                }) }}
+                                            {% if not addUserForm.password.second.vars.valid %}
+                                                <span>
+                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(addUserForm.password.second) }}"></i>
+                                                </span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-2">
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                            {% if addUserForm.admin.vars.valid %}
+                                                {{ form_widget(addUserForm.admin, {
+                                                    'attr': {
+                                                        'class': 'custom-control-input',
+                                                        'placeholder' : 'Admin'|trans,
+                                                        'id': 'adminCheck'}
+                                                    }) }}
+                                            <!-- If email invalid-->
+                                            {% else %}
+                                                {{ form_widget(addUserForm.admin, {
+                                                    'attr': {
+                                                        'class': 'custom-control-input invalid',
+                                                        'placeholder' : 'Admin'|trans,
+                                                        'id': 'adminCheck'}
+                                                    }) }}
+                                            {% endif %}
+                                            <label class="custom-control-label" for="adminCheck">{{ form_label(addUserForm.admin )}}</label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox custom-control-inline">
+                                            {% if addUserForm.hunter.vars.valid %}
+                                                {{ form_widget(addUserForm.hunter, {
+                                                    'attr': {
+                                                        'class': 'custom-control-input',
+                                                        'placeholder' : 'Hunter'|trans,
+                                                        'id': 'hunterCheck'}
+                                                    }) }}
+                                            <!-- If email invalid-->
+                                            {% else %}
+                                                {{ form_widget(addUserForm.hunter, {
+                                                    'attr': {
+                                                        'class': 'custom-control-input invalid',
+                                                        'placeholder' : 'Hunter'|trans,
+                                                        'id': 'hunterCheck'}
+                                                    }) }}
+                                            {% endif %}
+                                            <label class="custom-control-label" for="hunterCheck">{{ form_label(addUserForm.hunter )}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row justify-content-center">
+                                    <div class="col-md-10 mb-3 mt-2">
+                                        <button class="btn btn-info w-100" type="submit">{{ 'Add a user'|trans }}</button>
+                                    </div>
+                                </div>
+                                <!-- == Captcha and crsf token == -->
+                                <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                                <!-- End Captcha and crsf token -->
+                            {{ form_end(addUserForm) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+        {% if app.request.locale == 'en' %}
+            $('#dataTable').DataTable();
+        {% else %}
+            $('#dataTable').DataTable( {
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                }
+            });
+        {% endif %}
+    })
+
+    {% if captcha %}
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+                document.getElementById('g-recaptcha-response-2').value = token;
+            });
+        });
+    {% endif %}
+</script>
+{% endblock %}

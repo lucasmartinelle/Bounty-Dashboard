@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Reset your password'|trans }}{% endblock %}
+
+{% block idpage %}validationForgot{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    <div class="card m-auto">
+        <div class="text-header">
+            <h1 class="text-center mt-3 text-dark">{{ 'Reset your password'|trans }}</h1>
+        </div>
+        {{ form_start(resetForm) }}
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-2">
+                    <!-- If email valid -->
+                    {% if resetForm.plainPassword.first.vars.valid %}
+                        {{ form_widget(resetForm.plainPassword.first, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder' : 'Password'|trans }
+                            }) }}
+                    <!-- If email invalid-->
+                    {% else %}
+                        {{ form_widget(resetForm.plainPassword.first, {
+                            'attr': {
+                                'class': 'form-control invalid',
+                                'placeholder' : 'Password'|trans }
+                            }) }}
+                        {% if not resetForm.plainPassword.first.vars.valid %}
+                            <span>
+                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(resetForm.plainPassword.first) }}"></i>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-2">
+                    <!-- If email valid -->
+                    {% if resetForm.plainPassword.second.vars.valid %}
+                        {{ form_widget(resetForm.plainPassword.second, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder' : 'Repeat Password'|trans }
+                            }) }}
+                    <!-- If email invalid-->
+                    {% else %}
+                        {{ form_widget(resetForm.plainPassword.second, {
+                            'attr': {
+                                'class': 'form-control invalid',
+                                'placeholder' : 'Repeat Password'|trans }
+                            }) }}
+                        {% if not resetForm.plainPassword.second.vars.valid %}
+                            <span>
+                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(resetForm.plainPassword.second) }}"></i>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-2">
+                    <button class="btn btn-dark w-100" type="submit">{{ 'Reset password'|trans }}</button>
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-1">
+                    <p class="text-dark text-center">{{ 'Back to'|trans }} <a href="{{ path('login') }}">{{ 'Sign in'|trans }}</a></button>
+                </div>
+            </div>
+
+            <!-- == Captcha and crsf token == -->
+            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+            <!-- End Captcha and crsf token -->
+        {{ form_end(resetForm) }}
+    </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+
+    {% if captcha %}
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+            });
+        });
+    {% endif %}
+</script>
+{% endblock %}

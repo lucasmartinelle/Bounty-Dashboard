@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Registration'|trans }}{% endblock %}
+
+{% block idpage %}registration{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="card m-auto">
+        <div class="text-header">
+            <h1 class="text-center mt-3 text-dark">{{ 'Sign up'|trans }}</h1>
+        </div>
+        {{ form_start(form, {'method': 'POST'}) }}
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-4">
+                    <!-- If username valid -->
+                    {% if form.username.vars.valid %}
+                        {{ form_widget(form.username, {
+                            'attr': {
+                                'class': 'form-control', 
+                                'placeholder' : 'Username'|trans}
+                            }) }}
+                    <!-- If username invalid-->
+                    {% else %}
+                        {{ form_widget(form.username, {
+                            'attr': {
+                                'class': 'form-control invalid', 
+                                'placeholder' : 'Username'|trans}
+                            }) }}
+                        {% if not form.username.vars.valid %}
+                            <span>
+                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(form.username) }}"></i>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-2">
+                    <!-- If email valid -->
+                    {% if form.email.vars.valid %}
+                        {{ form_widget(form.email, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder' : 'Email'|trans}
+                            }) }}
+                    <!-- If email invalid-->
+                    {% else %}
+                        {{ form_widget(form.email, {
+                            'attr': {
+                                'class': 'form-control invalid',
+                                'placeholder' : 'Email'|trans}
+                            }) }}
+                        {% if not form.email.vars.valid %}
+                            <span>
+                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(form.email) }}"></i>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-2">
+                    <!-- If password and repeat password valid -->
+                    {% if form.password.first.vars.valid and form.password.second.vars.valid %}
+                        {{ form_widget(form.password.first, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder' : 'Password'|trans}
+                            }) }}
+                    <!-- If password and repeat password invalid -->
+                    {% else %}
+                        {{ form_widget(form.password.first, {
+                            'attr': {
+                                'class': 'form-control invalid',
+                                'placeholder' : 'Password'|trans}
+                            }) }}
+                        {% if not form.password.first.vars.valid %}
+                            <span>
+                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(form.password.first) }}"></i>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-2">
+                    <!-- If password and repeat password valid -->
+                    {% if form.password.first.vars.valid and form.password.second.vars.valid %}
+                        {{ form_widget(form.password.second, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder' : 'Repeat Password'|trans}
+                            }) }}
+                    <!-- If password and repeat password invalid -->
+                    {% else %}
+                        {{ form_widget(form.password.second, {
+                            'attr': {
+                                'class': 'form-control invalid',
+                                'placeholder' : 'Repeat Password'|trans}
+                            }) }}
+                        {% if not form.password.second.vars.valid %}
+                            <span>
+                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(form.password.second) }}"></i>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-2">
+                    <button class="btn btn-dark w-100" type="submit">{{ 'Sign up'|trans }}</button>
+                </div>
+            </div>
+            <div class="form-row justify-content-center">
+                <div class="col-md-10 mb-3 mt-1">
+                    <p class="text-dark text-center">{{ 'You already have an account ?'|trans }} <a href="{{ path('login') }}">{{ 'Sign in'|trans }}</a></button>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+    })
+
+    {% if captcha %}
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                document.getElementById('g-recaptcha-response').value = token;
+            });
+        });
+    {% endif %}
+</script>
+{% endblock %}

@@ -29,7 +29,7 @@ The objective of this project is to facilitate the management of your reports as
 ## Installation
 
 * install with the [simple MVC application](docs/Simple%20MVC%20Installation.md)
-* Install with the [Symfony application](docs/Symfony%20Installation)
+* Install with the [Symfony application](docs/Symfony%20Installation.md)
 
 ## Screenshots
 

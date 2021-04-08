@@ -66,11 +66,23 @@ Restart apache2
 systemctl restart apache2
 ```
 
-Finally, install composer dependencies, load the database and the fixtures
+Install composer dependencies, load the database and the fixtures
 
 ```bash
 cd /var/www/html/Bounty/
 composer update
 php bin/console doctrine:fixtures:load
+```
+
+Configure SMTP in `.env`, uncomment and replace the line below
+
+```bash
+# MAILER_DSN=smtp://localhost
+```
+
+For Gmail SMTP, it should be something like that
+
+```bash
+MAILER_DSN=gmail+smtp://<email address>:<password>@default
 ```
 

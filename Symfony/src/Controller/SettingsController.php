@@ -73,7 +73,6 @@ class SettingsController extends AbstractController
                  */
                 if ($AddUserForm->isSubmitted() && $AddUserForm->isValid()) {
                     if($this->formAddUser($AddUserForm, $user)){
-                        // return to settings 
                         return $this->redirectToRoute('settings');
                     }
                 }
@@ -82,6 +81,7 @@ class SettingsController extends AbstractController
                  * check for update captcha form
                  */
                 if ($updateCaptchaForm->isSubmitted() && $updateCaptchaForm->isValid()) {
+                    
                     if($this->formUpdateCaptha($updateCaptchaForm, $captchaEntity)){
                         // return to settings 
                         return $this->redirectToRoute('settings');
@@ -146,6 +146,8 @@ class SettingsController extends AbstractController
      * @return true
      */
     protected function formUpdateCaptha(Form $updateCaptchaForm, Captcha $captcha){
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         // process to update keys
         // check if database already contain keys for captcha
         $repo = $this->getDoctrine()->getRepository(Captcha::class);
@@ -154,8 +156,8 @@ class SettingsController extends AbstractController
         // if this is the case, update current keys and save
         if($captchas){
             $currentCaptcha = $captchas[0];
-            $currentCaptcha->setPrivateKey($captchaEntity->getPrivateKey());
-            $currentCaptcha->setPublicKey($captchaEntity->getPublicKey());
+            $currentCaptcha->setPrivateKey($captcha->getPrivateKey());
+            $currentCaptcha->setPublicKey($captcha->getPublicKey());
 
             // save user
             $em = $this->getDoctrine()->getManager();
@@ -164,7 +166,7 @@ class SettingsController extends AbstractController
         // else, save new keys
         } else {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($captchaEntity);
+            $em->persist($captcha);
             $em->flush();
         }
 
@@ -180,6 +182,8 @@ class SettingsController extends AbstractController
      * @return Form
      */
     protected function formAddUser(Form $AddUserForm, User $user){
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         // process to add a new user
         $repo = $this->getDoctrine()->getRepository(User::class);
         $users = $repo->findAll();
@@ -225,5 +229,25 @@ class SettingsController extends AbstractController
             return true;
         }
         return false;
+    }
+
+    /**
+     * @Route("/reset-captcha", 
+     * name="reset-captcha", 
+     * methods={"GET"},
+     * requirements={
+     *      "_locale": "en|fr",
+     * })
+     * @return redirection
+     */
+    public function resetCaptcha(Request $request)
+    {
+        $this->captcha->resetKeys();
+
+        // success message
+        $this->addFlash("success", $this->translator->trans("You have successfully reset the captcha"));
+
+        // return
+        return $this->redirectToRoute('settings');
     }
 }

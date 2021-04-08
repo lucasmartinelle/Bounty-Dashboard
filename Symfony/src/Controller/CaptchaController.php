@@ -85,4 +85,14 @@ class CaptchaController extends AbstractController
         }
         return true;
     }
+
+    public function resetKeys(){
+        $keys = $this->getDoctrine()->getRepository(Captcha::class)->getKeys();
+
+        if($keys){
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($keys[0]);
+            $em->flush();
+        }
+    }
 }

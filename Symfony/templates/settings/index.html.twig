@@ -175,6 +175,15 @@
                                 <!-- End Captcha and crsf token -->
                             {{ form_end(addCaptchaForm) }}
                         </div>
+                        <hr style="border-top: 1px solid rgba(0,0,0,.17);">
+
+                        <div class="wrapper-form">
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <a class="btn btn-danger w-100" href="{{ path('reset-captcha') }}">{{ 'Reset captcha'|trans }}</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 {% endif %}
             </div>

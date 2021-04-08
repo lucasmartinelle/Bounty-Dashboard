@@ -75,4 +75,6 @@ return array (
   'Templates' => 'Modèles',
   'Profile' => 'Profil',
   'Logout' => 'Déconnexion',
+  'You have successfully reset the captcha' => 'Vous avez réinitialisé le captcha avec succès',
+  'Reset captcha' => 'réinitialiser le captcha',
 );

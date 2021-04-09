@@ -2,7 +2,8 @@ This version is currently under development. Here are the features currently ava
 
 * Authentication system (sign in, sign up, reset password, logout, validation by email)
 * translation system
-* settings 
+* settings
+* profile
 
 ## Installation
 

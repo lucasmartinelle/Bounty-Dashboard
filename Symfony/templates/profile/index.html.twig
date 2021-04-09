@@ -1,0 +1,610 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Profile'|trans }}{% endblock %}
+
+{% block idpage %}profile{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Profile'|trans }}</h1>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Change username'|trans }}</h6>
+                    </div>
+                    <div class="wrapper-form">
+                        {{ form_start(UpdateUsernameForm, {'method': 'POST'}) }}
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-4">
+                                    <!-- If username valid -->
+                                    {% if UpdateUsernameForm.username.vars.valid %}
+                                        {{ form_widget(UpdateUsernameForm.username, {
+                                            'attr': {
+                                                'class': 'form-control', 
+                                                'placeholder' : 'Username'|trans}
+                                            }) }}
+                                    <!-- If username invalid-->
+                                    {% else %}
+                                        {{ form_widget(UpdateUsernameForm.username, {
+                                            'attr': {
+                                                'class': 'form-control invalid', 
+                                                'placeholder' : 'Username'|trans}
+                                            }) }}
+                                        {% if not UpdateUsernameForm.username.vars.valid %}
+                                            <span>
+                                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateUsernameForm.username) }}"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#saveUsername">{{ 'Confirm'|trans }}</button>
+                                </div>
+                            </div>
+
+                            <!-- == Captcha and crsf token == -->
+                            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                            <!-- End Captcha and crsf token -->
+
+                            <!-- Modal change username -->
+                            <div class="modal fade" id="saveUsername" tabindex="-1" role="dialog" aria-labelledby="saveUsernameLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="saveUsernameLabel">{{ 'Change your username'|trans }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p>{{ 'Are you sure you want to change your username by '|trans }} <span class="text-danger" id="usernameValueModal" style="position: static;"></span> ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                                            <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{ form_end(UpdateUsernameForm) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Change email'|trans }}</h6>
+                    </div>
+                    <div class="wrapper-form">
+                        {{ form_start(UpdateEmailForm, {'method': 'POST'}) }}
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-4">
+                                    <!-- If email valid -->
+                                    {% if UpdateEmailForm.email.vars.valid %}
+                                        {{ form_widget(UpdateEmailForm.email, {
+                                            'attr': {
+                                                'class': 'form-control',
+                                                'placeholder' : 'Email'|trans}
+                                            }) }}
+                                    <!-- If email invalid-->
+                                    {% else %}
+                                        {{ form_widget(UpdateEmailForm.email, {
+                                            'attr': {
+                                                'class': 'form-control invalid',
+                                                'placeholder' : 'Email'|trans}
+                                            }) }}
+                                        {% if not UpdateEmailForm.email.vars.valid %}
+                                            <span>
+                                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateEmailForm.email) }}"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#saveEmail">{{ 'Confirm'|trans }}</button>
+                                </div>
+                            </div>
+                            <!-- == Captcha and crsf token == -->
+                            <input type="hidden" id="g-recaptcha-response-1" name="g-recaptcha-response">
+                            <!-- End Captcha and crsf token -->
+
+                            <!-- Modal change email -->
+                            <div class="modal fade" id="saveEmail" tabindex="-1" role="dialog" aria-labelledby="saveEmailLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="saveEmailLabel">{{ 'Change your email address'|trans }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p>{{ 'Are you sure you want to change your email by '|trans }} <span class="text-danger" id="emailValueModal" style="position: static;"></span> ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                                            <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{ form_end(UpdateEmailForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Change password'|trans }}</h6>
+                    </div>
+                    <div class="wrapper-form">
+                        {{ form_start(UpdatePasswordForm, {'method': 'POST'}) }}
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <!-- If password and repeat password valid -->
+                                    {% if UpdatePasswordForm.password.first.vars.valid and UpdatePasswordForm.password.second.vars.valid %}
+                                        {{ form_widget(UpdatePasswordForm.password.first, {
+                                            'attr': {
+                                                'class': 'form-control',
+                                                'placeholder' : 'Password'|trans}
+                                            }) }}
+                                    <!-- If password and repeat password invalid -->
+                                    {% else %}
+                                        {{ form_widget(UpdatePasswordForm.password.first, {
+                                            'attr': {
+                                                'class': 'form-control invalid',
+                                                'placeholder' : 'Password'|trans}
+                                            }) }}
+                                        {% if not UpdatePasswordForm.password.first.vars.valid %}
+                                            <span>
+                                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdatePasswordForm.password.first) }}"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <!-- If password and repeat password valid -->
+                                    {% if UpdatePasswordForm.password.first.vars.valid and UpdatePasswordForm.password.second.vars.valid %}
+                                        {{ form_widget(UpdatePasswordForm.password.second, {
+                                            'attr': {
+                                                'class': 'form-control',
+                                                'placeholder' : 'Repeat Password'|trans}
+                                            }) }}
+                                    <!-- If password and repeat password invalid -->
+                                    {% else %}
+                                        {{ form_widget(UpdatePasswordForm.password.second, {
+                                            'attr': {
+                                                'class': 'form-control invalid',
+                                                'placeholder' : 'Repeat Password'|trans}
+                                            }) }}
+                                        {% if not UpdatePasswordForm.password.second.vars.valid %}
+                                            <span>
+                                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdatePasswordForm.password.second) }}"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#savePassword">{{ 'Confirm'|trans }}</button>
+                                </div>
+                            </div>
+                            <!-- == Captcha and crsf token == -->
+                            <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                            <!-- End Captcha and crsf token -->
+
+                            <!-- Modal change email -->
+                            <div class="modal fade" id="savePassword" tabindex="-1" role="dialog" aria-labelledby="savePasswordLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="savePasswordLabel">{{ 'Change your password'|trans }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p>{{ 'Are you sure you want to change your password ?'|trans }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                                            <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{ form_end(UpdatePasswordForm) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Billing settings'|trans }}</h6>
+                    </div>
+                    <div class="wrapper-form">
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                {% if billing %}
+                                    <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#changeBilling">{{ "Disable"|trans }}</button>
+                                {% else %}
+                                    <button class="btn btn-info w-100" type="button" data-toggle="modal" data-target="#changeBilling">{{ "Enable"|trans }}</button>
+                                {% endif %}
+
+                                <hr style="border-top: 1px solid rgba(0,0,0,.17);">
+
+                                <button class="btn btn-danger w-100" type="button" data-toggle="modal" data-target="#resetBilling">{{ 'Reset Billing'|trans }}</button>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="resetBilling" tabindex="-1" role="dialog" aria-labelledby="resetBillingLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="resetBillingLabel">{{ 'Reset billing informations'|trans }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <p>{{ 'Are you sure you want to reset billing informations ?'|trans }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                                        <a class="btn btn-primary" href="{{ path('reset-billing') }}">{{ 'Confirm'|trans }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if not billing %}
+                            {{ form_start(BillingForm, {'method': 'POST'}) }}
+                                <div class="modal fade" id="changeBilling" tabindex="-1" role="dialog" aria-labelledby="changeBillingLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="changeBillingLabel">{{ "Change your billing informations"|trans }}</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-2">
+                                                        <!-- If name valid -->
+                                                        {% if BillingForm.name.vars.valid %}
+                                                            {{ form_widget(BillingForm.name, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'Name'|trans}
+                                                                }) }}
+                                                        <!-- If name invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.name, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'Name'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.name.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.name) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If firstname valid -->
+                                                        {% if BillingForm.firstname.vars.valid %}
+                                                            {{ form_widget(BillingForm.firstname, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'Firstname'|trans}
+                                                                }) }}
+                                                        <!-- If firstname invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.firstname, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'Firstname'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.firstname.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.firstname) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If address valid -->
+                                                        {% if BillingForm.address.vars.valid %}
+                                                            {{ form_widget(BillingForm.address, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'Address'|trans}
+                                                                }) }}
+                                                        <!-- If address invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.address, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'Address'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.address.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.address) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If phone valid -->
+                                                        {% if BillingForm.phone.vars.valid %}
+                                                            {{ form_widget(BillingForm.phone, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'Phone'|trans}
+                                                                }) }}
+                                                        <!-- If phone invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.phone, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'Phone'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.phone.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.phone) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If email valid -->
+                                                        {% if BillingForm.email.vars.valid %}
+                                                            {{ form_widget(BillingForm.email, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'Email'|trans}
+                                                                }) }}
+                                                        <!-- If email invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.email, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'Email'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.email.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.email) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If siret valid -->
+                                                        {% if BillingForm.siret.vars.valid %}
+                                                            {{ form_widget(BillingForm.siret, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'SIRET'|trans}
+                                                                }) }}
+                                                        <!-- If siret invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.siret, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'SIRET'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.siret.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.siret) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If vat valid -->
+                                                        {% if BillingForm.vat.vars.valid %}
+                                                            {{ form_widget(BillingForm.vat, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'VAT'|trans}
+                                                                }) }}
+                                                        <!-- If vat invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.vat, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'VAT'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.vat.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.vat) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If bank valid -->
+                                                        {% if BillingForm.bank.vars.valid %}
+                                                            {{ form_widget(BillingForm.bank, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'Bank'|trans}
+                                                                }) }}
+                                                        <!-- If bank invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.bank, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'Bank'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.bank.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.bank) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If bic valid -->
+                                                        {% if BillingForm.bic.vars.valid %}
+                                                            {{ form_widget(BillingForm.bic, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'BIC'|trans}
+                                                                }) }}
+                                                        <!-- If bic invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.bic, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'BIC'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.bic.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.bic) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row justify-content-center">
+                                                    <div class="col-md-10 mb-3 mt-1">
+                                                        <!-- If iban valid -->
+                                                        {% if BillingForm.iban.vars.valid %}
+                                                            {{ form_widget(BillingForm.iban, {
+                                                                'attr': {
+                                                                    'class': 'form-control', 
+                                                                    'placeholder' : 'IBAN'|trans}
+                                                                }) }}
+                                                        <!-- If iban invalid-->
+                                                        {% else %}
+                                                            {{ form_widget(BillingForm.iban, {
+                                                                'attr': {
+                                                                    'class': 'form-control invalid', 
+                                                                    'placeholder' : 'IBAN'|trans}
+                                                                }) }}
+                                                            {% if not BillingForm.iban.vars.valid %}
+                                                                <span>
+                                                                    <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(BillingForm.iban) }}"></i>
+                                                                </span>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                                                <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{ form_end(BillingForm) }}
+                        {% else %}
+                            <div class="modal fade" id="changeBilling" tabindex="-1" role="dialog" aria-labelledby="changeBillingLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="changeBillingLabel">{{ 'Disable billing'|trans }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p>{{ 'Are you sure you want to disable billing system ?'|trans }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                                            <a class="btn btn-primary" href="{{ path('disable-billing') }}">{{ 'Confirm'|trans }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $("#update_username_profile_username").on("change paste keyup", function() {
+            $('#usernameValueModal').html($('#update_username_profile_username').val());
+        });
+
+        $("#update_email_profile_email").on("change paste keyup", function() {
+            $('#emailValueModal').html($('#update_email_profile_email').val());
+        });
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+
+        {% if captcha %}
+            grecaptcha.ready(function() {
+                grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('g-recaptcha-response-1').value = token;
+                    document.getElementById('g-recaptcha-response-2').value = token;
+                    document.getElementById('g-recaptcha-response-3').value = token;
+                });
+            });
+        {% endif %}
+
+    </script>
+{% endblock %}

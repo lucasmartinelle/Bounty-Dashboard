@@ -28,6 +28,8 @@
         </div>
     {% endfor %}
 
+    <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Settings'|trans }}</h1>
+
     {% if is_granted('ROLE_ADMIN') %}
         <div class="card card-listuser shadow mb-4">
             <div class="card-header py-3">

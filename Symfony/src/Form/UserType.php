@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 class UserType extends AbstractType
 {
@@ -34,7 +35,7 @@ class UserType extends AbstractType
                     new Assert\Length([
                         'max' => 255,
                         'maxMessage' => $this->translator->trans('Your username cannot be more than {{ limit }} characters long.')
-                    ]),
+                    ])
                 ],
             ])
             ->add('email', EmailType::class, [

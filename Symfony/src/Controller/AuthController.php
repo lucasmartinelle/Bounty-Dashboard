@@ -83,17 +83,12 @@ class AuthController extends AbstractController
 
                     foreach($users as $row){
                         // verify that the email doesn't already exist
-                        if($row->getEmail() == $form->get('email')){
+                        if($row->getEmail() == $user->getEmail()){
                             // block enumeration of email
                             $this->addFlash("success", $this->translator->trans("Registration successfull, please confirm your email before log in."));
                             
                             return $this->redirectToRoute('login');
                             die;
-                        }
-                        // verify that the username doesn't already exist
-                        if($row->getUsername() == $form->get('username')){
-                            $form->get('username')->addError(new FormError($this->translator->trans('This username is already in use')));
-                            return False;
                         }
                     }
 

@@ -1,0 +1,267 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'View a report'|trans }}{% endblock %}
+
+{% block idpage %}viewReport{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="d-flex justify-content-between">
+        <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'View a report'|trans }}</h1>
+        <div class="bt">
+            <button type="button" class="btn btn-info" style="height: max-content;" id="generateReportHtml">
+                {{ 'Generate report PDF'|trans }}
+            </button>
+            <button type="button" class="btn btn-warning" style="height: max-content;" id="generateReportMarkdown">
+                {{ 'Generate report markdown'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <p>
+        <span class="badge badge-pill badge-info" style="font-size: 15px;">{{ 'Title'|trans }}
+            <span class="badge badge-pill badge-light ml-2">{{ report.title }}</span>
+        </span>
+        <span class="badge badge-pill badge-info" style="font-size: 15px;">{{ 'Date'|trans }}
+            <span class="badge badge-pill badge-light ml-2">{{ report.date }}</span>
+        </span>
+        <span class="badge badge-pill badge-info" style="font-size: 15px;">{{ 'Severity'|trans }}
+            <span class="badge badge-pill badge-light ml-2">{{ report.severity }}</span>
+        </span>
+        <span class="badge badge-pill badge-info" style="font-size: 15px;">{{ 'Endpoint'|trans }}
+            <span class="badge badge-pill badge-light ml-2">{{ report.endpoint }}</span>
+        </span>
+        <span class="badge badge-pill badge-info" style="font-size: 15px;">{{ 'Program'|trans }}
+            <span class="badge badge-pill badge-light ml-2">{{ program.name }}</span>
+        </span>
+    </p>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-2">
+                <div class="card cm shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Impact'|trans }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="impact" class="w-100">
+                            <textarea style="display:none;" name="impact">{{ report.impact }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="card cm shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Ressources'|trans }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="ressources" class="w-100">
+                            <textarea style="display:none;" name="ressources">{{ report.ressources }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mt-2">
+                <div class="card cm shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Steps to reproduce'|trans }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="stepstoreproduce" class="w-100">
+                            <textarea style="display:none;" name="stepstoreproduce">{{ report.stepstoreproduce }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="card cm shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Mitigation'|trans }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="mitigation" class="w-100">
+                            <textarea style="display:none;" name="mitigation">{{ report.mitigation }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="/dist/editormd/css/editormd.css" rel="stylesheet">
+{% endblock %}
+
+{% block script %}
+    <script src="/dist/editormd/editormd.min.js"></script>
+    <script src="/dist/editormd/languages/en.js"></script>
+    <script src="/dist/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript">
+        var stepstoreproduce, impact, mitigation, ressources;
+        // Default export is a4 paper, portrait, using millimeters for units
+
+        $(function() {
+            stepstoreproduce = editormd("stepstoreproduce", {
+                height: '500px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                readOnly : true,
+                saveHTMLToTextarea : true,
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                },
+                onfullscreen : function() {
+                    if($('#stepstoreproduce').hasClass("editormd-fullscreen")){
+                        $('#stepstoreproduce').css("z-index", "5000");
+                    } else if($('#impact').hasClass("editormd-fullscreen")){
+                        $('#impact').css("z-index", "5000");
+                    } else if($('#mitigation').hasClass("editormd-fullscreen")){
+                        $('#mitigation').css("z-index", "5000");
+                    } else if($('#ressources').hasClass("editormd-fullscreen")){
+                        $('#ressources').css("z-index", "5000");
+                    }
+                },
+                onfullscreenExit : function() {
+                    if(!$('#stepstoreproduce').hasClass("editormd-fullscreen")){
+                        $('#stepstoreproduce').css("z-index", "unset");
+                    }
+                    if(!$('#impact').hasClass("editormd-fullscreen")){
+                        $('#impact').css("z-index", "unset");
+                    }
+                    if(!$('#mitigation').hasClass("editormd-fullscreen")){
+                        $('#mitigation').css("z-index", "unset");
+                    }
+                    if(!$('#ressources').hasClass("editormd-fullscreen")){
+                        $('#ressources').css("z-index", "unset");
+                    }
+                },
+                onload : function() {
+                    this.previewing();
+                }
+            });
+            
+            impact = editormd("impact", {
+                height: '500px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                readOnly : true, 
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                }
+            });
+
+            mitigation = editormd("mitigation", {
+                height: '500px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                readOnly : true, 
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                }
+            });
+
+            ressources = editormd("ressources ", {
+                height: '500px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                readOnly : true, 
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                }
+            });
+
+            //stepstoreproduce.previewing();
+        });
+
+        
+        $('#generateReportHtml').click(function(){
+            var impactHTML = impact.getHTML();
+            var stepstoreproduceHTML = stepstoreproduce.getHTML();
+            var ressourcesHTML = ressources.getHTML();
+            var mitigationHTML = mitigation.getHTML();
+
+            $('#generateReportHtml').text('Loading ...');
+            $('#generateReportHtml').css({"background-color": "#7cd6e3", "border-color": "#7cd6e3"});
+            $('#generateReportHtml').attr('disabled', 'disabled');
+
+            var url = "{{ path('generate-pdf') }}";
+            var formData = {title:"{{ report.title }}", date:"{{ report.date }}", severity:"{{ report.severity }}", endpoint:"{{ report.endpoint }}", program:"{{ program.id }}",impact:impactHTML,stepstoreproduce:stepstoreproduceHTML,ressources:ressourcesHTML,mitigation:mitigationHTML}; 
+
+            $.ajax({
+                url: url,
+                data: formData,                         
+                type: 'POST',
+                async: false,
+                success: function(response, textStatus, jqXHR) {
+                    $('#generateReportHtml').text('Generated !');
+                    $('#generateReportHtml').css({"background-color": "#7fe37c", "border-color": "#7fe37c"});
+                    window.location.href = response;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+        });
+
+        $('#generateReportMarkdown').on('click', function() {
+            impactMd = impact.getMarkdown();
+            stepstoreproduceMd = stepstoreproduce.getMarkdown();
+            ressourcesMd = ressources.getMarkdown();
+            mitigationMd = mitigation.getMarkdown();
+
+            $('#generateReportMarkdown').text('Loading ...');
+            $('#generateReportMarkdown').css({"background-color": "#ffe195", "border-color": "#ffe195"});
+            $('#generateReportMarkdown').attr('disabled', 'disabled');
+
+            var url = "{{ path('generate-markdown') }}";
+            var formData = {title:"{{ report.title }}", date:"{{ report.date }}", severity:"{{ report.severity }}", endpoint:"{{ report.endpoint }}", program:"{{ program.id }}",impact:impactMd,stepstoreproduce:stepstoreproduceMd,ressources:ressourcesMd,mitigation:mitigationMd}; 
+
+            $.ajax({
+                url: url,
+                data: formData,                         
+                type: 'POST',
+                async: false,
+                success: function(response, textStatus, jqXHR) {
+                    $('#generateReportMarkdown').text('Generated !');
+                    $('#generateReportMarkdown').css({"background-color": "#7fe37c", "border-color": "#7fe37c"});
+                    window.location.href = response;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+        });
+    </script>
+{% endblock %}

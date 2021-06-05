@@ -113,6 +113,8 @@ class ProfileController extends AbstractController
                     if($this->formBilling($BillingForm, $billing)){
                         return $this->redirectToRoute('profile');
                     }
+                } elseif($BillingForm->isSubmitted() && !$BillingForm->isValid()){
+                    $this->addFlash("error", $this->translator->trans("The form contains errors, please check the values entered."));
                 }
             } else {
                 // Captcha failed

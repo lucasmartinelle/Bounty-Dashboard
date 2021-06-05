@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Templates'|trans }}{% endblock %}
+
+{% block idpage %}templates{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="container-fluid">
+        <div class="row justify-content-between">
+            <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Templates'|trans }}</h1>
+            <a href="{{ path('create-template') }}" class="btn btn-info" style="height: max-content;">
+                {{ 'add a template'|trans }}
+            </a>
+        </div>
+        <a href="" class="btn btn-primary mb-3">
+            {{ 'Watch all templates'|trans }}
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">{{ 'Reports'|trans }}</h6>
+                <h6 class="m-0"><span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#filters">{{ 'filters'|trans }} <i class="fas fa-sort-down ml-2"></i></span></h6>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Title'|trans }}</th>
+                            <th>{{ 'Description'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>{{ 'Title'|trans }}</th>
+                            <th>{{ 'Description'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for template in templates %}
+                            <tr>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ template.title }}</span></td>
+                                <td class="text-center">{{ template.description }}</td>
+                                <td class="text-center">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{{ path('show-template', {'id': template.id})}}">{{ 'View'|trans }}</a>
+                                        <a class="dropdown-item" href="{{ path('edit-template', {'id': template.id})}}">{{ 'Edit'|trans }}</a>
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-url="{{ path('delete-template', {'id': template.id})}}" data-target="#confirmDelete" id="deleteTemplate">{{ 'Delete'|trans }}</a>
+                                    </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">{{ 'Delete a template'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>{{ 'Are you sure you want to delete this template ?'|trans }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                    <a class="btn btn-primary" href="" id="deleteTemplateLink">{{ 'Confirm'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+{% endblock %}
+
+{% block script %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" 
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        });
+
+        $( document ).ready(function() {
+            {% if app.user.lang == 'en' %}
+                $('#dataTable').DataTable();
+            {% else %}
+                $('#dataTable').DataTable( {
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                    }
+                });
+            {% endif %}
+
+            // captcha
+            {% if captcha %}
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                    });
+                });
+            {% endif %}
+        });
+
+        $('#confirmDelete').on('shown.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var url = button.data('url');
+            var modal = $(this)
+            modal.find('#deleteTemplateLink').attr('href', url)
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,264 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Programs Notes'|trans }}{% endblock %}
+
+{% block idpage %}notes{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="d-flex justify-content-between">
+        <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Notes'|trans }}</h1>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createNote" style="height: max-content;">
+            {{ 'add a note'|trans }}
+        </button>
+    </div>
+
+    <p>
+        <span class="badge badge-pill badge-info" style="font-size: 15px;">{{ 'Program'|trans }}
+            <span class="badge badge-pill badge-light ml-2">{{ name }}</span>
+        </span>
+    </p>
+
+    <div class="modal fade" id="createNote" tabindex="-1" role="dialog" aria-labelledby="#createNoteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createNoteLabel">{{ 'Add a note'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(AddNoteForm, {'method': 'POST'}) }}
+                    <div class="form-row justify-content-center m-t-sm">
+                        <div class="col-md-10 mb-3 mt-1">
+                            <!-- If title valid -->
+                            {% if AddNoteForm.title.vars.valid %}
+                                {{ form_widget(AddNoteForm.title, {
+                                    'attr': {
+                                        'placeholder': 'Title'|trans,
+                                        'class': 'form-control'}
+                                    }) }}
+                            <!-- If title invalid-->
+                            {% else %}
+                                {{ form_widget(AddNoteForm.title, {
+                                    'attr': {
+                                        'placeholder': 'Title'|trans,
+                                        'class': 'form-control invalid'}
+                                    }) }}
+                                {% if not AddNoteForm.title.vars.valid %}
+                                    <span>
+                                        <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddNoteForm.title) }}"></i>
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row justify-content-center">
+                        <div class="col-md-10 mb-3 mt-1">
+                            <!-- If title valid -->
+                            {% if AddNoteForm.text.vars.valid %}
+                                {{ form_widget(AddNoteForm.text, {
+                                    'attr': {
+                                        'placeholder': 'Text'|trans,
+                                        'rows': '5',
+                                        'class': 'form-control'}
+                                    }) }}
+                            <!-- If text invalid-->
+                            {% else %}
+                                {{ form_widget(AddNoteForm.text, {
+                                    'attr': {
+                                        'placeholder': 'Text'|trans,
+                                        'rows': '5',
+                                        'class': 'form-control invalid'}
+                                    }) }}
+                                {% if not AddNoteForm.text.vars.valid %}
+                                    <span>
+                                        <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddNoteForm.text) }}"></i>
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- == Captcha and crsf token == -->
+                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                    <!-- End Captcha and crsf token -->
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(AddNoteForm) }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-fluid">
+        <div id="accordion">
+            {% for note in notes %}
+                <div class="card">
+                    <div class="card-header" id="heading{{ note.id }}">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ note.id }}" aria-expanded="false" aria-controls="collapse{{ note.id }}">
+                                    {{ note.title }}
+                                </button>
+                            </h5>
+                            <div>
+                                <i class="fas fa-trash text-danger" data-toggle="modal" data-url="{{ path('delete-note', {'id': note.id}) }}" data-target="#confirmDelete" id="deleteNote"></i>
+                                <i class="fas fa-pen-square text-success" data-toggle="modal" data-id="{{ note.id }}" data-target="#updateNote" id="updateNoteButton"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="collapse{{ note.id }}" class="collapse" aria-labelledby="heading{{ note.id }}" data-parent="#accordion">
+                        <div class="card-body">
+                            {{ note.text }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateNote" tabindex="-1" role="dialog" aria-labelledby="#updateNoteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateNoteLabel">{{ 'Update a note'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(UpdateNoteForm, {'method': 'POST'}) }}
+                    <div class="form-row justify-content-center m-t-sm">
+                        <div class="col-md-10 mb-3 mt-1">
+                            <!-- If title valid -->
+                            {% if UpdateNoteForm.title.vars.valid %}
+                                {{ form_widget(UpdateNoteForm.title, {
+                                    'attr': {
+                                        'placeholder': 'Title'|trans,
+                                        'class': 'form-control'}
+                                    }) }}
+                            <!-- If title invalid-->
+                            {% else %}
+                                {{ form_widget(UpdateNoteForm.title, {
+                                    'attr': {
+                                        'placeholder': 'Title'|trans,
+                                        'class': 'form-control invalid'}
+                                    }) }}
+                                {% if not UpdateNoteForm.title.vars.valid %}
+                                    <span>
+                                        <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateNoteForm.title) }}"></i>
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-row justify-content-center">
+                        <div class="col-md-10 mb-3 mt-1">
+                            <!-- If title valid -->
+                            {% if UpdateNoteForm.text.vars.valid %}
+                                {{ form_widget(UpdateNoteForm.text, {
+                                    'attr': {
+                                        'placeholder': 'Text'|trans,
+                                        'rows': '5',
+                                        'class': 'form-control'}
+                                    }) }}
+                            <!-- If text invalid-->
+                            {% else %}
+                                {{ form_widget(UpdateNoteForm.text, {
+                                    'attr': {
+                                        'placeholder': 'Text'|trans,
+                                        'rows': '5',
+                                        'class': 'form-control invalid'}
+                                    }) }}
+                                {% if not UpdateNoteForm.text.vars.valid %}
+                                    <span>
+                                        <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateNoteForm.text) }}"></i>
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- == Captcha and crsf token == -->
+                    <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                    <!-- End Captcha and crsf token -->
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(UpdateNoteForm) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal delete -->
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">{{ 'Delete a note'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>{{ 'Are you sure you want to delete this note ?'|trans }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                    <a class="btn btn-primary" href="" id="deleteProgramLink">{{ 'Confirm'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $( document ).ready(function() {
+        $('[data-toggle="popover"]').popover();
+
+        // captcha
+        {% if captcha %}
+            grecaptcha.ready(function() {
+                grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('g-recaptcha-response-2').value = token;
+                });
+            });
+        {% endif %}
+
+        $('#updateNote').on('shown.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var id = button.data('id');
+            var modal = $(this)
+            modal.find('#update_note_programs_id').val(id)
+        });
+    });
+</script>
+{% endblock %}

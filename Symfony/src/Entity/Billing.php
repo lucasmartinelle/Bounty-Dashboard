@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\BillingRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @ORM\Entity(repositoryClass=BillingRepository::class)
@@ -43,7 +45,7 @@ class Billing
     private $phone;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $email;
 
@@ -207,5 +209,14 @@ class Billing
         $this->IBAN = $IBAN;
 
         return $this;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addConstraint(new UniqueEntity([
+            'fields' => 'user_id',
+            'errorPath' => 'user_id',
+            'message' => 'There is already billing information for this user.',
+        ]));
     }
 }

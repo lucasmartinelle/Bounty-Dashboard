@@ -1,0 +1,786 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Programs'|trans }}{% endblock %}
+
+{% block idpage %}programs{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="container-fluid">
+        <div class="row justify-content-between">
+            <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Programs'|trans }}</h1>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createProgram" style="height: max-content;">
+                {{ 'add a program'|trans }}
+            </button>
+        </div>
+        <a href="" class="btn btn-primary mb-3">
+            {{ 'Watch all programs'|trans }}
+        </a>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Bugs found by severity'|trans }}</h6>
+                    </div>
+                    <div class="card-body" style="width: 100%;">
+                        <canvas id="bugBySeverity" width="100%" height="300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createProgram" tabindex="-1" role="dialog" aria-labelledby="#createProgramLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createProgramLabel">{{ 'Add a program'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(AddProgramForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If name valid -->
+                                {% if AddProgramForm.name.vars.valid %}
+                                    {{ form_widget(AddProgramForm.name, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Name'|trans}
+                                        }) }}
+                                <!-- If name invalid-->
+                                {% else %}
+                                    {{ form_widget(AddProgramForm.name, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Name'|trans}
+                                        }) }}
+                                    {% if not AddProgramForm.name.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddProgramForm.name) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row addformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <div class="input-group">
+                                    <!-- If scope valid -->
+                                    {% if AddProgramForm.scope.vars.valid %}
+                                        {{ form_widget(AddProgramForm.scope, {
+                                            'attr': {
+                                                'class': 'form-control', 
+                                                'placeholder' : 'Scope'|trans,
+                                                'aria-describedby' : 'addbutton'}
+                                            }) }}
+                                    <!-- if scope invalid -->
+                                    {% else %}
+                                        {{ form_widget(AddProgramForm.scope, {
+                                            'attr': {
+                                                'class': 'form-control invalid', 
+                                                'placeholder' : 'Scope'|trans,
+                                                'aria-describedby' : 'addbutton'}
+                                            }) }}
+                                    {% endif %}
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="input-group-text bg-primary" id="addbutton" style="border: 0;">
+                                            <span class="badge badge-light">+</span>
+                                        </button>
+                                    </div>
+                                    {{ form_widget(AddProgramForm.scope_hidden, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Scope'|trans,
+                                            'aria-describedby' : 'addbutton'}
+                                        }) }}
+                                </div>
+                                {% if not AddProgramForm.scope.vars.valid %}
+                                    <span>
+                                        <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddProgramForm.scope) }}"></i>
+                                    </span>
+                                {% endif %}
+                                <span id="scopetags"></span>
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If date valid -->
+                                {% if AddProgramForm.date.vars.valid %}
+                                    {{ form_widget(AddProgramForm.date, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                <!-- If date invalid-->
+                                {% else %}
+                                    {{ form_widget(AddProgramForm.date, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                    {% if not AddProgramForm.date.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddProgramForm.date) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If status valid -->
+                                {% if AddProgramForm.status.vars.valid %}
+                                    {{ form_widget(AddProgramForm.status, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If status invalid-->
+                                {% else %}
+                                    {{ form_widget(AddProgramForm.status, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not AddProgramForm.status.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddProgramForm.status) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row addformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <div class="input-group">
+                                    {{ form_widget(AddProgramForm.tags, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Tags'|trans,
+                                            'aria-describedby' : 'addbuttontags'}
+                                        }) }}
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="input-group-text bg-primary" id="addbuttontags" style="border: 0;">
+                                            <span class="badge badge-light">+</span>
+                                        </button>
+                                    </div>
+                                    {{ form_widget(AddProgramForm.tags_hidden, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Tags'|trans,
+                                            'aria-describedby' : 'addbutton'}
+                                        }) }}
+                                </div>
+                                <span id="tagstags"></span>
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If platforms valid -->
+                                {% if AddProgramForm.platforms.vars.valid %}
+                                    {{ form_widget(AddProgramForm.platforms, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If platforms invalid-->
+                                {% else %}
+                                    {{ form_widget(AddProgramForm.platforms, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not AddProgramForm.platforms.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddProgramForm.platforms) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        <!-- End Captcha and crsf token -->
+
+                        <hr>
+
+                        <p class="text-muted text-center">{{ 'The buttons to the right of scope and tags allow the addition of the value. Remember to click on them to add your value.'|trans }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(AddProgramForm) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ 'Programs'|trans }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Name'|trans }}</th>
+                            <th>{{ 'Number of bugs found'|trans }}</th>
+                            <th>{{ 'Gain'|trans }}</th>
+                            <th>{{ 'Scopes number'|trans }}</th>
+                            <th>{{ 'Status'|trans }}</th>
+                            <th>{{ 'Tags'|trans }}</th>
+                            <th>{{ 'Platform'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>{{ 'Name'|trans }}</th>
+                            <th>{{ 'Number of bugs found'|trans }}</th>
+                            <th>{{ 'Gain'|trans }}</th>
+                            <th>{{ 'Scopes number'|trans }}</th>
+                            <th>{{ 'Status'|trans }}</th>
+                            <th>{{ 'Tags'|trans }}</th>
+                            <th>{{ 'Platform'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% set infosindex = 0 %}
+                        {% for program in programs %}
+                            {% set tags = '' %}
+                            {% set money = (app.user.lang == 'en') ? '$' : '€' %}
+                            {% for tag in program.tags|split("|") %}
+                                {% if tag != '' %}
+                                    {% set tags = tags ~ '<span class="badge badge-pill badge-warning m-r-sm">' ~ tag ~ '</span>' %}
+                                {% endif %}    
+                            {% endfor %}
+                            <tr>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ program.name }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success">{{ infos[infosindex].numberofbugs }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success">{{ infos[infosindex].gaintotal }} {{ money }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success">{{ infos[infosindex].scopenumber }}</span></td>
+                                <td class="text-center" data-toggle="modal" data-target="#updateStatus" data-id="{{ program.id }}"><span class="badge badge-pill badge-info">{{ program.status }}</span></td>
+                                <td class="text-center">{{ tags|raw }}</td>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ infos[infosindex].platform }}</span></td>
+                                <td class="text-center">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-id="{{ program.id }}" data-target="#updateProgram">{{ 'Edit'|trans }}</a>
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-url="{{ path('delete-program', {'id': program.id})}}" data-target="#confirmDelete" id="deleteProgram">{{ 'Delete'|trans }}</a>
+                                        <a class="dropdown-item" href="{{ path('notes-program', {'id': program.id})}}">{{ 'Notes'|trans }}</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% set infosindex = infosindex + 1 %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal change status -->
+    <div class="modal fade" id="updateStatus" tabindex="-1" role="dialog" aria-labelledby="#updateStatusLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateStatusLabel">{{ 'Update status'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(UpdateStatusForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If status valid -->
+                                {% if UpdateStatusForm.status.vars.valid %}
+                                    {{ form_widget(UpdateStatusForm.status, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If status invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdateStatusForm.status, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not UpdateStatusForm.status.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateStatusForm.status) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        <!-- End Captcha and crsf token -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(UpdateStatusForm) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal update program -->
+    <div class="modal fade" id="updateProgram" tabindex="-1" role="dialog" aria-labelledby="#updateProgramLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateProgramLabel">{{ 'Update a program'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(UpdateProgramForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row addformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <div class="input-group">
+                                    <!-- If scope valid -->
+                                    {% if UpdateProgramForm.scope.vars.valid %}
+                                        {{ form_widget(UpdateProgramForm.scope, {
+                                            'attr': {
+                                                'class': 'form-control', 
+                                                'placeholder' : 'Scope'|trans,
+                                                'aria-describedby' : 'addbuttonupdate'}
+                                            }) }}
+                                    <!-- if scope invalid -->
+                                    {% else %}
+                                        {{ form_widget(UpdateProgramForm.scope, {
+                                            'attr': {
+                                                'class': 'form-control invalid', 
+                                                'placeholder' : 'Scope'|trans,
+                                                'aria-describedby' : 'addbuttonupdate'}
+                                            }) }}
+                                    {% endif %}
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="input-group-text bg-primary" id="addbuttonupdate" style="border: 0;">
+                                            <span class="badge badge-light">+</span>
+                                        </button>
+                                    </div>
+                                    {{ form_widget(UpdateProgramForm.scope_hidden, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Scope'|trans}
+                                        }) }}
+                                </div>
+                                {% if not UpdateProgramForm.scope.vars.valid %}
+                                    <span>
+                                        <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateProgramForm.scope) }}"></i>
+                                    </span>
+                                {% endif %}
+                                <span id="scopetagsupdate"></span>
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If date valid -->
+                                {% if UpdateProgramForm.date.vars.valid %}
+                                    {{ form_widget(UpdateProgramForm.date, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                <!-- If date invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdateProgramForm.date, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                    {% if not UpdateProgramForm.date.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateProgramForm.date) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If status valid -->
+                                {% if UpdateProgramForm.status.vars.valid %}
+                                    {{ form_widget(UpdateProgramForm.status, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If status invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdateProgramForm.status, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not UpdateProgramForm.status.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateProgramForm.status) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row addformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <div class="input-group">
+                                    {{ form_widget(UpdateProgramForm.tags, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Tags'|trans,
+                                            'aria-describedby' : 'addbuttontagsupdate'}
+                                        }) }}
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="input-group-text bg-primary" id="addbuttontagsupdate" style="border: 0;">
+                                            <span class="badge badge-light">+</span>
+                                        </button>
+                                    </div>
+                                    {{ form_widget(UpdateProgramForm.tags_hidden, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Tags'|trans}
+                                        }) }}
+                                </div>
+                                <span id="tagstagsupdate"></span>
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If platforms valid -->
+                                {% if UpdateProgramForm.platforms.vars.valid %}
+                                    {{ form_widget(UpdateProgramForm.platforms, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If platforms invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdateProgramForm.platforms, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not UpdateProgramForm.platforms.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateProgramForm.platforms) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        {{ form_widget(UpdateProgramForm.programId) }}
+                        <!-- End Captcha and crsf token -->
+
+                        <hr>
+
+                        <p class="text-muted text-center">{{ 'The buttons to the right of scope and tags allow the addition of the value. Remember to click on them to add your value.'|trans }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(UpdateProgramForm) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal delete -->
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">{{ 'Delete a program and the associated report'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>{{ 'Are you sure you want to delete this program and all the associated report and notes ?'|trans }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                    <a class="btn btn-primary" href="" id="deleteProgramLink">{{ 'Confirm'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="/dist/datepicker.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" 
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="/dist/datepicker.js"></script>
+    {% set values = '' %}
+    {% set keys = '' %}
+    {% for key, value in severityChart %}
+        {% set keys = keys ~ "'" ~ key ~ "'," %}
+        {% set values = values ~ "'" ~ value ~ "'," %}
+    {% endfor %}
+    {% set values = values[:-1] %}
+    {% set keys = keys[:-1] %}
+
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+            Chart.defaults.global.defaultFontColor = '#858796';
+
+            // Pie Chart Example
+            var ctx = document.getElementById("bugBySeverity");
+            var bugBySeverity = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{{ keys|raw }}],
+                    datasets: [{
+                        data: [{{ values|raw }}],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#a4f542', '#ed3245', '#edbb45', '#a064fa' , '#45f1f7'],
+                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#95de3c', '#bd2232', '#d4a944', '#8f48fa', '#3dcfd4'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    cutoutPercentage: 80,
+                },
+            });
+
+            $('[data-toggle="popover"]').popover();
+
+            // enable data table
+            {% if app.user.lang == 'en' %}
+                $('#dataTable').DataTable();
+            {% else %}
+                $('#dataTable').DataTable( {
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                    }
+                });
+            {% endif %}
+
+            // update link for delete report
+            $('#confirmDelete').on('shown.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var url = button.data('url');
+                var modal = $(this)
+                modal.find('#deleteProgramLink').attr('href', url)
+            });
+
+            $('#updateStatus').on('shown.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var modal = $(this)
+                modal.find('#update_status_programs_id').val(id)
+            });
+
+            $('#updateProgram').on('shown.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var modal = $(this)
+                modal.find('#update_program_programs_programId').val(id)
+            });
+
+            // update hidden field for scope
+            var scope = $("#add_program_programs_scope_hidden").val();
+            var arr = scope.split('|');
+
+            $.each( arr, function( index, value ) {
+                $('#scopetags').append('<span class="badge badge-pill badge-success m-r-xs">'+value+'</span>');
+            });
+
+            // update hidden field for tags
+            var tags = $("#add_program_programs_tags").val();
+            var arr = tags.split('|');
+            $.each( arr, function( index, value ) {
+                $('#tagstags').append('<span class="badge badge-pill badge-success m-r-xs">'+value+'</span>');
+            });
+            
+            // autocomplete for Scope and Tags
+            var urlScopes = "{{ path('retrieve-data', {param: 'scope'})|escape('js') }}";
+            var urlTags = "{{ path('retrieve-data', {param: 'tags' })|escape('js') }}";
+
+            $('#add_program_programs_scope').autocomplete({
+                source: urlScopes,
+                minLength: 0
+            }).focus(function(){            
+                $(this).data("uiAutocomplete").search($(this).val());
+            });
+
+            $('#add_program_programs_scope').autocomplete("option","appendTo",".eventForm");
+
+            $('#add_program_programs_tags').autocomplete({
+                source: urlTags,
+                minLength: 0
+            }).focus(function(){            
+                $(this).data("uiAutocomplete").search($(this).val());
+            });
+
+            $('#add_program_programs_tags').autocomplete("option","appendTo",".eventForm");
+
+            // update hidden field for scope
+            var scope = $("#update_program_programs_scope_hidden").val();
+            var arr = scope.split('|');
+
+            $.each( arr, function( index, value ) {
+                $('#scopetagsupdate').append('<span class="badge badge-pill badge-success m-r-xs">'+value+'</span>');
+            });
+
+            // update hidden field for tags
+            var tags = $("#update_program_programs_tags").val();
+            var arr = tags.split('|');
+            $.each( arr, function( index, value ) {
+                $('#tagstagsupdate').append('<span class="badge badge-pill badge-success m-r-xs">'+value+'</span>');
+            });
+            
+            // autocomplete for Scope and Tags
+            var urlScopes = "{{ path('retrieve-data', {param: 'scope'})|escape('js') }}";
+            var urlTags = "{{ path('retrieve-data', {param: 'tags' })|escape('js') }}";
+
+            $('#update_program_programs_scope').autocomplete({
+                source: urlScopes,
+                minLength: 0
+            }).focus(function(){            
+                $(this).data("uiAutocomplete").search($(this).val());
+            });
+
+            $('#update_program_programs_scope').autocomplete("option","appendTo",".eventForm");
+
+            $('#update_program_programs_tags').autocomplete({
+                source: urlTags,
+                minLength: 0
+            }).focus(function(){            
+                $(this).data("uiAutocomplete").search($(this).val());
+            });
+
+            $('#update_program_programs_tags').autocomplete("option","appendTo",".eventForm");
+
+            // captcha
+            {% if captcha %}
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        document.getElementById('g-recaptcha-response-2').value = token;
+                    });
+                });
+            {% endif %}
+
+            // datepicker
+            $('[data-toggle="datepicker"]').datepicker({
+                format: 'dd-mm-yyyy'
+            });
+        });
+
+        // escape HTML
+        function escapeHtml(text) {
+            var map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // add button for scope
+        $('#addbutton').click(function(){
+            var scope = escapeHtml($('#add_program_programs_scope').val());
+            if(scope.trim() != ""){
+                $('#add_program_programs_scope_hidden').val($('#add_program_programs_scope_hidden').val()+scope+"|");
+                $('#scopetags').append('<span class="badge badge-pill badge-success m-r-xs">'+scope+'</span>');
+                $('#add_program_programs_scope').val("");
+            }
+        });
+
+        // add button for tags
+        $('#addbuttontags').click(function(){
+            var tag = escapeHtml($('#add_program_programs_tags').val());
+            if(tag.trim() != ""){
+                $('#add_program_programs_tags_hidden').val($('#add_program_programs_tags_hidden').val()+tag+"|");
+                $('#tagstags').append('<span class="badge badge-pill badge-success m-r-xs">'+tag+'</span>');
+                $('#add_program_programs_tags').val("");
+            }
+        });
+
+        // add button for scope
+        $('#addbuttonupdate').click(function(){
+            var scope = escapeHtml($('#update_program_programs_scope').val());
+            if(scope.trim() != ""){
+                $('#update_program_programs_scope_hidden').val($('#update_program_programs_scope_hidden').val()+scope+"|");
+                $('#scopetagsupdate').append('<span class="badge badge-pill badge-success m-r-xs">'+scope+'</span>');
+                $('#update_program_programs_scope').val("");
+            }
+        });
+
+        // add button for tags
+        $('#addbuttontagsupdate').click(function(){
+            var tag = escapeHtml($('#update_program_programs_tags').val());
+            if(tag.trim() != ""){
+                $('#update_program_programs_tags_hidden').val($('#update_program_programs_tags_hidden').val()+tag+"|");
+                $('#tagstagsupdate').append('<span class="badge badge-pill badge-success m-r-xs">'+tag+'</span>');
+                $('#update_program_programs_tags').val("");
+            }
+        });
+    </script>
+{% endblock %}

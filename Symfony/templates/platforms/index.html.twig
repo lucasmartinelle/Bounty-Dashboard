@@ -1,0 +1,759 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Platforms'|trans }}{% endblock %}
+
+{% block idpage %}platforms{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        {% if message is iterable %}
+            {% for error in message %}
+                <div class="alert alert-danger">
+                    <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ error }} </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-danger">
+                <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }} </p>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="container-fluid">
+        <div class="row justify-content-between">
+            <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Platforms'|trans }}</h1>
+            <div>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#createPlatform" style="height: max-content;">
+                    {{ 'Add a platform'|trans }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createPlatform" tabindex="-1" role="dialog" aria-labelledby="#createPlatformLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPlatformLabel">{{ 'Add a new platform'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(AddPlatformForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If name valid -->
+                                {% if AddPlatformForm.name.vars.valid %}
+                                    {{ form_widget(AddPlatformForm.name, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Name'|trans}
+                                        }) }}
+                                <!-- If name invalid-->
+                                {% else %}
+                                    {{ form_widget(AddPlatformForm.name, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Name'|trans}
+                                        }) }}
+                                    {% if not AddPlatformForm.name.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddPlatformForm.name) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If client valid -->
+                                {% if AddPlatformForm.client.vars.valid %}
+                                    {{ form_widget(AddPlatformForm.client, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Client'|trans}
+                                        }) }}
+                                <!-- If client invalid-->
+                                {% else %}
+                                    {{ form_widget(AddPlatformForm.client, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Client'|trans}
+                                        }) }}
+                                    {% if not AddPlatformForm.client.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddPlatformForm.client) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If btw valid -->
+                                {% if AddPlatformForm.btw.vars.valid %}
+                                    {{ form_widget(AddPlatformForm.btw, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'BTW'|trans}
+                                        }) }}
+                                <!-- If btw invalid-->
+                                {% else %}
+                                    {{ form_widget(AddPlatformForm.btw, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'BTW'|trans}
+                                        }) }}
+                                    {% if not AddPlatformForm.btw.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddPlatformForm.btw) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If address valid -->
+                                {% if AddPlatformForm.address.vars.valid %}
+                                    {{ form_widget(AddPlatformForm.address, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Address'|trans}
+                                        }) }}
+                                <!-- If address invalid-->
+                                {% else %}
+                                    {{ form_widget(AddPlatformForm.address, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Address'|trans}
+                                        }) }}
+                                    {% if not AddPlatformForm.address.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddPlatformForm.address) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If email valid -->
+                                {% if AddPlatformForm.email.vars.valid %}
+                                    {{ form_widget(AddPlatformForm.email, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Email'|trans}
+                                        }) }}
+                                <!-- If email invalid-->
+                                {% else %}
+                                    {{ form_widget(AddPlatformForm.email, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Email'|trans}
+                                        }) }}
+                                    {% if not AddPlatformForm.email.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddPlatformForm.email) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If date valid -->
+                                {% if AddPlatformForm.date.vars.valid %}
+                                    {{ form_widget(AddPlatformForm.date, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                <!-- If date invalid-->
+                                {% else %}
+                                    {{ form_widget(AddPlatformForm.date, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                    {% if not AddPlatformForm.date.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddPlatformForm.date) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        <!-- End Captcha and crsf token -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(AddPlatformForm) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ 'Bugs found by severity'|trans }}</h6>
+                    </div>
+                    <div class="card-body" style="width: 100%;">
+                        <canvas id="bugBySeverity" width="100%" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Earning per month'|trans }}</h6>
+                            <h6 class="m-0"><span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#filterEarningPerMonth">{{ 'filters'|trans }} <i class="fas fa-sort-down ml-2"></i></span></h6>
+                        </div>
+                    </div>
+                    <div class="card-body" style="width: 100%;">
+                        <canvas id="earningpermonth" width="100%" height="300"></canvas>
+                    </div>
+                    <hr>
+                    <div class="container-fluid pb-3">
+                        <span class="badge badge-pill badge-primary">{{ 'year'|trans }}
+                            <span class="badge badge-pill badge-light ml-2">{{ earningPerMonthChartActualYear }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="filterEarningPerMonth" tabindex="-1" role="dialog" aria-labelledby="#filterEarningPerMonthLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterEarningPerMonthLabel">{{ 'Apply a filter'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(filterEarningPerMonthForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If year valid -->
+                                {% if filterEarningPerMonthForm.year.vars.valid %}
+                                    {{ form_widget(filterEarningPerMonthForm.year, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Year'|trans}
+                                        }) }}
+                                <!-- If date invalid-->
+                                {% else %}
+                                    {{ form_widget(filterEarningPerMonthForm.year, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Year'|trans}
+                                        }) }} 
+                                    {% if not filterEarningPerMonthForm.year.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(filterEarningPerMonthForm.year) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="g-recaptcha-response-4" name="g-recaptcha-response">
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(filterEarningPerMonthForm) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- datatable -->
+    <div class="card card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ 'Platforms'|trans }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Name'|trans }}</th>
+                            <th>{{ 'Client'|trans }}</th>
+                            <th>{{ 'BTW'|trans }}</th>
+                            <th>{{ 'Address'|trans }}</th>
+                            <th>{{ 'Email'|trans }}</th>
+                            <th>{{ 'Date'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>{{ 'Name'|trans }}</th>
+                            <th>{{ 'Client'|trans }}</th>
+                            <th>{{ 'BTW'|trans }}</th>
+                            <th>{{ 'Address'|trans }}</th>
+                            <th>{{ 'Email'|trans }}</th>
+                            <th>{{ 'Date'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for platform in platforms %}
+                            <tr>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ platform.name }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-info">{{ platform.client }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ platform.BTW }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success">{{ platform.address }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-info">{{ platform.email }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-warning">{% if platform.date %}{{ platform.date|date("d-m-Y") }}{% endif %}</span></td>
+                                <td class="text-center">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-id="{{ platform.id }}" data-target="#importData" id="importDataButton">{{ 'Import'|trans }}</a>
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-id="{{ platform.id }}" data-target="#updatePlatform" id="updatePlatformButton">{{ 'Edit'|trans }}</a>
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-url="{{ path('delete-platform', {'id': platform.id}) }}" data-target="#deletePlatform" id="deletePlatformButton">{{ 'Delete'|trans }}</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal update Platform -->
+    <div class="modal fade" id="updatePlatform" tabindex="-1" role="dialog" aria-labelledby="#updatePlatformLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updatePlatformLabel">{{ 'Update a platform'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(UpdatePlatformForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If client valid -->
+                                {% if UpdatePlatformForm.client.vars.valid %}
+                                    {{ form_widget(UpdatePlatformForm.client, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Client'|trans}
+                                        }) }}
+                                <!-- If client invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdatePlatformForm.client, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Client'|trans}
+                                        }) }}
+                                    {% if not UpdatePlatformForm.client.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdatePlatformForm.client) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If btw valid -->
+                                {% if UpdatePlatformForm.btw.vars.valid %}
+                                    {{ form_widget(UpdatePlatformForm.btw, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'BTW'|trans}
+                                        }) }}
+                                <!-- If btw invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdatePlatformForm.btw, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'BTW'|trans}
+                                        }) }}
+                                    {% if not UpdatePlatformForm.btw.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdatePlatformForm.btw) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If address valid -->
+                                {% if UpdatePlatformForm.address.vars.valid %}
+                                    {{ form_widget(UpdatePlatformForm.address, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Address'|trans}
+                                        }) }}
+                                <!-- If address invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdatePlatformForm.address, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Address'|trans}
+                                        }) }}
+                                    {% if not UpdatePlatformForm.address.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdatePlatformForm.address) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If email valid -->
+                                {% if UpdatePlatformForm.email.vars.valid %}
+                                    {{ form_widget(UpdatePlatformForm.email, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Email'|trans}
+                                        }) }}
+                                <!-- If email invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdatePlatformForm.email, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Email'|trans}
+                                        }) }}
+                                    {% if not UpdatePlatformForm.email.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdatePlatformForm.email) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If date valid -->
+                                {% if UpdatePlatformForm.date.vars.valid %}
+                                    {{ form_widget(UpdatePlatformForm.date, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                <!-- If date invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdatePlatformForm.date, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                    {% if not UpdatePlatformForm.date.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdatePlatformForm.date) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                        {{ form_widget(UpdatePlatformForm.platformId) }}
+                        <!-- End Captcha and crsf token -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(UpdatePlatformForm) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal delete -->
+    <div class="modal fade" id="deletePlatform" tabindex="-1" role="dialog" aria-labelledby="deletePlatformLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePlatformLabel">{{ 'Delete a platform'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>{{ 'Are you sure you want to delete this platform, all his programs and all his reports ?'|trans }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                    <a class="btn btn-primary" href="" id="deletePlatformLink">{{ 'Confirm'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal import -->
+    <div class="modal fade" id="importData" tabindex="-1" role="dialog" aria-labelledby="importDataLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePlatformLabel">{{ 'Import Data'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(ImportDataForm, {'method': 'POST'}) }}
+                    <div class="modal-body text-center">
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If file valid -->
+                                {% if ImportDataForm.file.vars.valid %}
+                                    {{ form_widget(ImportDataForm.file, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If file invalid-->
+                                {% else %}
+                                    {{ form_widget(ImportDataForm.file, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not ImportDataForm.file.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(ImportDataForm.file) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response-3" name="g-recaptcha-response">
+                        <!-- End Captcha and crsf token -->
+                        <hr>
+                        <a href="/dist/import/Import Demo.csv" download rel="noopener noreferrer" target="_blank">{{ 'Excel demo import file'|trans }}</a>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(ImportDataForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link href="/dist/datepicker.css" rel="stylesheet">
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+    <script src="/dist/datepicker.js"></script>
+
+    {% set keysEarningPerMonth = "'January'"|trans ~ ',' ~ "'February'"|trans ~ ',' ~ "'March'"|trans ~ ',' ~ "'April'"|trans ~ ',' ~ "'May'"|trans ~ ',' ~ "'June'"|trans ~ ',' ~ "'July'"|trans ~ ',' ~ "'August'"|trans ~ ',' ~ "'September'"|trans ~ ',' ~ "'October'"|trans ~ ',' ~ "'November'"|trans ~ ',' ~ "'December'"|trans %}
+    {% set valuesEarningPerMonth = '' %}
+    {% for key, value in earningPerMonthChart %}
+        {% set valuesEarningPerMonth = valuesEarningPerMonth ~ "'" ~ value ~ "'," %}
+    {% endfor %}
+    {% set valuesEarningPerMonth = valuesEarningPerMonth[:-1] %}
+
+    {% set values = '' %}
+    {% set keys = '' %}
+    {% for key, value in severityChart %}
+        {% set keys = keys ~ "'" ~ key ~ "'," %}
+        {% set values = values ~ "'" ~ value ~ "'," %}
+    {% endfor %}
+    {% set values = values[:-1] %}
+    {% set keys = keys[:-1] %}
+
+    <script type="text/javascript">
+        $(function () {
+            var ctx = document.getElementById('earningpermonth');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{{ keysEarningPerMonth|raw }}],
+                    datasets: [{
+                        data: [{{ valuesEarningPerMonth|raw }}],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(165, 105, 189 , 0.2)',
+                            'rgba(120, 40, 31, 0.2)',
+                            'rgba(40, 55, 71, 0.2)',
+                            'rgba(22, 160, 133 , 0.2)',
+                            'rgba(93, 173, 226, 0.2)',
+                            'rgba(108, 52, 131 , 0.2)',
+                            'rgba(220, 118, 51, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(165, 105, 189 , 1)',
+                            'rgba(120, 40, 31, 1)',
+                            'rgba(40, 55, 71, 1)',
+                            'rgba(22, 160, 133 , 1)',
+                            'rgba(93, 173, 226, 1)',
+                            'rgba(108, 52, 131 , 1)',
+                            'rgba(220, 118, 51, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false,
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            ctx.height = 300;
+
+            Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+            Chart.defaults.global.defaultFontColor = '#858796';
+
+            // Pie Chart Example
+            var ctx = document.getElementById("bugBySeverity");
+            var bugBySeverity = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{{ keys|raw }}],
+                    datasets: [{
+                        data: [{{ values|raw }}],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#a4f542', '#ed3245', '#edbb45', '#a064fa' , '#45f1f7'],
+                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#95de3c', '#bd2232', '#d4a944', '#8f48fa', '#3dcfd4'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    cutoutPercentage: 80,
+                },
+            });
+
+            $('[data-toggle="popover"]').popover();
+            $('[data-toggle="datepicker"]').datepicker({format: 'dd-mm-yyyy'});
+
+            {% if captcha %}
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        document.getElementById('g-recaptcha-response-2').value = token;
+                        document.getElementById('g-recaptcha-response-3').value = token;
+                        document.getElementById('g-recaptcha-response-4').value = token;
+                    });
+                });
+            {% endif %}
+
+            {% if app.request.locale == 'en' %}
+                $('#dataTable').DataTable();
+            {% else %}
+                $('#dataTable').DataTable( {
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                    }
+                });
+            {% endif %}
+
+            $('#deletePlatform').on('shown.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var url = button.data('url');
+                var modal = $(this)
+                modal.find('#deletePlatformLink').attr('href', url)
+            });
+
+            $('#updatePlatform').on('shown.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var modal = $(this)
+                modal.find('#update_platform_platforms_platformId').attr('value', id)
+            });
+
+            $('#importData').on('shown.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var modal = $(this)
+                modal.find('#import_data_platforms_platform').attr('value', id)
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,428 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Reports'|trans }}{% endblock %}
+
+{% block idpage %}reports{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="container-fluid">
+        <div class="row justify-content-between">
+            <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Reports'|trans }}</h1>
+            <a href="{{ path('create-report') }}" class="btn btn-info" style="height: max-content;">
+                {{ 'add a report'|trans }}
+            </a>
+        </div>
+        <a href="" class="btn btn-primary mb-3">
+            {{ 'Watch all reports'|trans }}
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">{{ 'Reports'|trans }}</h6>
+                <h6 class="m-0"><span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#filters">{{ 'filters'|trans }} <i class="fas fa-sort-down ml-2"></i></span></h6>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Title'|trans }}</th>
+                            <th>{{ 'Severity'|trans }}</th>
+                            <th>{{ 'Endpoint'|trans }}</th>
+                            <th>{{ 'Gain'|trans }}</th>
+                            <th>{{ 'Identifier'|trans }}</th>
+                            <th>{{ 'Date'|trans }}</th>
+                            <th>{{ 'Status'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>{{ 'Title'|trans }}</th>
+                            <th>{{ 'Severity'|trans }}</th>
+                            <th>{{ 'Endpoint'|trans }}</th>
+                            <th>{{ 'Gain'|trans }}</th>
+                            <th>{{ 'Identifier'|trans }}</th>
+                            <th>{{ 'Date'|trans }}</th>
+                            <th>{{ 'Status'|trans }}</th>
+                            <th>{{ 'Action'|trans }}</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for report in reports %} 
+                            {% set money = (app.user.lang == 'en') ? '$' : '€' %}
+                            <tr>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ report.title }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success">{{ report.severity }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-warning">{{ report.endpoint }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success" data-toggle="modal" data-id="{{ report.id }}" data-target="#changeGain">{{ report.gain }} {{ money }}</td>
+                                <td class="text-center"><span class="badge badge-pill badge-info">{{ report.identifiant }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-info">{{ report.date }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-danger" data-toggle="modal" data-id="{{ report.id }}" data-target="#changeStatus">{{ report.status }}</td>
+                                <td class="text-center">
+                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{{ path('show-report', {'id': report.id})}}">{{ 'View'|trans }}</a>
+                                        <a class="dropdown-item" href="{{ path('edit-report', {'id': report.id})}}">{{ 'Edit'|trans }}</a>
+                                        <a class="dropdown-item" style="color: #3a3b45 !important;" data-toggle="modal" data-url="{{ path('delete-report', {'id': report.id})}}" data-target="#confirmDelete" id="deleteReport">{{ 'Delete'|trans }}</a>
+                                    </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="filters" tabindex="-1" role="dialog" aria-labelledby="#filtersLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtersLabel">{{ 'Apply a filter'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(FiltersForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If program valid -->
+                                {% if FiltersForm.program.vars.valid %}
+                                    {{ form_widget(FiltersForm.program, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If program invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersForm.program, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersForm.program.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersForm.program) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If platform valid -->
+                                {% if FiltersForm.platform.vars.valid %}
+                                    {{ form_widget(FiltersForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If platform invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersForm.platform.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersForm.platform) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If status valid -->
+                                {% if FiltersForm.status.vars.valid %}
+                                    {{ form_widget(FiltersForm.status, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If status invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersForm.status, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersForm.status.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersForm.status) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If severity min valid -->
+                                {% if FiltersForm.severity_min.vars.valid %}
+                                    {{ form_widget(FiltersForm.severity_min, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Severity min (CVSS scale)'|trans}
+                                        }) }}
+                                <!-- If severity min invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersForm.severity_min, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Severity min (CVSS scale)'|trans}
+                                        }) }}
+                                    {% if not FiltersForm.severity_min.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersForm.severity_min) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If severity max valid -->
+                                {% if FiltersForm.severity_max.vars.valid %}
+                                    {{ form_widget(FiltersForm.severity_max, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Severity max (CVSS scale)'|trans}
+                                        }) }}
+                                <!-- If severity max invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersForm.severity_max, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Severity max (CVSS scale)'|trans}
+                                        }) }}
+                                    {% if not FiltersForm.severity_max.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersForm.severity_max) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(FiltersForm) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changeGain" tabindex="-1" role="dialog" aria-labelledby="#changeGainLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeGainLabel">{{ 'Update gain'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(UpdateGainForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        
+                        <div class="form-row justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If gain valid -->
+                                {% if UpdateGainForm.gain.vars.valid %}
+                                    {{ form_widget(UpdateGainForm.gain, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Gain'|trans}
+                                        }) }}
+                                <!-- If gain invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdateGainForm.gain, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Gain'|trans}
+                                        }) }}
+                                    {% if not UpdateGainForm.gain.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateGainForm.gain) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                        <!-- End Captcha and crsf token -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(UpdateGainForm) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changeStatus" tabindex="-1" role="dialog" aria-labelledby="#changeStatusLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeStatusLabel">{{ 'Update status'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(UpdateStatusForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If status valid -->
+                                {% if UpdateStatusForm.status.vars.valid %}
+                                    {{ form_widget(UpdateStatusForm.status, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If status invalid-->
+                                {% else %}
+                                    {{ form_widget(UpdateStatusForm.status, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not UpdateStatusForm.status.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateStatusForm.status) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- == Captcha and crsf token == -->
+                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        <!-- End Captcha and crsf token -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(UpdateStatusForm) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">{{ 'Delete a report'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>{{ 'Are you sure you want to delete this report ?'|trans }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                    <a class="btn btn-primary" href="" id="deleteReportLink">{{ 'Confirm'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+{% endblock %}
+
+{% block script %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" 
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        });
+
+        $( document ).ready(function() {
+            {% if app.user.lang == 'en' %}
+                $('#dataTable').DataTable();
+            {% else %}
+                $('#dataTable').DataTable( {
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                    }
+                });
+            {% endif %}
+
+            // captcha
+            {% if captcha %}
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        document.getElementById('g-recaptcha-response-2').value = token;
+                        document.getElementById('g-recaptcha-response-3').value = token;
+                    });
+                });
+            {% endif %}
+        });
+
+        $('#changeStatus').on('shown.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var idReport = button.data('id');
+            var modal = $(this)
+            modal.find('#status_reports_id').val(idReport)
+        });
+
+        $('#confirmDelete').on('shown.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var url = button.data('url');
+            var modal = $(this)
+            modal.find('#deleteReportLink').attr('href', url)
+        });
+
+        $('#changeGain').on('shown.bs.modal', function (e) {
+            var button = $(e.relatedTarget);
+            var idReport = button.data('id');
+            var modal = $(this)
+            modal.find('#gain_reports_id').val(idReport)
+        });
+    </script>
+{% endblock %}

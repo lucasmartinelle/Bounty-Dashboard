@@ -1,0 +1,396 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Create a report'|trans }}{% endblock %}
+
+{% block idpage %}createReport{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="d-flex justify-content-between">
+        <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Create a template'|trans }}</h1>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#useTemplate" style="height: max-content;">
+            {{ 'use a template'|trans }}
+        </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="useTemplate" tabindex="-1" role="dialog" aria-labelledby="useTemplateLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                {{ form_start(UseTemplateForm, {'method': 'POST'}) }}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="useTemplateLabel">{{ 'Use a template' }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If template valid -->
+                                {% if UseTemplateForm.template.vars.valid %}
+                                    {{ form_widget(UseTemplateForm.template, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If template invalid-->
+                                {% else %}
+                                    {{ form_widget(UseTemplateForm.template, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not UseTemplateForm.template.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UseTemplateForm.template) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                    <!-- == Captcha and crsf token == -->
+                    <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+                    <!-- End Captcha and crsf token -->
+                {{ form_end(UseTemplateForm) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        {{ form_start(CreateReportForm, {'method': 'POST'}) }}
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Basic informations'|trans }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-1">
+                                <!-- If title valid -->
+                                {% if CreateReportForm.title.vars.valid %}
+                                    {{ form_widget(CreateReportForm.title, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Title'|trans}
+                                        }) }}
+                                <!-- If title invalid-->
+                                {% else %}
+                                    {{ form_widget(CreateReportForm.title, {
+                                        'attr': {
+                                            'class': 'form-control invalid', 
+                                            'placeholder' : 'Title'|trans}
+                                        }) }}
+                                    {% if not CreateReportForm.title.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(CreateReportForm.title) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <!-- If severity valid -->
+                                    {% if CreateReportForm.severity.vars.valid %}
+                                        {{ form_widget(CreateReportForm.severity, {
+                                            'attr': {
+                                                'class': 'form-control', 
+                                                'placeholder' : 'Severity (CVSS scale)'|trans}
+                                            }) }}
+                                    <!-- If severity invalid-->
+                                    {% else %}
+                                        {{ form_widget(CreateReportForm.severity, {
+                                            'attr': {
+                                                'class': 'form-control invalid', 
+                                                'placeholder' : 'Severity (CVSS scale)'|trans}
+                                            }) }}
+                                        {% if not CreateReportForm.severity.vars.valid %}
+                                            <span>
+                                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(CreateReportForm.severity) }}"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <!-- date -->
+                                    {{ form_widget(CreateReportForm.date, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Date'|trans,
+                                            'data-toggle' : 'datepicker'}
+                                        }) }}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <!-- endpoint -->
+                                    {{ form_widget(CreateReportForm.endpoint, {
+                                        'attr': {
+                                            'class': 'form-control', 
+                                            'placeholder' : 'Endpoint'|trans}
+                                        }) }}
+                                </div>
+                            </div>
+                            <div class="form-row justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <!-- If identifier valid -->
+                                    {% if CreateReportForm.identifiant.vars.valid %}
+                                        {{ form_widget(CreateReportForm.identifiant, {
+                                            'attr': {
+                                                'class': 'form-control', 
+                                                'placeholder' : 'Identifier'|trans}
+                                            }) }}
+                                    <!-- If identifier invalid-->
+                                    {% else %}
+                                        {{ form_widget(CreateReportForm.identifiant, {
+                                            'attr': {
+                                                'class': 'form-control invalid', 
+                                                'placeholder' : 'Identifier'|trans}
+                                            }) }}
+                                        {% if not CreateReportForm.identifiant.vars.valid %}
+                                            <span>
+                                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(CreateReportForm.identifiant) }}"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-row selectformrow justify-content-center">
+                                <div class="col-md-10 mb-3 mt-2">
+                                    <!-- If program valid -->
+                                    {% if CreateReportForm.program_id.vars.valid %}
+                                        {{ form_widget(CreateReportForm.program_id, {
+                                            'attr': {
+                                                'class': 'form-control'}
+                                            }) }}
+                                    <!-- If program invalid-->
+                                    {% else %}
+                                        {{ form_widget(CreateReportForm.program_id, {
+                                            'attr': {
+                                                'class': 'form-control invalid'}
+                                            }) }}
+                                        {% if not CreateReportForm.program_id.vars.valid %}
+                                            <span>
+                                                <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(CreateReportForm.program_id) }}"></i>
+                                            </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card cm shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Ressources'|trans }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="ressources" class="w-100">
+                                <!-- ressource textarea -->
+                                {{ form_widget(CreateReportForm.ressources, {
+                                    'attr': {
+                                        'class': 'form-control', 
+                                        'placeholder' : 'Ressources'|trans}
+                                    }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card cm shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Impact'|trans }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="impact" class="w-100">
+                                <!-- impact textarea -->
+                                {{ form_widget(CreateReportForm.impact, {
+                                    'attr': {
+                                        'class': 'form-control', 
+                                        'placeholder' : 'Impact'|trans}
+                                    }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card cm shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Steps to reproduce'|trans }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="stepstoreproduce" class="w-100">
+                                <!-- Steps to reproduce textarea -->
+                                {{ form_widget(CreateReportForm.stepstoreproduce, {
+                                    'attr': {
+                                        'class': 'form-control', 
+                                        'placeholder' : 'Steps to reproduce'|trans}
+                                    }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card cm shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Mitigation'|trans }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="mitigation" class="w-100">
+                                <!-- Mitigation textarea -->
+                                {{ form_widget(CreateReportForm.mitigation, {
+                                    'attr': {
+                                        'class': 'form-control', 
+                                        'placeholder' : 'Mitigation'|trans}
+                                    }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mb-4">
+                    <div class="container m-auto btndiv">
+                        <button class="btn btn-info w-100" type="submit" style="height: 50px;">{{ 'Create'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- == Captcha and crsf token == -->
+            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+            <!-- End Captcha and crsf token -->
+        {{ form_end(CreateReportForm) }}
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="/dist/editormd/css/editormd.css" rel="stylesheet">
+    <link href="/dist/datepicker.css" rel="stylesheet">
+{% endblock %}
+
+{% block script %}
+    <script src="/dist/editormd/editormd.min.js"></script>
+    <script src="/dist/editormd/languages/en.js"></script>
+    <script src="/dist/datepicker.js"></script>
+    <script type="text/javascript">
+
+        var stepstoreproduce, impact, mitigation, ressources;
+
+        $(function() {
+            $('[data-toggle="datepicker"]').datepicker({
+                format: 'dd-mm-yyyy'
+            });
+
+            // captcha
+            {% if captcha %}
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        document.getElementById('g-recaptcha-response-2').value = token;
+                    });
+                });
+            {% endif %}
+
+            var stepstoreproduce = editormd("stepstoreproduce", {
+                height: '400px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                },
+                onfullscreen : function() {
+                    if($('#stepstoreproduce').hasClass("editormd-fullscreen")){
+                        $('#stepstoreproduce').css("z-index", "5000");
+                    } else if($('#impact').hasClass("editormd-fullscreen")){
+                        $('#impact').css("z-index", "5000");
+                    } else if($('#mitigation').hasClass("editormd-fullscreen")){
+                        $('#mitigation').css("z-index", "5000");
+                    } else if($('#ressources').hasClass("editormd-fullscreen")){
+                        $('#ressources').css("z-index", "5000");
+                    }
+                },
+                onfullscreenExit : function() {
+                    if(!$('#stepstoreproduce').hasClass("editormd-fullscreen")){
+                        $('#stepstoreproduce').css("z-index", "unset");
+                    }
+                    if(!$('#impact').hasClass("editormd-fullscreen")){
+                        $('#impact').css("z-index", "unset");
+                    }
+                    if(!$('#mitigation').hasClass("editormd-fullscreen")){
+                        $('#mitigation').css("z-index", "unset");
+                    }
+                    if(!$('#ressources').hasClass("editormd-fullscreen")){
+                        $('#ressources').css("z-index", "unset");
+                    }
+                }
+            });
+
+            var impact = editormd("impact", {
+                height: '400px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                }
+            });
+
+            var mitigation = editormd("mitigation", {
+                height: '400px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                }
+            });
+
+            var ressources = editormd("ressources", {
+                height: '340px',
+                path   : "/dist/editormd/lib/",
+                toolbarAutoFixed : false,
+                toolbarIcons : function() {
+                    // Or return editormd.toolbarModes[name]; // full, simple, mini
+                    // Using "||" set icons align right.
+                    return ["undo", "redo", "|", "bold", "del", "italic", "quote", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "fullscreen", "watch", "preview"]
+                }
+            });
+
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,9 +1,39 @@
-This version is currently under development. Here are the features currently available
+### This version is currently under development. Here are the features currently available
 
-* Authentication system (sign in, sign up, reset password, logout, validation by email)
-* translation system
-* settings
-* profile
+* *Authentication system*
+  * *sign in* 
+  * *sign up*
+  * *reset password*
+  * *logout*
+  * *validation by email*
+* *Translation system (not complete)*
+* *Settings*
+  * *List of user (only admin)*
+  * *Change language*
+  * *Update Captcha and Reset Captcha (only admin)*
+  * *Add user (only admin)*
+* *profile*
+  * Change username
+  * Change email
+  * Change password
+  * Enable / Disable billing and reset billing
+* *Reports (only English)*
+  * *Creation*
+  * *Update*
+  * *Deletion*
+  * *Filters*
+* *Programs (only English)*
+  * *Creation*
+  * *Update*
+  * *Deletion*
+  * *Charts*
+  * *Notes*
+* *Platforms (only English)*
+  * *Creation*
+  * *Update*
+  * *Deletion*
+  * *Charts*
+  * *Importation*
 
 ## Installation
 

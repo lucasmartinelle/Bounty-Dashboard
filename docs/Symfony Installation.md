@@ -6,29 +6,29 @@
   * *reset password*
   * *logout*
   * *validation by email*
-* *Translation system (not complete)*
+* *Translation system*
 * *Settings*
   * *List of user (only admin)*
   * *Change language*
   * *Update Captcha and Reset Captcha (only admin)*
   * *Add user (only admin)*
 * *profile*
-  * Change username
-  * Change email
-  * Change password
-  * Enable / Disable billing and reset billing
-* *Reports (only English)*
+  * *Change username*
+  * *Change email*
+  * *Change password*
+  * *Enable / Disable billing and reset billing*
+* *Reports *
   * *Creation*
   * *Update*
   * *Deletion*
   * *Filters*
-* *Programs (only English)*
+* *Programs*
   * *Creation*
   * *Update*
   * *Deletion*
   * *Charts*
   * *Notes*
-* *Platforms (only English)*
+* *Platforms*
   * *Creation*
   * *Update*
   * *Deletion*

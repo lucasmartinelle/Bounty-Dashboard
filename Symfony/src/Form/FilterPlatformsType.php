@@ -24,9 +24,9 @@ class FilterPlatformsType extends AbstractType
     {
         $builder
             ->add('year', ChoiceType::class, [
-                'label' => 'Year',
+                'label' => $this->translator->trans('Year'),
                 'required' => false,
-                'placeholder' => 'all',
+                'placeholder' => $this->translator->trans('all'),
                 'choices'  => [
                     '2021' => '2021',
                     '2020' => '2020'

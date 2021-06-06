@@ -175,4 +175,43 @@ class ReportsRepository extends ServiceEntityRepository
 
         return $dates;
     }
+
+    /**
+     * @return object
+     */
+    public function filtersInvoices($month=null, $platform=null, $creator)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('r')
+            ->where('r.creator_id = :creatorid')
+            ->setParameter('creatorid', $creator);
+
+            if($platform){
+                $qb = $qb->leftJoin('App\Entity\Programs', 'programs', 'WITH', 'r.program_id = programs.id')
+                    ->leftJoin('App\Entity\Platforms', 'platforms', 'WITH', 'programs.platform_id = platforms.id')
+                    ->andWhere('platforms.id = :platformid')
+                    ->setParameter('platformid', $platform);
+            }
+
+            if($month){
+                $reportsQuery = $qb->getQuery()->getResult();
+                $reports = array();
+
+                foreach($reportsQuery as $report){
+                    $date = $report->getDate();
+                    if($date){
+                        $exploded_date = explode("-", $date);
+                        if($exploded_date[1] == $month){
+                            array_push($reports, $report);
+                        }
+                    }
+                }
+
+                return $reports;
+            } else {
+                return $qb->getQuery()->execute();
+            }
+    
+            
+    }
 }

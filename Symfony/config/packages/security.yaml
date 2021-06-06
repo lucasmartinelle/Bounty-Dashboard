@@ -45,4 +45,9 @@ security:
         - { path: ^/settings, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/settings/delete-user, roles: [IS_AUTHENTICATED_FULLY, ROLE_ADMIN] }
         - { path: ^/settings/reset-captcha, roles: [IS_AUTHENTICATED_FULLY, ROLE_ADMIN] }
+        - { path: ^/reports, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/templates, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/programs, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/platforms, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/invoices, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }

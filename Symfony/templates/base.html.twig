@@ -74,13 +74,15 @@
                         </a>
                     </li>
 
-                    <!-- Nav Item - Invoices -->
-                    <!--<li class="nav-item">
-                        <a class="nav-link" href="">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>Invoices</span>
-                        </a>
-                    </li>-->
+                    {% if app.user.isActiveInvoices %}
+                        <!-- Nav Item - Invoices -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('invoices') }}">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span>Invoices</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 {% endif %}
 
                 <!-- Divider -->

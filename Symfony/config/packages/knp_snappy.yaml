@@ -1,0 +1,9 @@
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     xvfb-run wkhtmltopdf
+        options:    []
+    image:
+        enabled:    true
+        binary:     xvfb-run wkhtmltoimage
+        options:    []

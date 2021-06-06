@@ -1,0 +1,254 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Invoices'|trans }}{% endblock %}
+
+{% block idpage %}invoices{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="container-fluid mb-4">
+        <div class="row justify-content-between">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Invoices'|trans }}</h1>
+                <span class="badge badge-pill badge-primary">{{ 'Platform'|trans }}<span class="badge badge-pill badge-light ml-2">{{ filterPlatform }}</span></span>
+                <span class="badge badge-pill badge-primary">{{ 'Month'|trans }}<span class="badge badge-pill badge-light ml-2">{{ filterMonth }}</span></span>
+            </div>
+            <button class="btn btn-info" style="height: max-content;" data-toggle="modal" data-target="#filters">
+                {{ 'Filters'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ 'Your reports'|trans }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                        <tr>
+                            <th>{{ 'Title'|trans }}</th>
+                            <th>{{ 'Severity'|trans }}</th>
+                            <th>{{ 'Endpoint'|trans }}</th>
+                            <th>{{ 'Gain'|trans }}</th>
+                            <th>{{ 'Identifier'|trans }}</th>
+                            <th>{{ 'Date'|trans }}</th>
+                            <th>{{ 'Status'|trans }}</th>
+                            <th>{{ 'Select'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>{{ 'Title'|trans }}</th>
+                            <th>{{ 'Severity'|trans }}</th>
+                            <th>{{ 'Endpoint'|trans }}</th>
+                            <th>{{ 'Gain'|trans }}</th>
+                            <th>{{ 'Identifier'|trans }}</th>
+                            <th>{{ 'Date'|trans }}</th>
+                            <th>{{ 'Status'|trans }}</th>
+                            <th>{{ 'Select'|trans }}</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ report.title }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success">{{ report.severity }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-warning">{{ report.endpoint }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-success">{{ report.gain }}€</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-info">{{ report.identifiant }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-info">{{ report.date }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ report.status }}</span></td>
+                                <td>
+                                    <div class="form-check text-center">
+                                        <input class="form-check-input position-static" type="checkbox" data-title='{{ report.title }}' data-date='{{ report.date }}' data-gain='{{ report.gain }}' data-identifier='{{ report.identifiant }}'>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container text-center" style="margin-top: 60px !important;">
+        <button id="generateInvoice" type="button" class="btn btn-info" style="width: 40%; height: 50px;">{{ 'Generate invoice'|trans }}</button>
+    </div>
+
+    <div class="modal fade" id="filters" tabindex="-1" role="dialog" aria-labelledby="#filtersLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtersLabel">{{ 'Apply a filter'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(FiltersForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If month valid -->
+                                {% if FiltersForm.month.vars.valid %}
+                                    {{ form_widget(FiltersForm.month, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If month invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersForm.month, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersForm.month.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersForm.month) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If platform valid -->
+                                {% if FiltersForm.platform.vars.valid %}
+                                    {{ form_widget(FiltersForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If platform invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersForm.platform.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersForm.platform) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(FiltersForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+{% endblock %}
+
+{% block script %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" 
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+    <script src="/dist/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript">
+    var reportsSelected = [];
+
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+
+        {% if (filterMonth == 'none') and (filterPlatform == 'none') %}
+            $('#filters').modal('show');
+        {% endif %}
+
+        {% if app.user.lang == 'en' %}
+            $('#dataTable').DataTable();
+        {% else %}
+            $('#dataTable').DataTable( {
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                }
+            });
+        {% endif %}
+
+        // captcha
+        {% if captcha %}
+            grecaptcha.ready(function() {
+                grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                });
+            });
+        {% endif %}
+
+        $('input[type="checkbox"]').change(function() {
+            var info = [$(this).data('title'), $(this).data('date'), $(this).data('gain'), $(this).data('identifier')];
+            if(this.checked) {
+                reportsSelected.push(info);
+            } else {
+                if($.inArray(info, reportsSelected)){
+                    reportsSelected.splice(reportsSelected.indexOf(info), 1);
+                }
+            }
+        });
+    });
+
+    $('#generateInvoice').click(function(){
+        var requestResponse = '';
+        var formData = {reports: reportsSelected, month: '{{ filterMonth }}', platform: '{{ filterPlatform }}'};
+        $.ajax({
+            url: '{{ path("generate-invoice") }}',
+            data: formData,                         
+            type: 'POST',
+            async: false,
+            success: function(response, textStatus, jqXHR) {
+                requestResponse = response;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+
+        console.log(requestResponse);
+        if(requestResponse == "month or platform not provided."){
+            alert(requestResponse);
+            $("#filters").modal('show');
+        } else if(requestResponse == "reports not provided"){
+            alert(requestResponse);
+        } else if(requestResponse != false){
+            window.location.href = requestResponse;
+        }
+    });
+</script>
+{% endblock %}

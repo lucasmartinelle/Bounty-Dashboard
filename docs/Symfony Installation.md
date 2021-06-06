@@ -17,7 +17,7 @@
   * *Change email*
   * *Change password*
   * *Enable / Disable billing and reset billing*
-* *Reports *
+* *Reports*
   * *Creation*
   * *Update*
   * *Deletion*
@@ -34,6 +34,9 @@
   * *Deletion*
   * *Charts*
   * *Importation*
+* *Invoices*
+  * *Report selections in relation to filters*
+  * *Generation in PDF*
 
 ## Installation
 

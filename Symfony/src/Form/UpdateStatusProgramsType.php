@@ -27,8 +27,8 @@ class UpdateStatusProgramsType extends AbstractType
                 'label' => false,
                 'placeholder' => 'Status',
                 'choices'  => [
-                    'Open' => 'Open',
-                    'Close' => 'Close'
+                    $this->translator->trans('Open') => 'Open',
+                    $this->translator->trans('Close') => 'Close'
                 ],
                 'constraints' => [
                     new Assert\NotBlank([

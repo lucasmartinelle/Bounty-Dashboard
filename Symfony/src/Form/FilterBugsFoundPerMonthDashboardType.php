@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class StatusReportsType extends AbstractType
+class FilterBugsFoundPerMonthDashboardType extends AbstractType
 {
     private $translator;
 
@@ -23,25 +23,20 @@ class StatusReportsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('status', ChoiceType::class, [
-                'label' => false,
-                'placeholder' => 'Status',
-                'choices'  => [
-                    $this->translator->trans('New') => 'New',
-                    $this->translator->trans('Accepted') => 'Accepted',
-                    $this->translator->trans('Resolved') => 'Resolved',
-                    $this->translator->trans('NA') => 'NA',
-                    $this->translator->trans('OOS') => 'OOS',
-                    $this->translator->trans('Informative') => 'Informative',
-                ],
-                'constraints' => [
-                    new Assert\NotBlank([
-                        'message' => $this->translator->trans('Please enter a status.'),
-                    ]),
-                ]
+            ->add('platform', ChoiceType::class, [
+                'label' => $this->translator->trans('Platform'),
+                'required' => false,
+                'placeholder' => $this->translator->trans('Platform'),
+                'choices'  => $options['platformsName']
             ])
-            ->add('id', HiddenType::class, [
-                'label' => false
+            ->add('year', ChoiceType::class, [
+                'label' => $this->translator->trans('Year'),
+                'required' => false,
+                'placeholder' => $this->translator->trans('all'),
+                'choices'  => [
+                    '2021' => '2021',
+                    '2020' => '2020'
+                ]
             ])
         ;
     }
@@ -49,5 +44,6 @@ class StatusReportsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([]);
+        $resolver->setRequired('platformsName');
     }
 }

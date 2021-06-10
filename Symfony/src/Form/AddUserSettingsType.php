@@ -82,7 +82,7 @@ class AddUserSettingsType extends AbstractType
                 'mapped' => false
             ])
             ->add('hunter', CheckboxType::class, [
-                'label'    => 'Hunter',
+                'label'    => $this->translator->trans('Hunter'),
                 'required' => false,
                 'mapped' => false
             ])

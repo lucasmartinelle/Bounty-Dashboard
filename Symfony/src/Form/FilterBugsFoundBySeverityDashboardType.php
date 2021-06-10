@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class FiltersReportsType extends AbstractType
+class FilterBugsFoundBySeverityDashboardType extends AbstractType
 {
     private $translator;
 
@@ -34,27 +34,6 @@ class FiltersReportsType extends AbstractType
                 'required' => false,
                 'placeholder' => $this->translator->trans('Platform'),
                 'choices'  => $options['platformsName']
-            ])
-            ->add('status', ChoiceType::class, [
-                'label' => false,
-                'required' => false,
-                'placeholder' => 'Status',
-                'choices'  => [
-                    $this->translator->trans('New') => 'New',
-                    $this->translator->trans('Accepted') => 'Accepted',
-                    $this->translator->trans('Resolved') => 'Resolved',
-                    $this->translator->trans('NA') => 'NA',
-                    $this->translator->trans('OOS') => 'OOS',
-                    $this->translator->trans('Informative') => 'Informative',
-                ]
-            ])
-            ->add('severity_min', NumberType::class, [
-                'label' => false,
-                'required' => false
-            ])
-            ->add('severity_max', NumberType::class, [
-                'label' => false,
-                'required' => false
             ])
         ;
     }

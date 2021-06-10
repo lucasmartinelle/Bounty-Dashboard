@@ -22,7 +22,7 @@ class ReportsRepository extends ServiceEntityRepository
     /**
      * @return object
      */
-    public function filters($program, $platform, $status, $severity_min, $severity_max)
+    public function filters($program, $platform, $status, $severity_min, $severity_max, $creatorid=null)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -69,6 +69,11 @@ class ReportsRepository extends ServiceEntityRepository
         if($severity_max){
             $qb = $qb->andWhere('r.severity < :severitymax')
                 ->setParameter('severitymax', $severity_max);
+        }
+
+        if($creatorid){
+            $qb = $qb->andWhere('r.creator_id = :creatorid')
+                ->setParameter('creatorid', $creatorid);
         }
 
         return $qb->getQuery()->execute();
@@ -130,7 +135,7 @@ class ReportsRepository extends ServiceEntityRepository
             ->getResult();
 
         foreach($reports as $report){
-            $sev = (int) $report['severity'];
+            $sev = (float) $report['severity'];
             if($sev == 0){
                 $sev = 'None';
             } elseif($sev > 0 and $sev < 4){
@@ -186,32 +191,187 @@ class ReportsRepository extends ServiceEntityRepository
             ->where('r.creator_id = :creatorid')
             ->setParameter('creatorid', $creator);
 
-            if($platform){
-                $qb = $qb->leftJoin('App\Entity\Programs', 'programs', 'WITH', 'r.program_id = programs.id')
-                    ->leftJoin('App\Entity\Platforms', 'platforms', 'WITH', 'programs.platform_id = platforms.id')
-                    ->andWhere('platforms.id = :platformid')
-                    ->setParameter('platformid', $platform);
-            }
+        if($platform){
+            $qb = $qb->leftJoin('App\Entity\Programs', 'programs', 'WITH', 'r.program_id = programs.id')
+                ->leftJoin('App\Entity\Platforms', 'platforms', 'WITH', 'programs.platform_id = platforms.id')
+                ->andWhere('platforms.id = :platformid')
+                ->setParameter('platformid', $platform);
+        }
 
-            if($month){
-                $reportsQuery = $qb->getQuery()->getResult();
-                $reports = array();
+        if($month){
+            $reportsQuery = $qb->getQuery()->getResult();
+            $reports = array();
 
-                foreach($reportsQuery as $report){
-                    $date = $report->getDate();
-                    if($date){
-                        $exploded_date = explode("-", $date);
-                        if($exploded_date[1] == $month){
-                            array_push($reports, $report);
-                        }
+            foreach($reportsQuery as $report){
+                $date = $report->getDate();
+                if($date){
+                    $exploded_date = explode("-", $date);
+                    if($exploded_date[1] == $month){
+                        array_push($reports, $report);
                     }
                 }
-
-                return $reports;
-            } else {
-                return $qb->getQuery()->execute();
             }
-    
-            
+
+            return $reports;
+        } else {
+            return $qb->getQuery()->execute();
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function bugsOpened(){
+        return $this->createQueryBuilder('r')
+            ->select('count(r.id)')
+            ->where('r.status = :status')
+            ->setParameter(':status', 'new')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return int
+     */
+    public function bugsAcceptedAndFixed(){
+        return $this->createQueryBuilder('r')
+            ->select('count(r.id)')
+            ->where('r.status = :status OR r.status = :status2')
+            ->setParameter(':status', 'accepted')
+            ->setParameter(':status2', 'resolved')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return int
+     */
+    public function totalEarnings(){
+        return $this->createQueryBuilder('r')
+            ->select('sum(r.gain)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return int
+     */
+    public function criticalsBugsFounds(){
+        return $this->createQueryBuilder('r')
+            ->select('count(r.id)')
+            ->where('r.severity >= :min')
+            ->setParameter(':min', 9)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return array
+     */
+    public function bugsFoundsPerMonth($platform=null, $year=null){
+        $qb = $this->createQueryBuilder('r')
+            ->select('r');
+
+        if($platform and $platform != "all"){
+            $qb = $qb->leftJoin('App\Entity\Programs', 'programs', 'WITH', 'r.program_id = programs.id')
+                ->leftJoin('App\Entity\Platforms', 'platforms', 'WITH', 'programs.platform_id = platforms.id')
+                ->where('platforms.id = :platformid')
+                ->setParameter('platformid', $platform);
+        }
+
+        $reports = $qb->getQuery()->getResult();
+
+        $dates = array('01' => 0, '02' => 0, '03' => 0, '04' => 0, '05' => 0, '06' => 0, '07' => 0, '08' => 0, '09' => 0, '10' => 0, '11' => 0, '12' => 0);
+
+        foreach($reports as $report){
+            $date = $report->getDate();
+            if($date){
+                $exploded_date = explode("-", $date);
+                $month = $exploded_date[1];
+                if($year != null and $year == $exploded_date[2] and $year != 'all'){
+                    $dates[$month] += 1;
+                } else if($year == null or $year == 'all'){
+                    $dates[$month] += 1;
+                }
+            }
+        }
+
+        return $dates;
+    }
+
+    /**
+     * @return array
+     */
+    public function bugsFoundsBySeverity($platform=null, $program=null){
+        $qb = $this->createQueryBuilder('r')
+            ->select('r');
+
+        $addProgram = false;
+        $severity = array();
+
+        if($platform){
+            $qb = $qb->leftJoin('App\Entity\Programs', 'programs', 'WITH', 'r.program_id = programs.id')
+                ->leftJoin('App\Entity\Platforms', 'platforms', 'WITH', 'programs.platform_id = platforms.id')
+                ->where('platforms.id = :platformid')
+                ->setParameter('platformid', $platform);
+            if($program){
+                $qb = $qb->andWhere('programs.id = :programid')
+                    ->setParameter('programid', $program);
+                $addProgram = true;
+            }
+        }
+
+        if($program && !$addProgram){
+            $qb = $qb->where('r.program_id = :programid')
+                ->setParameter('programid', $program);
+        }
+
+        $reports = $qb->getQuery()->execute();
+
+        foreach($reports as $report){
+            $sev = (float) $report->getSeverity();
+            if($sev == 0){
+                $sev = 'None';
+            } elseif($sev > 0 and $sev < 4){
+                $sev = 'Low';
+            } elseif($sev >= 4 and $sev < 7){
+                $sev = 'Medium';
+            } elseif($sev >= 7 and $sev < 9){
+                $sev = 'High';
+            } elseif($sev >= 9 and $sev <= 10){
+                $sev = 'Critical';
+            }
+            if(array_key_exists($sev, $severity)){
+                $severity[$sev] += 1;
+            } else {
+                $severity[$sev] = 1;
+            }
+        }
+        
+        return $severity;
+    }
+
+    /**
+     * @return array
+     */
+    public function bugsFoundsByPlatforms(){
+        $platforms = array();
+
+        $reports = $this->createQueryBuilder('r')
+            ->select('platforms.name')
+            ->leftJoin('App\Entity\Programs', 'programs', 'WITH', 'r.program_id = programs.id')
+            ->leftJoin('App\Entity\Platforms', 'platforms', 'WITH', 'programs.platform_id = platforms.id')
+            ->getQuery()
+            ->execute();
+
+        foreach($reports as $report){
+            if(array_key_exists($report["name"], $platforms)){
+                $platforms[$report["name"]] += 1;
+            } else {
+                $platforms[$report["name"]] = 1;
+            }
+        }
+
+        return $platforms;
     }
 }

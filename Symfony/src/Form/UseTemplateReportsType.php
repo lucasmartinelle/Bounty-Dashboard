@@ -25,7 +25,7 @@ class UseTemplateReportsType extends AbstractType
         $builder
             ->add('template', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choose a template',
+                'placeholder' => $this->translator->trans('Choose a template'),
                 'choices'  => $options['templatesName'],
                 'constraints' => [
                     new Assert\NotBlank([

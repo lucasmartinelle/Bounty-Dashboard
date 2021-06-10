@@ -45,10 +45,10 @@ class UpdateProgramProgramsType extends AbstractType
             ])
             ->add('status', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choose a status',
+                'placeholder' => $this->translator->trans('Choose a status'),
                 'choices'  => [
-                    'Open' => 'Open',
-                    'Close' => 'Close'
+                    $this->translator->trans('Open') => 'Open',
+                    $this->translator->trans('Close') => 'Close'
                 ],
                 'required' => false
             ])
@@ -62,7 +62,7 @@ class UpdateProgramProgramsType extends AbstractType
             ])
             ->add('platforms', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choose a Platform',
+                'placeholder' => $this->translator->trans('Choose a Platform'),
                 'choices'  => $options['platformsName'],
                 'required' => false
             ])

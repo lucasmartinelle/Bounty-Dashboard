@@ -115,7 +115,7 @@ class LoginAuthenticator extends AbstractFormLoginAuthenticator implements Passw
 
         if (!$user) {
             // fail authentication with a custom error
-            return new RedirectResponse($this->urlGenerator->generate('settings'));
+            return new RedirectResponse($this->urlGenerator->generate('login'));
         }
 
         $this->session->set('_locale_user', true);

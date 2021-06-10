@@ -35,7 +35,7 @@ class AuthController extends AbstractController
     public function login(Request $request,AuthenticationUtils $authenticationUtils)
     {
         if ($this->getUser()) {
-            return $this->redirectToRoute('settings');
+            return $this->redirectToRoute('dashboard');
         }
 
         $user = new User();

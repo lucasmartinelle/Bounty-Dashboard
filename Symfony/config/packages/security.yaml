@@ -51,3 +51,4 @@ security:
         - { path: ^/platforms, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/invoices, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/dashboard, roles: IS_AUTHENTICATED_FULLY }

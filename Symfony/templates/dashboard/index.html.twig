@@ -1,0 +1,454 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Dashboard'|trans }}{% endblock %}
+
+{% block idpage %}dashboard{% endblock %}
+
+{% block captcha %}
+    {% if captcha %}
+        <script src="https://www.google.com/recaptcha/api.js?render={{ publicKey }}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <!-- Error/Success messages -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">
+            <p style="margin-bottom: 0;"><i class="fas fa-exclamation-triangle m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <p style="margin-bottom: 0;"><i class="fas fa-check m-r-xs"></i> {{ message }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="container-fluid">
+        <h1 class="h3 mb-1 text-gray-800 mb-3">{{ 'Dashboard'|trans }}</h1>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Content Row -->
+        <div class="row">
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    {{ 'Bugs opened'|trans }}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ bugsOpened }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-lock-open fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    {{ 'Bugs accepted and fixed'|trans }}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ bugsAcceptedAndFixed }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-lock fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    {{ 'total earnings'|trans }}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalEarnings }}{{ currency }}</div>
+                            </div>
+                            <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    {{ 'Criticals bugs founds'|trans }}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ criticalsBugsFounds }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-bug fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">{{ 'Bugs founds per month'|trans }}</h6>
+                                <h6 class="m-0"><span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#filtersBugsFoundsPerMonth">{{ 'filters'|trans }} <i class="fas fa-sort-down ml-2"></i></span></h6>
+                            </div>
+                        </div>
+                        <div class="card-body" style="width: 100%;">
+                            <canvas id="bugsFoundsPerMonth" width="100%" height="300px;"></canvas>
+                        </div>
+                        <hr>
+                        <div class="container-fluid pb-3">
+                            <span class="badge badge-pill badge-primary">{{ 'Platform'|trans }}<span class="badge badge-pill badge-light ml-2">
+                                {{ bugsFoundsPerMonthFilterPlatform }}
+                            </span></span>
+                            <span class="badge badge-pill badge-primary">{{ 'Year'|trans }}<span class="badge badge-pill badge-light ml-2">
+                                {{ bugsFoundsPerMonthFilterYear }}
+                            </span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">{{ 'Bugs founds by severity'|trans }}</h6>
+                                <h6 class="m-0"><span class="badge badge-pill badge-primary" data-toggle="modal" data-target="#filtersBugsFoundsBySeverity">{{ 'filters'}} <i class="fas fa-sort-down ml-2"></i></span></h6>
+                            </div>
+                        </div>
+                        <div class="card-body" style="width: 100%;">
+                            <canvas id="bugsFoundsBySeverity" width="100%" height="300px;"></canvas>
+                        </div>
+                        <hr>
+                        <div class="container-fluid pb-3">
+                            <span class="badge badge-pill badge-primary">{{ 'Platform'|trans }}<span class="badge badge-pill badge-light ml-2">
+                                {{ bugsFoundsBySeverityFilterPlatform }}
+                            </span></span>
+                            <span class="badge badge-pill badge-primary">{{ 'Program'|trans }}<span class="badge badge-pill badge-light ml-2">
+                                {{ bugsFoundsBySeverityFilterProgram }}
+                            </span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ 'Bugs founds by platforms'|trans }}</h6>
+                        </div>
+                        <div class="card-body" style="width: 100%;">
+                            <canvas id="bugsFoundsByPlatforms" width="100%" height="300px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="filtersBugsFoundsBySeverity" tabindex="-1" role="dialog" aria-labelledby="#filtersBugsFoundsBySeverityLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtersBugsFoundsBySeverityLabel">{{ 'Apply filters'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(FiltersBugsFoundBySeverityForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If program valid -->
+                                {% if FiltersBugsFoundBySeverityForm.program.vars.valid %}
+                                    {{ form_widget(FiltersBugsFoundBySeverityForm.program, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If program invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersBugsFoundBySeverityForm.program, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersBugsFoundBySeverityForm.program.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersBugsFoundBySeverityForm.program) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If platform valid -->
+                                {% if FiltersBugsFoundBySeverityForm.platform.vars.valid %}
+                                    {{ form_widget(FiltersBugsFoundBySeverityForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If platform invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersBugsFoundBySeverityForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersBugsFoundBySeverityForm.platform.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersBugsFoundBySeverityForm.platform) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(FiltersBugsFoundBySeverityForm) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="filtersBugsFoundsPerMonth" tabindex="-1" role="dialog" aria-labelledby="#filtersBugsFoundsPerMonthLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filtersBugsFoundsPerMonthLabel">{{ 'Apply filters'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ form_start(FiltersBugsFoundPerMonthForm, {'method': 'POST'}) }}
+                    <div class="modal-body">
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If year valid -->
+                                {% if FiltersBugsFoundPerMonthForm.year.vars.valid %}
+                                    {{ form_widget(FiltersBugsFoundPerMonthForm.year, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If year invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersBugsFoundPerMonthForm.year, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersBugsFoundPerMonthForm.year.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersBugsFoundPerMonthForm.year) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row selectformrow justify-content-center">
+                            <div class="col-md-10 mb-3 mt-2">
+                                <!-- If platform valid -->
+                                {% if FiltersBugsFoundPerMonthForm.platform.vars.valid %}
+                                    {{ form_widget(FiltersBugsFoundPerMonthForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control'}
+                                        }) }}
+                                <!-- If platform invalid-->
+                                {% else %}
+                                    {{ form_widget(FiltersBugsFoundPerMonthForm.platform, {
+                                        'attr': {
+                                            'class': 'form-control invalid'}
+                                        }) }}
+                                    {% if not FiltersBugsFoundPerMonthForm.platform.vars.valid %}
+                                        <span>
+                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(FiltersBugsFoundPerMonthForm.platform) }}"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'Close'|trans }}</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Confirm'|trans }}</button>
+                    </div>
+                {{ form_end(FiltersBugsFoundPerMonthForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" 
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    {% set keysMonth = ['January'|trans,'February'|trans,'March'|trans,'April'|trans,'May'|trans,'June'|trans,'July'|trans,'August'|trans,'September'|trans,'October'|trans,'November'|trans,'December'|trans] %}
+    {% set keysBugsFoundsPerMonth = '' %}
+    {% set valuesBugsFoundsPerMonth = '' %}
+    {% for key, value in bugsFoundsPerMonth %}
+        {% if value != 0 %}
+            {% set keysBugsFoundsPerMonth = keysBugsFoundsPerMonth ~ "'" ~ keysMonth[key|trim(0, 'left')] ~ "'," %}
+            {% set valuesBugsFoundsPerMonth = valuesBugsFoundsPerMonth ~ "'" ~ value ~ "'," %}
+        {% endif %}
+    {% endfor %}
+    {% set valuesBugsFoundsPerMonth = valuesBugsFoundsPerMonth[:-1] %}
+
+    {% set keysBugsFoundsBySeverity = '' %}
+    {% set valuesBugsFoundsBySeverity = '' %}
+    {% for key, value in bugsFoundsBySeverity %}
+        {% set keysBugsFoundsBySeverity = keysBugsFoundsBySeverity ~ "'" ~ key ~ "'," %}
+        {% set valuesBugsFoundsBySeverity = valuesBugsFoundsBySeverity ~ "'" ~ value ~ "'," %}
+    {% endfor %}
+    {% set keysBugsFoundsBySeverity = keysBugsFoundsBySeverity[:-1] %}
+    {% set valuesBugsFoundsBySeverity = valuesBugsFoundsBySeverity[:-1] %}
+
+    {% set keysBugsFoundsByPlatforms = '' %}
+    {% set valuesBugsFoundsByPlatforms = '' %}
+    {% for key, value in bugsFoundsByPlatforms %}
+        {% set keysBugsFoundsByPlatforms = keysBugsFoundsByPlatforms ~ "'" ~ key ~ "'," %}
+        {% set valuesBugsFoundsByPlatforms = valuesBugsFoundsByPlatforms ~ "'" ~ value ~ "'," %}
+    {% endfor %}
+    {% set keysBugsFoundsByPlatforms = keysBugsFoundsByPlatforms[:-1] %}
+    {% set valuesBugsFoundsByPlatforms = valuesBugsFoundsByPlatforms[:-1] %}
+
+    <script type="text/javascript">
+        $(function () {
+            var ctxDate = document.getElementById("bugsFoundsPerMonth");
+            var bugPerMonth = new Chart(ctxDate, {
+                type: 'doughnut',
+                data: {
+                    labels: [{{ keysBugsFoundsPerMonth|raw }}],
+                    datasets: [{
+                    data: [{{ valuesBugsFoundsPerMonth|raw }}],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#a4f542', '#ed3245', '#edbb45', '#a064fa' , '#45f1f7', '#1bc08f', '#cba006', '#c93808', '#c901d0'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#95de3c', '#bd2232', '#d4a944', '#8f48fa', '#3dcfd4', '#128764', '#bb9716', '#bb3f16', '#a627aa'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    cutoutPercentage: 80,
+                },
+            });
+
+            var ctxDate = document.getElementById("bugsFoundsBySeverity");
+            var bugBySeverity = new Chart(ctxDate, {
+                type: 'doughnut',
+                data: {
+                    labels: [{{ keysBugsFoundsBySeverity|raw }}],
+                    datasets: [{
+                    data: [{{ valuesBugsFoundsBySeverity|raw }}],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#a4f542', '#ed3245', '#edbb45', '#a064fa' , '#45f1f7', '#1bc08f', '#cba006', '#c93808', '#c901d0'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#95de3c', '#bd2232', '#d4a944', '#8f48fa', '#3dcfd4', '#128764', '#bb9716', '#bb3f16', '#a627aa'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    cutoutPercentage: 80,
+                },
+            });
+
+            var ctxDate = document.getElementById("bugsFoundsByPlatforms");
+            var bugBySeverity = new Chart(ctxDate, {
+                type: 'doughnut',
+                data: {
+                    labels: [{{ keysBugsFoundsByPlatforms|raw }}],
+                    datasets: [{
+                    data: [{{ valuesBugsFoundsByPlatforms|raw }}],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#a4f542', '#ed3245', '#edbb45', '#a064fa' , '#45f1f7', '#1bc08f', '#cba006', '#c93808', '#c901d0'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#95de3c', '#bd2232', '#d4a944', '#8f48fa', '#3dcfd4', '#128764', '#bb9716', '#bb3f16', '#a627aa'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    cutoutPercentage: 80,
+                },
+            });
+
+            {% if captcha %}
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        document.getElementById('g-recaptcha-response-2').value = token;
+                    });
+                });
+            {% endif %}
+        });
+    </script>
+{% endblock %}

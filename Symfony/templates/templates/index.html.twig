@@ -35,8 +35,12 @@
                 {{ 'add a template'|trans }}
             </a>
         </div>
-        <a href="" class="btn btn-primary mb-3">
-            {{ 'Watch all templates'|trans }}
+        <a href="{{ path('change-watch-status') }}" class="btn btn-primary mb-3">
+            {% if not app.session.get('_watch_all', false) %}
+                {{ 'Watch all templates'|trans }}
+            {% else %}
+                {{ 'Watch my templates'|trans }}
+            {% endif %}
         </a>
     </div>
 

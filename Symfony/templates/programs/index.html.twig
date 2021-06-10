@@ -35,8 +35,12 @@
                 {{ 'add a program'|trans }}
             </button>
         </div>
-        <a href="" class="btn btn-primary mb-3">
+        <a href="{{ path('change-watch-status') }}" class="btn btn-primary mb-3">
+        {% if not app.session.get('_watch_all', false) %}
             {{ 'Watch all programs'|trans }}
+        {% else %}
+            {{ 'Watch my programs'|trans }}
+        {% endif %}
         </a>
     </div>
 
@@ -284,12 +288,13 @@
                                     {% set tags = tags ~ '<span class="badge badge-pill badge-warning m-r-sm">' ~ tag ~ '</span>' %}
                                 {% endif %}    
                             {% endfor %}
+                            {% set statusTrans = {"Open": "Open"|trans, "Close": "Close"|trans} %}
                             <tr>
                                 <td class="text-center"><span class="badge badge-pill badge-danger">{{ program.name }}</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-success">{{ infos[infosindex].numberofbugs }}</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-success">{{ infos[infosindex].gaintotal }} {{ money }}</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-success">{{ infos[infosindex].scopenumber }}</span></td>
-                                <td class="text-center" data-toggle="modal" data-target="#updateStatus" data-id="{{ program.id }}"><span class="badge badge-pill badge-info">{{ program.status }}</span></td>
+                                <td class="text-center" data-toggle="modal" data-target="#updateStatus" data-id="{{ program.id }}"><span class="badge badge-pill badge-info">{{ statusTrans[program.status] }}</span></td>
                                 <td class="text-center">{{ tags|raw }}</td>
                                 <td class="text-center"><span class="badge badge-pill badge-danger">{{ infos[infosindex].platform }}</span></td>
                                 <td class="text-center">
@@ -347,7 +352,7 @@
                         </div>
 
                         <!-- == Captcha and crsf token == -->
-                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        <input type="hidden" id="g-recaptcha-response-2" name="g-recaptcha-response">
                         <!-- End Captcha and crsf token -->
                     </div>
                     <div class="modal-footer">
@@ -505,7 +510,7 @@
                         </div>
 
                         <!-- == Captcha and crsf token == -->
-                        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+                        <input type="hidden" id="g-recaptcha-response-3" name="g-recaptcha-response">
                         {{ form_widget(UpdateProgramForm.programId) }}
                         <!-- End Captcha and crsf token -->
 
@@ -720,6 +725,7 @@
                     grecaptcha.execute('{{ publicKey }}', {action: 'homepage'}).then(function(token) {
                         document.getElementById('g-recaptcha-response').value = token;
                         document.getElementById('g-recaptcha-response-2').value = token;
+                        document.getElementById('g-recaptcha-response-3').value = token;
                     });
                 });
             {% endif %}

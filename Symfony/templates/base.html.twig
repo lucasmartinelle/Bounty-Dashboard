@@ -36,7 +36,7 @@
 
                     <!-- Nav Item - Dashboard -->
                     <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <a class="nav-link" href="{{ path('dashboard') }}">
                             <i class="fas fa-fw fa-tachometer-alt"></i>
                             <span>{{ 'Dashboard'|trans }}</span>
                         </a>
@@ -79,7 +79,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('invoices') }}">
                                 <i class="fas fa-dollar-sign"></i>
-                                <span>Invoices</span>
+                                <span>{{ 'Invoices'|trans }}</span>
                             </a>
                         </li>
                     {% endif %}

@@ -75,7 +75,7 @@ class CreateReportReportsType extends AbstractType
             ])
             ->add('program_id', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choose a program',
+                'placeholder' => $this->translator->trans('Choose a program'),
                 'choices'  => $options['programsName'],
                 'constraints' => [
                     new Assert\NotBlank([

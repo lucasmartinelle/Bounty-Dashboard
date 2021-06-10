@@ -60,10 +60,10 @@ class AddProgramProgramsType extends AbstractType
             ])
             ->add('status', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choose a status',
+                'placeholder' => $this->translator->trans('Choose a status'),
                 'choices'  => [
-                    'Open' => 'Open',
-                    'Close' => 'Close'
+                    $this->translator->trans('Open')=> 'Open',
+                    $this->translator->trans('Close') => 'Close'
                 ],
                 'constraints' => [
                     new Assert\NotBlank([
@@ -82,7 +82,7 @@ class AddProgramProgramsType extends AbstractType
             ])
             ->add('platforms', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choose a Platform',
+                'placeholder' => $this->translator->trans('Choose a Platform'),
                 'choices'  => $options['platformsName'],
                 'constraints' => [
                     new Assert\NotBlank([

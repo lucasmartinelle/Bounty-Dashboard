@@ -36,9 +36,19 @@ class TemplatesController extends AbstractController
      */
     public function index(): Response
     {
-        // get templates
-        $repo = $this->getDoctrine()->getRepository(Templates::class);
-        $templates = $repo->findAll();
+        $watchall = $this->session->get('_watch_all', false);
+        
+        if($watchall){
+            // get templates
+            $repo = $this->getDoctrine()->getRepository(Templates::class);
+            $templates = $repo->findAll();
+        } else {
+            // get templates
+            $repo = $this->getDoctrine()->getRepository(Templates::class);
+            $templates = $repo->findBy([
+                "creator_id" => $this->getUser()->getId()
+            ]);
+        }
 
         return $this->render('templates/index.html.twig', [
             'captcha' => $this->captcha->enabled(),

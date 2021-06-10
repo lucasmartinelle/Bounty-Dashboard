@@ -46,7 +46,14 @@ class ProgramsController extends AbstractController
         // get informations for table
         $repo = $this->getDoctrine()->getRepository(Programs::class);
         $reportRepo = $this->getDoctrine()->getRepository(Reports::class);
-        $programs = $repo->findAll();
+        $watchall = $this->session->get('_watch_all', false);
+        if($watchall){
+            $programs = $repo->findAll();
+        } else {
+            $programs = $repo->findBy([
+                "creator_id" => $this->getUser()->getId()
+            ]);
+        }
 
         $infos = array();
 

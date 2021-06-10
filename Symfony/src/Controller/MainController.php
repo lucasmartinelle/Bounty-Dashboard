@@ -29,7 +29,7 @@ class MainController extends AbstractController
         $redirection = $request->headers->get('referer');
 
         if($this->session->has('REDIRECT_FROM') == "authentificationSuccess"){
-            $redirection = 'settings';
+            $redirection = 'dashboard';
             $this->session->remove('REDIRECT_FROM');
         }
 
@@ -53,5 +53,24 @@ class MainController extends AbstractController
         }
         
         return $this->redirect($redirection);
+    }
+
+    /**
+     * @Route("/change-watch-status", name="change-watch-status")
+     */
+    public function changeWatchStatus(Request $request){
+        if(!$this->getUser()){
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $currentWatchStatus = $request->getSession()->get('_watch_all', false);
+
+        if($currentWatchStatus){
+            $request->getSession()->set('_watch_all', false);
+        } else {
+            $request->getSession()->set('_watch_all', true);
+        }
+
+        return $this->redirect($request->headers->get('referer'));
     }
 }

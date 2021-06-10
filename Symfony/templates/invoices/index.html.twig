@@ -74,6 +74,7 @@
                     </tfoot>
                     <tbody>
                         {% for report in reports %}
+                            {% set transStatus = {"New": "New"|trans, "Accepted": "Accepted"|trans, "Resolved": "Resolved"|trans, "NA": "NA"|trans, "OOS": "OOS"|trans, "Informative": "Informative"|trans} %}
                             <tr>
                                 <td class="text-center"><span class="badge badge-pill badge-danger">{{ report.title }}</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-success">{{ report.severity }}</span></td>
@@ -81,7 +82,7 @@
                                 <td class="text-center"><span class="badge badge-pill badge-success">{{ report.gain }}€</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-info">{{ report.identifiant }}</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-info">{{ report.date }}</span></td>
-                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ report.status }}</span></td>
+                                <td class="text-center"><span class="badge badge-pill badge-danger">{{ transStatus[report.status] }}</span></td>
                                 <td>
                                     <div class="form-check text-center">
                                         <input class="form-check-input position-static" type="checkbox" data-title='{{ report.title }}' data-date='{{ report.date }}' data-gain='{{ report.gain }}' data-identifier='{{ report.identifiant }}'>

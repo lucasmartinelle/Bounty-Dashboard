@@ -48,9 +48,18 @@ class ReportsController extends AbstractController
      */
     public function index(Request $request): Response
     {
-        // get reports
-        $repo = $this->getDoctrine()->getRepository(Reports::class);
-        $reports = $repo->findAll();
+        $watchall = $this->session->get('_watch_all', false);
+
+        if($watchall){
+            // get reports
+            $repo = $this->getDoctrine()->getRepository(Reports::class);
+            $reports = $repo->findAll();
+        } else {
+            $repo = $this->getDoctrine()->getRepository(Reports::class);
+            $reports = $repo->findBy([
+                "creator_id" => $this->getUser()->getId()
+            ]);
+        }
 
         // get programs names
         $repo = $this->getDoctrine()->getRepository(Programs::class);
@@ -96,7 +105,7 @@ class ReportsController extends AbstractController
                  */
                 if ($FiltersForm->isSubmitted() && $FiltersForm->isValid()) {
                     // filters form
-                    $filters = $this->formFilters($FiltersForm);
+                    $filters = $this->formFilters($FiltersForm, $watchall);
 
                     if($filters !== false){
                         $reports = $filters;
@@ -155,9 +164,10 @@ class ReportsController extends AbstractController
     /**
      * Filters form
      * @param FiltersReportsType : Form request from reports
+     * @param watchall : Select all report or only report of user ?
      * @return object|false
      */
-    protected function formFilters(Form $FiltersForm){
+    protected function formFilters(Form $FiltersForm, $watchall){
         // get form fields
         $program = $FiltersForm->get('program')->getData();
         $platform = $FiltersForm->get('platform')->getData();
@@ -180,7 +190,11 @@ class ReportsController extends AbstractController
         if($program || $platform || $status || $severity_max || $severity_min){
             // return find like in report repository
             $repo = $this->getDoctrine()->getRepository(Reports::class);
-            return $repo->filters($program, $platform, $status, $severity_max, $severity_min);
+            if($watchall){
+                return $repo->filters($program, $platform, $status, $severity_max, $severity_min);
+            } else {
+                return $repo->filters($program, $platform, $status, $severity_max, $severity_min, $this->getUser()->getId());
+            }
         }
 
         // return

@@ -35,8 +35,12 @@
                 {{ 'add a report'|trans }}
             </a>
         </div>
-        <a href="" class="btn btn-primary mb-3">
-            {{ 'Watch all reports'|trans }}
+        <a href="{{ path('change-watch-status') }}" class="btn btn-primary mb-3">
+            {% if not app.session.get('_watch_all', false) %}
+                {{ 'Watch all reports'|trans }}
+            {% else %}
+                {{ 'Watch my reports'|trans }}
+            {% endif %}
         </a>
     </div>
 
@@ -77,6 +81,7 @@
                     <tbody>
                         {% for report in reports %} 
                             {% set money = (app.user.lang == 'en') ? '$' : '€' %}
+                            {% set transStatus = {"New": "New"|trans, "Accepted": "Accepted"|trans, "Resolved": "Resolved"|trans, "NA": "NA"|trans, "OOS": "OOS"|trans, "Informative": "Informative"|trans} %}
                             <tr>
                                 <td class="text-center"><span class="badge badge-pill badge-danger">{{ report.title }}</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-success">{{ report.severity }}</span></td>
@@ -84,7 +89,7 @@
                                 <td class="text-center"><span class="badge badge-pill badge-success" data-toggle="modal" data-id="{{ report.id }}" data-target="#changeGain">{{ report.gain }} {{ money }}</td>
                                 <td class="text-center"><span class="badge badge-pill badge-info">{{ report.identifiant }}</span></td>
                                 <td class="text-center"><span class="badge badge-pill badge-info">{{ report.date }}</span></td>
-                                <td class="text-center"><span class="badge badge-pill badge-danger" data-toggle="modal" data-id="{{ report.id }}" data-target="#changeStatus">{{ report.status }}</td>
+                                <td class="text-center"><span class="badge badge-pill badge-danger" data-toggle="modal" data-id="{{ report.id }}" data-target="#changeStatus">{{ transStatus[report.status] }}</td>
                                 <td class="text-center">
                                     <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-edit"></i>

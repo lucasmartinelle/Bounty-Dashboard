@@ -1,0 +1,50 @@
+
+version: "3.8"
+
+volumes:
+  db-volume:
+    
+networks:
+  mynet:
+
+services:
+  db:
+    image: mariadb:latest
+    volumes:
+      - db-volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - mynet
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command: /usr/sbin/apache2ctl -D FOREGROUND
+    ports:
+      - "80:80"
+    volumes:
+      - ./app/:/var/www/html/
+      - ./bin/apache2/000-default.conf:/etc/apache2/000-default.conf:ro
+    depends_on:
+      - db
+    links:
+      - db
+    networks:
+      - mynet
+
+  phpmyadmin:
+    image: phpmyadmin:5.1.1-fpm-alpine
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - mynet
+    

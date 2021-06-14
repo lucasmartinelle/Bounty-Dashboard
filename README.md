@@ -8,7 +8,7 @@ The objective of this project is to facilitate the management of your reports as
 
 ## Available features
 * Dashboard with your customizable statistics according to different filters
-* Add/remove platforms
+* Add/remove platforms and import data
 * Add/Remove Programs
   * System for adding notes to a program
 * Report management system
@@ -22,37 +22,57 @@ The objective of this project is to facilitate the management of your reports as
   * Site language (FR/EN)
   * update reCaptcha keys
 
-## Feature to come
-
-* Complete rewrite with Symfony
-
 ## Installation
 
-* install with the [simple MVC application](docs/Simple%20MVC%20Installation.md)
-* Install with the [Symfony application](docs/Symfony%20Installation.md)
+**Set environment variables**
+
+First of all, configure the SMTP parameters in the `/app/.env` file. Here is an example of configuration for gmail:
+
+```bash
+MAILER_DSN=gmail+smtp://<email address>:<password>@default
+```
+
+Then, launch docker-compose:
+
+```bash
+docker-compose up -d --build
+```
+
+Navigate in the symfony container and execute the following command:
+
+```bash
+sh ./prepare.sh
+```
+
+Enjoy !
 
 ## Screenshots
 
 **Dashboard :**
 
-![Dashboard](https://zupimages.net/up/21/10/pvnt.png)
+![Dashboard](https://zupimages.net/up/21/24/8lno.png)
 
-**Platforms :**
-![Platforms](https://zupimages.net/up/21/09/zqhh.png)
+**Profile :**
 
-**Programs :**
-![Programs ](https://zupimages.net/up/21/09/k4ke.png)
-**Notes :**
-![Notes ](https://zupimages.net/up/21/10/b60z.png)
-
-**Templates :**
-![Templates ](https://zupimages.net/up/21/09/0buw.png)
-
-**Reports :**
-![Reports](https://zupimages.net/up/21/09/vavk.png)
-
-**Invoices :**
-![Invoices ](https://zupimages.net/up/21/09/76b4.png)
+![](https://zupimages.net/up/21/24/vdc7.png)
 
 **Settings :**
-![Settings ](https://zupimages.net/up/21/09/lgfw.png)
+
+![](https://zupimages.net/up/21/24/jqg5.png)
+
+**Platforms :**
+![Platforms](https://zupimages.net/up/21/24/stey.png)
+
+**Programs :**
+![Programs ](https://zupimages.net/up/21/24/ct6y.png)
+**Notes :**
+![Notes ](https://zupimages.net/up/21/24/574s.png)
+
+**Templates :**
+![Templates ](https://zupimages.net/up/21/24/k1c7.png)
+
+**Reports :**
+![Reports](https://zupimages.net/up/21/24/fvrn.png)
+
+**Invoices :**
+![Invoices ](https://zupimages.net/up/21/24/odw2.png)

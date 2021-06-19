@@ -212,7 +212,7 @@ class InvoicesController extends AbstractController
             $path = $this->kernel->getProjectDir()."/public/pdf/".$newName.".pdf";
 
             // init
-            $knpSnappyPdf = new Pdf('usr/local/bin/wkhtmltopdf');
+            $knpSnappyPdf = new Pdf('/usr/bin/wkhtmltopdf');
 
             $currency = ($this->getUser()->getLang() == "fr") ? '€' : '$';
 

@@ -3,9 +3,6 @@ version: "3.8"
 networks:
   symfony-network:
 
-volumes:
-  nginx-volume:
-
 services:
   mariadb:
     container_name: mariadb
@@ -19,20 +16,10 @@ services:
       MARIADB_DATABASE: ${MYSQL_DATABASE}
       MARIADB_USER: ${MYSQL_USER}
       MARIADB_PASSWORD: ${MYSQL_PASSWORD}
-    # We need to run healthcheck because we need to make sure that the initial & default
-    # database has been created
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--silent"]
-      interval: 2s
-      timeout: 20s
-      retries: 10
-    ports:
-      - "3306:3306"
-    expose:
-      - "3306"
 
   symfony:
     container_name: symfony
+    command: /usr/sbin/apache2ctl -D FOREGROUND
     build:
       context: .
       dockerfile: ./docker/symfony/Dockerfile
@@ -40,23 +27,8 @@ services:
       - mariadb
     # Database must be ready before running this searvice
     depends_on:
-      mariadb:
-        condition: service_healthy # DB service must be in healthy state to start this App
+      - mariadb
     networks:
       - symfony-network
-
-  nginx:
-    container_name: nginx
-    image: nginx:alpine
-    volumes:
-      - ./app:/var/www/html
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/nginx/sites/:/etc/nginx/sites-available
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
     ports:
-      - "80:80"   # Webserver will run on http://localhost:8011
-    depends_on:
-      - symfony     # Web App service must be running
-      - mariadb     # DB must be ready
-    networks:
-      - symfony-network
+      - "80:80"

@@ -26,7 +26,7 @@ The objective of this project is to facilitate the management of your reports as
 
 **Set environment variables**
 
-First of all, configure the SMTP parameters in the `/app/.env` file. Here is an example of configuration for gmail:
+First of all, uncomment and configure the `MAILER_DNS` parameters in the `/app/.env` file. Here is an example of configuration for gmail:
 
 ```bash
 MAILER_DSN=gmail+smtp://<email address>:<password>@default
@@ -43,6 +43,8 @@ Navigate in the symfony container and execute the following command:
 ```bash
 sh ./prepare.sh
 ```
+
+Answer `yes` for every questions asked.
 
 Enjoy !
 

@@ -39,10 +39,6 @@ class UpdateProgramProgramsType extends AbstractType
                 ],
                 'required' => false
             ])
-            ->add('date', TextType::class, [
-                'label' => false,
-                'required' => false
-            ])
             ->add('status', ChoiceType::class, [
                 'label' => false,
                 'placeholder' => $this->translator->trans('Choose a status'),

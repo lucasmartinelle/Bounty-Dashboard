@@ -135,32 +135,6 @@
                                 <span id="scopetags"></span>
                             </div>
                         </div>
-                        <div class="form-row justify-content-center">
-                            <div class="col-md-10 mb-3 mt-2">
-                                <!-- If date valid -->
-                                {% if AddProgramForm.date.vars.valid %}
-                                    {{ form_widget(AddProgramForm.date, {
-                                        'attr': {
-                                            'class': 'form-control', 
-                                            'placeholder' : 'Date'|trans,
-                                            'data-toggle' : 'datepicker'}
-                                        }) }}
-                                <!-- If date invalid-->
-                                {% else %}
-                                    {{ form_widget(AddProgramForm.date, {
-                                        'attr': {
-                                            'class': 'form-control invalid', 
-                                            'placeholder' : 'Date'|trans,
-                                            'data-toggle' : 'datepicker'}
-                                        }) }}
-                                    {% if not AddProgramForm.date.vars.valid %}
-                                        <span>
-                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(AddProgramForm.date) }}"></i>
-                                        </span>
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                        </div>
                         <div class="form-row selectformrow justify-content-center">
                             <div class="col-md-10 mb-3 mt-2">
                                 <!-- If status valid -->
@@ -413,32 +387,6 @@
                                     </span>
                                 {% endif %}
                                 <span id="scopetagsupdate"></span>
-                            </div>
-                        </div>
-                        <div class="form-row justify-content-center">
-                            <div class="col-md-10 mb-3 mt-2">
-                                <!-- If date valid -->
-                                {% if UpdateProgramForm.date.vars.valid %}
-                                    {{ form_widget(UpdateProgramForm.date, {
-                                        'attr': {
-                                            'class': 'form-control', 
-                                            'placeholder' : 'Date'|trans,
-                                            'data-toggle' : 'datepicker'}
-                                        }) }}
-                                <!-- If date invalid-->
-                                {% else %}
-                                    {{ form_widget(UpdateProgramForm.date, {
-                                        'attr': {
-                                            'class': 'form-control invalid', 
-                                            'placeholder' : 'Date'|trans,
-                                            'data-toggle' : 'datepicker'}
-                                        }) }}
-                                    {% if not UpdateProgramForm.date.vars.valid %}
-                                        <span>
-                                            <i class="fas fa-info-circle text-danger" tabindex="0" data-html=true data-toggle="popover" data-trigger="hover" title="<span class='text-danger' style='font-size: 18px; font-weight: 500;'>{{ 'Incorrect value'|trans }}</span>" data-content="{{ form_errors(UpdateProgramForm.date) }}"></i>
-                                        </span>
-                                    {% endif %}
-                                {% endif %}
                             </div>
                         </div>
                         <div class="form-row selectformrow justify-content-center">
@@ -729,11 +677,6 @@
                     });
                 });
             {% endif %}
-
-            // datepicker
-            $('[data-toggle="datepicker"]').datepicker({
-                format: 'dd-mm-yyyy'
-            });
         });
 
         // escape HTML

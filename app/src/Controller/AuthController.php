@@ -169,7 +169,7 @@ class AuthController extends AbstractController
         if (!$user) {
             $this->addFlash("error", $this->translator->trans("Sorry, this user is unknown."));
             
-            return $this->redirectToRoute('registration');
+            return $this->redirectToRoute('login');
         // user exist
         } else {
             // update user
@@ -181,7 +181,7 @@ class AuthController extends AbstractController
             // confirmation success
             $this->addFlash("success", $this->translator->trans("Thank you ! You account has been enabled."));
             
-            return $this->redirectToRoute('registration');
+            return $this->redirectToRoute('login');
         }
     }
 

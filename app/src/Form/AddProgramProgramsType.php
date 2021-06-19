@@ -54,10 +54,6 @@ class AddProgramProgramsType extends AbstractType
                 ],
                 'mapped' => false
             ])
-            ->add('date', TextType::class, [
-                'label' => false,
-                'required' => false
-            ])
             ->add('status', ChoiceType::class, [
                 'label' => false,
                 'placeholder' => $this->translator->trans('Choose a status'),

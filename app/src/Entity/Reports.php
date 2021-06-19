@@ -52,7 +52,7 @@ class Reports
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    private $status = 'new';
+    private $status = 'New';
 
     /**
      * @ORM\Column(type="smallint", nullable=true)

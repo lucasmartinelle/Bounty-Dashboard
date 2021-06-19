@@ -122,7 +122,6 @@ class ProgramsController extends AbstractController
                     $program->setPlatformId($AddProgramForm->get('platforms')->getData());
                     $program->setScope($AddProgramForm->get('scope_hidden')->getData());
                     $program->setTags($AddProgramForm->get('tags_hidden')->getData());
-                    $program->setDate(new \Datetime($program->getDate()));
                     
                     // save
                     $em = $this->getDoctrine()->getManager();
@@ -186,9 +185,6 @@ class ProgramsController extends AbstractController
                     // update platform data
                     if(!empty(trim($UpdateProgramForm->get('scope_hidden')->getData()))){
                         $program->setScope($UpdateProgramForm->get('scope_hidden')->getData());
-                    }
-                    if(!empty(trim($UpdateProgramForm->get('date')->getData()))){
-                        $program->setDate($UpdateProgramForm->get('date')->getData());
                     }
                     if(!empty(trim($UpdateProgramForm->get('status')->getData()))){
                         $program->setStatus($UpdateProgramForm->get('status')->getData());

@@ -35,11 +35,6 @@ class Programs
     private $scope;
 
     /**
-     * @ORM\Column(type="date")
-     */
-    private $date;
-
-    /**
      * @ORM\Column(type="string", length=5)
      */
     private $status;
@@ -103,27 +98,6 @@ class Programs
     public function setScope(string $scope): self
     {
         $this->scope = $scope;
-
-        return $this;
-    }
-
-    public function getDate()
-    {
-        if($this->date){
-            return $this->date->format('d-m-Y');
-        }
-        return null;
-    }
-
-    public function setDate($date): self
-    {
-        if(gettype($date) == "object"){
-            $this->date = $date;
-        } else {
-            if(\preg_match("(([0][1-9]|[1-2][0-9]|[3][0-1])-([0][1-9]|[1][0-2])-([2][0][0-9]{2}))", $date)){
-                $this->date = new \DateTime($date);
-            }
-        }
 
         return $this;
     }
